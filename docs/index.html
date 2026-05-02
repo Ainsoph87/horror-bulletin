@@ -405,29 +405,66 @@ async function bulkApprove(approved) {
   if (!await ensureApiKey()) return;
   if (!confirm((approved?'Approvare':'Disapprovare') + ' ' + selectedIds.size + ' voci selezionate?')) return;
 
+  const allIds = [...selectedIds];
+  let totalSuccess = 0;
+  let totalFailed  = 0;
+  let remaining    = allIds;
+  let batchNum     = 0;
+
   showToast('⏳ Operazione bulk in corso...');
-  try {
-    const ids = [...selectedIds];
-    const r = await fetch(WORKER_URL + '/bulk-approve', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Api-Key': API_KEY },
-      body: JSON.stringify({ ids, approved })
-    });
-    const j = await r.json();
-    if (!r.ok) throw new Error(j.error || 'Errore');
-    ids.forEach(id => {
-      const item = DATA.items.find(i => i.id === id);
-      if (item) item.approvato = approved;
-    });
-    selectedIds.clear();
-    updateBulkBar();
-    renderCards();
-    renderStats();
-    renderArchive();
-    renderPostSelect();
-    showToast('✓ ' + j.count + '/' + j.total + ' voci aggiornate');
-  } catch (err) {
-    showToast('⚠️ Errore: ' + err.message);
+
+  while (remaining.length > 0) {
+    batchNum++;
+    showToast(`⏳ Batch ${batchNum} — ${remaining.length} rimanenti...`);
+    try {
+      const r = await fetch(WORKER_URL + '/bulk-approve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Api-Key': API_KEY },
+        body: JSON.stringify({ ids: remaining, approved })
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || 'Errore');
+
+      totalSuccess += j.successCount || 0;
+      totalFailed  += j.failedCount  || 0;
+
+      // Aggiorna localmente solo le voci effettivamente riuscite
+      (j.success || []).forEach(id => {
+        const item = DATA.items.find(i => i.id === id);
+        if (item) item.approvato = approved;
+      });
+
+      // Loggare i fallimenti in console
+      if (j.failed?.length) console.warn('Failed in batch ' + batchNum + ':', j.failed);
+
+      remaining = j.remaining || [];
+
+      // Aggiorna UI a ogni batch
+      renderCards();
+      renderStats();
+      renderArchive();
+      renderPostSelect();
+
+      // Piccola pausa tra batch
+      if (remaining.length > 0) await new Promise(r => setTimeout(r, 1000));
+
+    } catch (err) {
+      showToast('⚠️ Errore batch ' + batchNum + ': ' + err.message);
+      break;
+    }
+  }
+
+  selectedIds.clear();
+  updateBulkBar();
+  renderCards();
+  renderStats();
+  renderArchive();
+  renderPostSelect();
+
+  if (totalFailed > 0) {
+    showToast('⚠️ ' + totalSuccess + '/' + allIds.length + ' completate (' + totalFailed + ' fallite)');
+  } else {
+    showToast('✓ ' + totalSuccess + '/' + allIds.length + ' voci aggiornate');
   }
 }
 
