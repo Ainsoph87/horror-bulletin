@@ -1,0 +1,31 @@
+name: Horror Bulletin — Monthly Fetch
+
+on:
+  # Ogni 28 del mese alle 01:00 UTC
+  schedule:
+    - cron: '0 1 28 * *'
+  # Permette di avviare manualmente dal pannello GitHub Actions
+  workflow_dispatch:
+
+jobs:
+  fetch-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Horror Bulletin fetch
+        env:
+          TMDB_API_KEY:      ${{ secrets.TMDB_API_KEY }}
+          NOTION_TOKEN:      ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_ID:      ${{ secrets.NOTION_DB_ID }}
+          TELEGRAM_TOKEN:    ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID:  ${{ secrets.TELEGRAM_CHAT_ID }}
+          DISCORD_WEBHOOK:   ${{ secrets.DISCORD_WEBHOOK }}
+        run: node fetch_horror.js
