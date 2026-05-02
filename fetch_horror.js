@@ -1,11 +1,10 @@
-// fetch_horror.js — v4
-// Crea automaticamente il database Notion se non esiste ancora
-const TMDB_KEY     = process.env.TMDB_API_KEY;
-const NOTION_TOKEN = process.env.NOTION_TOKEN;
-const NOTION_PAGE_ID = process.env.NOTION_DB_ID; // ora è il Page ID della pagina vuota
-const TG_TOKEN     = process.env.TELEGRAM_TOKEN;
-const TG_CHAT      = process.env.TELEGRAM_CHAT_ID;
-const DISCORD_URL  = process.env.DISCORD_WEBHOOK;
+// fetch_horror.js — v5
+const TMDB_KEY       = process.env.TMDB_API_KEY;
+const NOTION_TOKEN   = process.env.NOTION_TOKEN;
+const NOTION_PAGE_ID = process.env.NOTION_DB_ID;
+const TG_TOKEN       = process.env.TELEGRAM_TOKEN;
+const TG_CHAT        = process.env.TELEGRAM_CHAT_ID;
+const DISCORD_URL    = process.env.DISCORD_WEBHOOK;
 
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const TMDB_IMG  = 'https://image.tmdb.org/t/p/w500';
@@ -16,15 +15,34 @@ const N_HDR     = {
   'Content-Type': 'application/json'
 };
 
-const now  = new Date();
-const tM   = now.getMonth() + 2 > 12 ? 1 : now.getMonth() + 2;
-const tY   = now.getMonth() + 2 > 12 ? now.getFullYear() + 1 : now.getFullYear();
-const pad  = n => String(n).padStart(2,'0');
+const now   = new Date();
+const tM    = now.getMonth() + 2 > 12 ? 1 : now.getMonth() + 2;
+const tY    = now.getMonth() + 2 > 12 ? now.getFullYear() + 1 : now.getFullYear();
+const pad   = n => String(n).padStart(2,'0');
 const dFrom = `${tY}-${pad(tM)}-01`;
 const dTo   = `${tY}-${pad(tM)}-${new Date(tY, tM, 0).getDate()}`;
-console.log(`Target: ${tY}-${pad(tM)} | ${dFrom} → ${dTo}`);
 
-let DB_ID = null; // verrà popolato dopo creazione/ricerca del database
+const MONTH_IT = new Date(tY, tM-1).toLocaleString('it-IT',{month:'long',year:'numeric'}).toUpperCase();
+
+let DB_ID = null;
+
+// Caratteri non latini — titoli non leggibili da pubblico occidentale
+const NON_LATIN = /[\u0E00-\u0E7F\u3000-\u9FFF\uAC00-\uD7AF\u0600-\u06FF\u0900-\u097F\u0400-\u04FF\uF900-\uFAFF]/;
+
+function isReadable(title) {
+  return title && !NON_LATIN.test(title);
+}
+
+// Usa titolo inglese se il titolo originale non è leggibile
+function bestTitle(det) {
+  const orig = det.title || det.name || '';
+  if (isReadable(orig)) return orig;
+  // Prova titolo inglese dalle traduzioni
+  const en = det.translations?.translations?.find(t => t.iso_639_1 === 'en');
+  const enTitle = en?.data?.title || en?.data?.name || '';
+  if (enTitle && isReadable(enTitle)) return enTitle;
+  return null; // film da escludere
+}
 
 async function tmdb(path) {
   const sep = path.includes('?') ? '&' : '?';
@@ -43,7 +61,6 @@ async function notion(method, path, body) {
   return json;
 }
 
-// Cerca un database già creato come figlio della pagina
 async function findExistingDB() {
   const r = await notion('GET', `/blocks/${NOTION_PAGE_ID}/children`);
   for (const block of r.results || []) {
@@ -55,7 +72,6 @@ async function findExistingDB() {
   return null;
 }
 
-// Crea il database con tutte le proprietà necessarie
 async function createDB() {
   console.log('Creating new Notion database...');
   const r = await notion('POST', '/databases', {
@@ -133,49 +149,145 @@ function getCategory(plat) {
   return 'Streaming';
 }
 
-function buildPost(e) {
-  const tags = ['#horror','#horrormovies','#horrorfilm',
+function formatDate(d) {
+  if (!d) return 'N/D';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+
+// Caption per Telegram — per singolo film
+function filmCaption(e) {
+  const tags = [
+    '#horror', '#horrormovies',
     '#' + e.category.toLowerCase().replace(/\s/g,''),
     e.platform !== 'Cinema' ? '#' + e.platform.toLowerCase().replace(/[^a-z0-9]/g,'') : ''
   ].filter(Boolean).join(' ');
-  return `🎬 ${e.title} (${e.year})
-📽️ Regia / Dir.: ${e.director}
-📅 Uscita mondiale / World Release: ${e.releaseDate}
-🏷️ ${e.category}
-📺 ${e.platform}
 
-🇮🇹 SINOSSI
-${e.synIT || 'Sinossi non disponibile.'}
-
-🇬🇧 SYNOPSIS
-${e.synEN || 'Synopsis not available.'}
-
-${tags}`;
+  return [
+    `🎬 *${e.title}* (${e.year})`,
+    ``,
+    `🎥 *Regia / Dir.:* ${e.director}`,
+    `📅 *Uscita:* ${formatDate(e.releaseDate)}`,
+    `📺 *Piattaforma:* ${e.platform}`,
+    ``,
+    `🇮🇹 *Sinossi*`,
+    e.synIT || '_Sinossi non disponibile._',
+    ``,
+    `🇬🇧 *Synopsis*`,
+    e.synEN || '_Synopsis not available._',
+    ``,
+    tags
+  ].join('\n');
 }
 
-async function pushTG(text, poster) {
-  const ep   = poster ? 'sendPhoto' : 'sendMessage';
-  const body = poster
-    ? { chat_id: TG_CHAT, photo: poster, caption: text.slice(0,1024) }
-    : { chat_id: TG_CHAT, text: text.slice(0,4096) };
-  await fetch(`https://api.telegram.org/bot${TG_TOKEN}/${ep}`, {
+// Separatore di categoria per Telegram
+function categorySeparator(cat) {
+  const icons = {
+    'Cinema':     '🎟️',
+    'Streaming':  '📡',
+    'VOD':        '🎞️',
+    'Home Video': '📀'
+  };
+  const icon = icons[cat] || '☠️';
+  return [
+    ``,
+    `━━━━━━━━━━━━━━━━━━━━━━`,
+    `${icon}  *${cat.toUpperCase()}*`,
+    `━━━━━━━━━━━━━━━━━━━━━━`,
+    ``
+  ].join('\n');
+}
+
+// Intestazione mensile
+function monthHeader(count) {
+  return [
+    `☠️ *HORROR BULLETIN*`,
+    `📅 *${MONTH_IT}*`,
+    ``,
+    `_${count} uscite horror questo mese_`,
+    ``,
+    `#horror #horrorbulletin #horrormonth`
+  ].join('\n');
+}
+
+// Delay per non superare rate limit Telegram
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function tgSend(body) {
+  const r = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+    body: JSON.stringify({ ...body, parse_mode: 'Markdown', disable_web_page_preview: true })
   });
+  await sleep(500);
+  return r;
 }
 
-async function pushDiscord(text, poster) {
-  await fetch(DISCORD_URL, {
+async function tgPhoto(photo, caption) {
+  const r = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendPhoto`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      content: text.slice(0,2000),
-      embeds: poster ? [{ image: { url: poster } }] : []
+      chat_id: TG_CHAT,
+      photo,
+      caption: caption.slice(0, 1024),
+      parse_mode: 'Markdown'
     })
   });
+  await sleep(800);
+  return r;
+}
+
+async function tgNoPhoto(caption) {
+  return tgSend({
+    chat_id: TG_CHAT,
+    text: [
+      `🖼️ _Locandina non disponibile_`,
+      ``,
+      caption
+    ].join('\n')
+  });
+}
+
+// Discord — un embed per film
+async function discordFilm(e) {
+  const embed = {
+    title: `${e.title} (${e.year})`,
+    color: 0x8B0000,
+    fields: [
+      { name: '🎥 Regia / Dir.', value: e.director, inline: true },
+      { name: '📅 Uscita',       value: formatDate(e.releaseDate), inline: true },
+      { name: '📺 Piattaforma',  value: e.platform, inline: true },
+      { name: '🇮🇹 Sinossi',     value: (e.synIT || '_Non disponibile_').slice(0,1000) },
+      { name: '🇬🇧 Synopsis',    value: (e.synEN || '_Not available_').slice(0,1000) }
+    ],
+    thumbnail: e.poster ? { url: e.poster } : undefined,
+    footer: { text: `#horror #${e.category.toLowerCase()}` }
+  };
+
+  await fetch(DISCORD_URL, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ embeds: [embed] })
+  });
+  await sleep(800);
+}
+
+async function discordSeparator(cat) {
+  const icons = { 'Cinema':'🎟️', 'Streaming':'📡', 'VOD':'🎞️', 'Home Video':'📀' };
+  await fetch(DISCORD_URL, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ content: `\n${icons[cat]||'☠️'} **${cat.toUpperCase()}**\n━━━━━━━━━━━━━━━━━━━━━━` })
+  });
+  await sleep(500);
+}
+
+async function discordHeader(count) {
+  await fetch(DISCORD_URL, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ content: `# ☠️ HORROR BULLETIN — ${MONTH_IT}\n*${count} uscite horror questo mese*` })
+  });
+  await sleep(500);
 }
 
 async function main() {
-  // Trova o crea il database
   const existingId = await findExistingDB();
   DB_ID = existingId || await createDB();
   console.log(`Using DB: ${DB_ID}`);
@@ -188,19 +300,28 @@ async function main() {
   const movies = (mRes.results||[]).map(m => ({ ...m, _type:'movie' }));
   const series = (sRes.results||[]).map(s => ({ ...s, _type:'tv', title:s.name, release_date:s.first_air_date }));
   const all    = [...movies, ...series];
-  console.log(`Found ${movies.length} movies, ${series.length} series`);
+  console.log(`Found ${movies.length} movies, ${series.length} series (pre-filter)`);
 
   const saved = [];
 
   for (const item of all) {
     try {
-      const titleRaw = item.title || item.name || 'Unknown';
-      if (await exists(titleRaw)) { console.log(`Skip: ${titleRaw}`); continue; }
+      const rawTitle = item.title || item.name || '';
 
+      // Fetch dettagli con translations per titolo inglese fallback
       const [det, detEN] = await Promise.all([
-        tmdb(`/${item._type}/${item.id}?language=it-IT&append_to_response=watch/providers,credits`),
+        tmdb(`/${item._type}/${item.id}?language=it-IT&append_to_response=watch/providers,credits,translations`),
         tmdb(`/${item._type}/${item.id}?language=en-US`)
       ]);
+
+      // Filtra titoli non leggibili da pubblico occidentale
+      const title = bestTitle(det) || bestTitle(detEN);
+      if (!title) {
+        console.log(`Skip (non-latin title): ${rawTitle}`);
+        continue;
+      }
+
+      if (await exists(title)) { console.log(`Skip (exists): ${title}`); continue; }
 
       const plat = getPlatform(det['watch/providers']);
       const cat  = getCategory(plat);
@@ -209,7 +330,7 @@ async function main() {
         : (det.created_by?.map(c => c.name).join(', ') || 'N/D');
 
       const entry = {
-        title:       det.title || det.name || titleRaw,
+        title,
         director:    dir,
         year:        new Date(det.release_date || det.first_air_date || `${tY}-01-01`).getFullYear(),
         category:    cat,
@@ -223,8 +344,8 @@ async function main() {
 
       await save(entry);
       saved.push(entry);
-      console.log(`Saved: ${entry.title}`);
-      await new Promise(r => setTimeout(r, 400));
+      console.log(`Saved: ${entry.title} [${entry.category}]`);
+      await sleep(400);
 
     } catch(err) {
       console.error(`Error [${item.title||item.name}]: ${err.message}`);
@@ -233,15 +354,49 @@ async function main() {
 
   if (!saved.length) { console.log('No new entries.'); return; }
 
-  const hdr = `☠️ HORROR BULLETIN — ${new Date(tY, tM-1)
-    .toLocaleString('it-IT',{month:'long',year:'numeric'}).toUpperCase()}\n\n`
-    + `${saved.length} uscite horror in arrivo:\n\n`
-    + saved.map((e,i) => `${i+1}. ${e.title} (${e.category} — ${e.platform}) — ${e.releaseDate}`).join('\n')
-    + '\n\n#horror #horrorbulletin';
+  // Raggruppa per categoria
+  const order    = ['Cinema', 'Streaming', 'VOD', 'Home Video'];
+  const grouped  = {};
+  order.forEach(c => grouped[c] = []);
+  saved.forEach(e => {
+    if (grouped[e.category]) grouped[e.category].push(e);
+    else grouped['Cinema'].push(e);
+  });
 
-  await pushTG(hdr, null);
-  await pushDiscord(hdr, null);
-  console.log(`Done — ${saved.length} entries saved. Awaiting approval before individual push.`);
+  const total = saved.length;
+
+  // ── TELEGRAM ──
+  await tgSend({ chat_id: TG_CHAT, text: monthHeader(total) });
+
+  for (const cat of order) {
+    const films = grouped[cat];
+    if (!films.length) continue;
+
+    await tgSend({ chat_id: TG_CHAT, text: categorySeparator(cat) });
+
+    for (const e of films) {
+      const caption = filmCaption(e);
+      if (e.poster) {
+        await tgPhoto(e.poster, caption);
+      } else {
+        await tgNoPhoto(caption);
+      }
+    }
+  }
+
+  // ── DISCORD ──
+  await discordHeader(total);
+
+  for (const cat of order) {
+    const films = grouped[cat];
+    if (!films.length) continue;
+    await discordSeparator(cat);
+    for (const e of films) {
+      await discordFilm(e);
+    }
+  }
+
+  console.log(`Done — ${total} entries saved and pushed.`);
 }
 
 main().catch(err => { console.error('Fatal:', err); process.exit(1); });
