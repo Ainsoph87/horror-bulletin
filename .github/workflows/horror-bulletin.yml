@@ -7,6 +7,12 @@ on:
   # Permette di avviare manualmente dal pannello GitHub Actions
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: write
+
 jobs:
   fetch-and-push:
     runs-on: ubuntu-latest
@@ -29,3 +35,15 @@ jobs:
           TELEGRAM_CHAT_ID:  ${{ secrets.TELEGRAM_CHAT_ID }}
           DISCORD_WEBHOOK:   ${{ secrets.DISCORD_WEBHOOK }}
         run: node fetch_horror.js
+
+      - name: Commit data.json if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/data.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update data.json from monthly fetch $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git push
+          fi
