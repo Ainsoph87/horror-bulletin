@@ -17,6 +17,10 @@ const N_HDR       = {
   'Content-Type': 'application/json'
 };
 
+// File system per export JSON
+const fs = require('fs');
+const path = require('path');
+
 const now   = new Date();
 const tM    = now.getMonth() + 2 > 12 ? 1 : now.getMonth() + 2;
 const tY    = now.getMonth() + 2 > 12 ? now.getFullYear() + 1 : now.getFullYear();
@@ -624,6 +628,72 @@ async function main() {
 
   console.log(`\nDone — ${saved.length} entries saved and pushed.`);
   order.forEach(c => { if (grouped[c].length) console.log(`  ${c}: ${grouped[c].length}`); });
+
+  // Export completo del DB Notion in data.json per il frontend
+  await exportFullDataJson();
+}
+
+// Esporta TUTTO il database Notion in un file JSON consumabile dal frontend
+async function exportFullDataJson() {
+  console.log('\nExporting full DB to data.json...');
+  const allRows = [];
+  let cursor = undefined;
+  do {
+    const body = cursor ? { start_cursor: cursor, page_size: 100 } : { page_size: 100 };
+    const r = await notion('POST', `/databases/${DB_ID}/query`, body);
+    allRows.push(...r.results);
+    cursor = r.has_more ? r.next_cursor : undefined;
+  } while (cursor);
+
+  const items = allRows.map(p => {
+    const props = p.properties || {};
+    const t = (key, type) => {
+      const v = props[key];
+      if (!v) return null;
+      if (type === 'title')      return v.title?.[0]?.plain_text || null;
+      if (type === 'rich_text')  return v.rich_text?.map(x => x.plain_text).join('') || null;
+      if (type === 'number')     return v.number;
+      if (type === 'select')     return v.select?.name || null;
+      if (type === 'date')       return v.date?.start || null;
+      if (type === 'url')        return v.url || null;
+      if (type === 'checkbox')   return !!v.checkbox;
+      return null;
+    };
+    return {
+      id:           p.id,
+      title:        t('Name','title'),
+      director:     t('Regista','rich_text'),
+      year:         t('Anno','number'),
+      category:     t('Categoria','select'),
+      tipo:         t('Tipo','select'),
+      platform:     t('Piattaforma','rich_text'),
+      releaseDate:  t('Data uscita','date'),
+      originalYear: t('Anno originale','number'),
+      synIT:        t('Sinossi IT','rich_text'),
+      synEN:        t('Sinossi EN','rich_text'),
+      poster:       t('URL Locandina','url'),
+      verificato:   t('Verificato','checkbox'),
+      approvato:    t('Approvato','checkbox'),
+      pubblicato:   t('Pubblicato','checkbox')
+    };
+  });
+
+  // Ordina: prima approvati, poi per data
+  items.sort((a,b) => (b.releaseDate||'').localeCompare(a.releaseDate||''));
+
+  const data = {
+    updatedAt:   new Date().toISOString(),
+    targetMonth: MONTH_IT,
+    total:       items.length,
+    items
+  };
+
+  // Crea cartella docs/ se non esiste
+  const docsDir = path.join(process.cwd(), 'docs');
+  if (!fs.existsSync(docsDir)) fs.mkdirSync(docsDir, { recursive: true });
+
+  fs.writeFileSync(path.join(docsDir, 'data.json'), JSON.stringify(data, null, 2));
+  console.log(`Exported ${items.length} items to docs/data.json`);
 }
 
 main().catch(err => { console.error('Fatal:', err); process.exit(1); });
