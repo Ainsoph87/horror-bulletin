@@ -1,7 +1,8 @@
-// fetch_horror.js — v3
+// fetch_horror.js — v4
+// Crea automaticamente il database Notion se non esiste ancora
 const TMDB_KEY     = process.env.TMDB_API_KEY;
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
-const NOTION_DB_ID = process.env.NOTION_DB_ID;
+const NOTION_PAGE_ID = process.env.NOTION_DB_ID; // ora è il Page ID della pagina vuota
 const TG_TOKEN     = process.env.TELEGRAM_TOKEN;
 const TG_CHAT      = process.env.TELEGRAM_CHAT_ID;
 const DISCORD_URL  = process.env.DISCORD_WEBHOOK;
@@ -15,13 +16,15 @@ const N_HDR     = {
   'Content-Type': 'application/json'
 };
 
-const now = new Date();
-const tM  = now.getMonth() + 2 > 12 ? 1 : now.getMonth() + 2;
-const tY  = now.getMonth() + 2 > 12 ? now.getFullYear() + 1 : now.getFullYear();
-const pad = n => String(n).padStart(2,'0');
+const now  = new Date();
+const tM   = now.getMonth() + 2 > 12 ? 1 : now.getMonth() + 2;
+const tY   = now.getMonth() + 2 > 12 ? now.getFullYear() + 1 : now.getFullYear();
+const pad  = n => String(n).padStart(2,'0');
 const dFrom = `${tY}-${pad(tM)}-01`;
 const dTo   = `${tY}-${pad(tM)}-${new Date(tY, tM, 0).getDate()}`;
 console.log(`Target: ${tY}-${pad(tM)} | ${dFrom} → ${dTo}`);
+
+let DB_ID = null; // verrà popolato dopo creazione/ricerca del database
 
 async function tmdb(path) {
   const sep = path.includes('?') ? '&' : '?';
@@ -40,12 +43,79 @@ async function notion(method, path, body) {
   return json;
 }
 
-// Controlla duplicati per titolo
+// Cerca un database già creato come figlio della pagina
+async function findExistingDB() {
+  const r = await notion('GET', `/blocks/${NOTION_PAGE_ID}/children`);
+  for (const block of r.results || []) {
+    if (block.type === 'child_database') {
+      console.log(`Found existing DB: ${block.id}`);
+      return block.id.replace(/-/g,'');
+    }
+  }
+  return null;
+}
+
+// Crea il database con tutte le proprietà necessarie
+async function createDB() {
+  console.log('Creating new Notion database...');
+  const r = await notion('POST', '/databases', {
+    parent: { type: 'page_id', page_id: NOTION_PAGE_ID },
+    title: [{ type: 'text', text: { content: 'Horror Bulletin DB' } }],
+    properties: {
+      'Name':          { title: {} },
+      'Regista':       { rich_text: {} },
+      'Anno':          { number: { format: 'number' } },
+      'Categoria':     { select: { options: [
+        { name: 'Cinema',     color: 'red'    },
+        { name: 'Streaming',  color: 'blue'   },
+        { name: 'VOD',        color: 'purple' },
+        { name: 'Home Video', color: 'yellow' }
+      ]}},
+      'Piattaforma':   { rich_text: {} },
+      'Data uscita':   { date: {} },
+      'Sinossi IT':    { rich_text: {} },
+      'Sinossi EN':    { rich_text: {} },
+      'URL Locandina': { url: {} },
+      'Verificato':    { checkbox: {} },
+      'Approvato':     { checkbox: {} },
+      'Pubblicato':    { checkbox: {} }
+    }
+  });
+  console.log(`Database created: ${r.id}`);
+  return r.id.replace(/-/g,'');
+}
+
 async function exists(title) {
-  const r = await notion('POST', `/databases/${NOTION_DB_ID}/query`, {
+  const r = await notion('POST', `/databases/${DB_ID}/query`, {
     filter: { property: 'Name', title: { equals: title } }
   });
   return r.results.length > 0;
+}
+
+async function save(e) {
+  const props = {
+    'Name':        { title:     [{ text: { content: e.title } }] },
+    'Regista':     { rich_text: [{ text: { content: e.director } }] },
+    'Anno':        { number:    e.year },
+    'Categoria':   { select:    { name: e.category } },
+    'Piattaforma': { rich_text: [{ text: { content: e.platform } }] },
+    'Verificato':  { checkbox:  false },
+    'Approvato':   { checkbox:  false },
+    'Pubblicato':  { checkbox:  false }
+  };
+  if (e.releaseDate) props['Data uscita']   = { date:      { start: e.releaseDate } };
+  if (e.synIT)       props['Sinossi IT']    = { rich_text: [{ text: { content: e.synIT.slice(0,2000) } }] };
+  if (e.synEN)       props['Sinossi EN']    = { rich_text: [{ text: { content: e.synEN.slice(0,2000) } }] };
+  if (e.poster)      props['URL Locandina'] = { url: e.poster };
+
+  return notion('POST', '/pages', {
+    parent: { database_id: DB_ID },
+    properties: props,
+    children: [{
+      object: 'block', type: 'paragraph',
+      paragraph: { rich_text: [{ type: 'text', text: { content: `TMDB ID: ${e.tmdbId}` } }] }
+    }]
+  });
 }
 
 function getPlatform(wp) {
@@ -61,43 +131,6 @@ function getCategory(plat) {
   if (plat.startsWith('VOD')) return 'VOD';
   if (plat === 'Cinema')      return 'Cinema';
   return 'Streaming';
-}
-
-async function save(e) {
-  // Proprietà Notion — solo quelle standard senza tmdb_id
-  const props = {
-    'Name':        { title:     [{ text: { content: e.title } }] },
-    'Regista':     { rich_text: [{ text: { content: e.director } }] },
-    'Anno':        { number:    e.year },
-    'Piattaforma': { rich_text: [{ text: { content: e.platform } }] },
-    'Verificato':  { checkbox:  false },
-    'Approvato':   { checkbox:  false },
-    'Pubblicato':  { checkbox:  false }
-  };
-
-  // Campi opzionali — aggiunti solo se la proprietà esiste
-  // Data uscita
-  if (e.releaseDate) props['Data uscita'] = { date: { start: e.releaseDate } };
-  // Sinossi IT
-  if (e.synIT) props['Sinossi IT'] = { rich_text: [{ text: { content: e.synIT.slice(0,2000) } }] };
-  // Sinossi EN
-  if (e.synEN) props['Sinossi EN'] = { rich_text: [{ text: { content: e.synEN.slice(0,2000) } }] };
-  // URL Locandina
-  if (e.poster) props['URL Locandina'] = { url: e.poster };
-  // Categoria (Select)
-  if (e.category) props['Categoria'] = { select: { name: e.category } };
-
-  // Il corpo della pagina contiene TMDB ID come testo (nessuna proprietà speciale necessaria)
-  const children = [{
-    object: 'block', type: 'paragraph',
-    paragraph: { rich_text: [{ type: 'text', text: { content: `TMDB ID: ${e.tmdbId}` } }] }
-  }];
-
-  return notion('POST', '/pages', {
-    parent: { database_id: NOTION_DB_ID },
-    properties: props,
-    children
-  });
 }
 
 function buildPost(e) {
@@ -142,6 +175,11 @@ async function pushDiscord(text, poster) {
 }
 
 async function main() {
+  // Trova o crea il database
+  const existingId = await findExistingDB();
+  DB_ID = existingId || await createDB();
+  console.log(`Using DB: ${DB_ID}`);
+
   const [mRes, sRes] = await Promise.all([
     tmdb(`/discover/movie?with_genres=27&primary_release_date.gte=${dFrom}&primary_release_date.lte=${dTo}&sort_by=popularity.desc&language=it-IT&page=1`),
     tmdb(`/discover/tv?with_genres=27&first_air_date.gte=${dFrom}&first_air_date.lte=${dTo}&sort_by=popularity.desc&language=it-IT&page=1`)
@@ -149,7 +187,7 @@ async function main() {
 
   const movies = (mRes.results||[]).map(m => ({ ...m, _type:'movie' }));
   const series = (sRes.results||[]).map(s => ({ ...s, _type:'tv', title:s.name, release_date:s.first_air_date }));
-  const all = [...movies, ...series];
+  const all    = [...movies, ...series];
   console.log(`Found ${movies.length} movies, ${series.length} series`);
 
   const saved = [];
@@ -157,7 +195,7 @@ async function main() {
   for (const item of all) {
     try {
       const titleRaw = item.title || item.name || 'Unknown';
-      if (await exists(titleRaw)) { console.log(`Skip (exists): ${titleRaw}`); continue; }
+      if (await exists(titleRaw)) { console.log(`Skip: ${titleRaw}`); continue; }
 
       const [det, detEN] = await Promise.all([
         tmdb(`/${item._type}/${item.id}?language=it-IT&append_to_response=watch/providers,credits`),
@@ -195,7 +233,6 @@ async function main() {
 
   if (!saved.length) { console.log('No new entries.'); return; }
 
-  // Riepilogo mensile
   const hdr = `☠️ HORROR BULLETIN — ${new Date(tY, tM-1)
     .toLocaleString('it-IT',{month:'long',year:'numeric'}).toUpperCase()}\n\n`
     + `${saved.length} uscite horror in arrivo:\n\n`
