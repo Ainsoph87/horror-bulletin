@@ -46,7 +46,7 @@
   .stat-label{font-size:11px;color:var(--text2);margin-top:4px}
 
   .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
-  .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;transition:.2s;display:flex;flex-direction:column}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;transition:.2s;display:flex;flex-direction:column;cursor:pointer}
   .card:hover{border-color:var(--border2);transform:translateY(-2px)}
   .card-poster{width:100%;aspect-ratio:2/3;background:var(--bg3);position:relative;overflow:hidden}
   .card-poster img{width:100%;height:100%;object-fit:cover}
@@ -118,6 +118,7 @@
     <button class="nav-tab" onclick="showPage('social')">Social</button>
   </div>
   <div class="updated" id="updated-info">—</div>
+  <button class="nav-tab" style="font-size:11px;color:var(--text3)" onclick="changeApiKey()" title="Cambia API Key">🔑</button>
 </nav>
 
 <main>
@@ -143,6 +144,18 @@
       <button class="filter-btn" onclick="setFilter(this,'Riedizione')">♻️ Riedizioni</button>
       <button class="filter-btn" onclick="setFilter(this,'approved')">✓ Approvati</button>
       <button class="filter-btn" onclick="setFilter(this,'pending')">⏳ Da approvare</button>
+    </div>
+
+    <div id="bulk-bar" style="display:none;background:var(--bg3);border:1px solid var(--red);border-radius:var(--radius);padding:10px 16px;margin-bottom:1rem;align-items:center;gap:12px;flex-wrap:wrap">
+      <span id="bulk-count" style="font-size:13px;color:var(--red3);font-weight:500">0 selezionati</span>
+      <button class="card-btn" style="border-color:var(--green2);color:var(--green3);max-width:200px" onclick="bulkApprove(true)">✓ Approva selezionati</button>
+      <button class="card-btn" style="border-color:var(--orange3);color:var(--orange3);max-width:200px" onclick="bulkApprove(false)">⊘ Disapprova selezionati</button>
+      <button class="card-btn" style="max-width:120px" onclick="clearSelection()">✕ Pulisci</button>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:12px;color:var(--text3)" id="selection-info">Clicca le card per selezionare più voci</div>
+      <button class="card-btn" style="max-width:200px" onclick="approveAllVisible()">✓ Approva tutti i visibili</button>
     </div>
 
     <div id="cards-container" class="cards-grid"><div class="loading">⏳ Caricamento dati...</div></div>
@@ -239,9 +252,14 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// === CONFIGURAZIONE WORKER ===
+const WORKER_URL = 'https://horror-bulletin-api.di-rodi-mirko2.workers.dev';
+let API_KEY = localStorage.getItem('hb_api_key') || '';
+
 let DATA = { items:[], updatedAt:null, targetMonth:'', total:0 };
 let currentFilter = 'all';
 let currentItem = null;
+let selectedIds = new Set();
 
 const CAT_BADGE = {
   'Cinema':'badge-cinema','Streaming':'badge-streaming','VOD':'badge-vod',
@@ -304,12 +322,14 @@ function renderCards() {
     const posterImg  = d.poster
       ? `<img src="${d.poster}" alt="${d.title}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'card-poster-placeholder\\'>☠</div>'">`
       : `<div class="card-poster-placeholder">☠</div>`;
+    const isSelected = selectedIds.has(d.id);
     return `
-      <div class="card">
+      <div class="card" style="${isSelected?'border-color:var(--red);box-shadow:0 0 0 2px var(--red)':''}" onclick="toggleSelect('${d.id}', event)">
         <div class="card-poster">
           ${posterImg}
           <span class="card-badge ${badgeClass}">${d.category||'?'}</span>
           <span class="card-tipo ${tipoClass}">${tipoLabel}</span>
+          ${isSelected ? '<div style="position:absolute;bottom:8px;right:8px;width:28px;height:28px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;font-size:14px">✓</div>' : ''}
         </div>
         <div class="card-body">
           <div class="card-title">${d.title || 'Senza titolo'} ${d.year ? `(${d.year})` : ''}</div>
@@ -325,12 +345,128 @@ function renderCards() {
           <span class="pill ${d.approvato?'on-approved':''}">${d.approvato?'✓':'·'} Approvato</span>
           <span class="pill ${d.pubblicato?'on-published':''}">${d.pubblicato?'✓':'·'} Pubblicato</span>
         </div>
-        <div class="card-actions">
-          <button class="card-btn" onclick='openPost(${JSON.stringify(d.id)})'>📋 Post Social</button>
+        <div class="card-actions" onclick="event.stopPropagation()">
+          <button class="card-btn" style="border-color:${d.approvato?'var(--orange3)':'var(--green2)'};color:${d.approvato?'var(--orange3)':'var(--green3)'}" onclick="toggleApprove('${d.id}', ${!d.approvato})">
+            ${d.approvato ? '⊘ Disapprova' : '✓ Approva'}
+          </button>
+          <button class="card-btn" onclick="openPost('${d.id}')">📋 Post Social</button>
         </div>
       </div>
     `;
   }).join('');
+}
+
+function toggleSelect(id, ev) {
+  if (ev.target.tagName === 'BUTTON') return;
+  if (selectedIds.has(id)) selectedIds.delete(id);
+  else selectedIds.add(id);
+  updateBulkBar();
+  renderCards();
+}
+
+function clearSelection() {
+  selectedIds.clear();
+  updateBulkBar();
+  renderCards();
+}
+
+function updateBulkBar() {
+  const bar = document.getElementById('bulk-bar');
+  const cnt = document.getElementById('bulk-count');
+  cnt.textContent = selectedIds.size + ' selezionat' + (selectedIds.size === 1 ? 'o' : 'i');
+  bar.style.display = selectedIds.size > 0 ? 'flex' : 'none';
+}
+
+async function toggleApprove(id, approved) {
+  if (!await ensureApiKey()) return;
+  showToast('⏳ Aggiornamento in corso...');
+  try {
+    const r = await fetch(WORKER_URL + '/approve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Api-Key': API_KEY },
+      body: JSON.stringify({ id, approved })
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Errore');
+    const item = DATA.items.find(i => i.id === id);
+    if (item) item.approvato = approved;
+    renderCards();
+    renderStats();
+    renderArchive();
+    renderPostSelect();
+    showToast(approved ? '✓ Voce approvata' : '⊘ Voce disapprovata');
+  } catch (err) {
+    showToast('⚠️ Errore: ' + err.message);
+  }
+}
+
+async function bulkApprove(approved) {
+  if (!selectedIds.size) return;
+  if (!await ensureApiKey()) return;
+  if (!confirm((approved?'Approvare':'Disapprovare') + ' ' + selectedIds.size + ' voci selezionate?')) return;
+
+  showToast('⏳ Operazione bulk in corso...');
+  try {
+    const ids = [...selectedIds];
+    const r = await fetch(WORKER_URL + '/bulk-approve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Api-Key': API_KEY },
+      body: JSON.stringify({ ids, approved })
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Errore');
+    ids.forEach(id => {
+      const item = DATA.items.find(i => i.id === id);
+      if (item) item.approvato = approved;
+    });
+    selectedIds.clear();
+    updateBulkBar();
+    renderCards();
+    renderStats();
+    renderArchive();
+    renderPostSelect();
+    showToast('✓ ' + j.count + '/' + j.total + ' voci aggiornate');
+  } catch (err) {
+    showToast('⚠️ Errore: ' + err.message);
+  }
+}
+
+async function approveAllVisible() {
+  const visible = applyFilter(DATA.items, currentFilter);
+  const toApprove = visible.filter(i => !i.approvato);
+  if (!toApprove.length) { showToast('ℹ️ Nessuna voce da approvare'); return; }
+  if (!confirm('Approvare tutte le ' + toApprove.length + ' voci visibili non ancora approvate?')) return;
+  selectedIds = new Set(toApprove.map(i => i.id));
+  await bulkApprove(true);
+}
+
+async function ensureApiKey() {
+  if (API_KEY) return true;
+  const k = prompt('Inserisci la tua API Key per modificare il database:\n(la chiave viene salvata solo nel tuo browser)');
+  if (!k) return false;
+  try {
+    const r = await fetch(WORKER_URL + '/', { headers: { 'X-Api-Key': k } });
+    if (!r.ok) {
+      showToast('⚠️ API Key non valida');
+      return false;
+    }
+    API_KEY = k;
+    localStorage.setItem('hb_api_key', k);
+    showToast('✓ API Key salvata');
+    return true;
+  } catch (err) {
+    showToast('⚠️ Errore connessione: ' + err.message);
+    return false;
+  }
+}
+
+function changeApiKey() {
+  const k = prompt('Nuova API Key:', API_KEY);
+  if (k !== null) {
+    API_KEY = k;
+    localStorage.setItem('hb_api_key', k);
+    showToast(k ? '✓ API Key aggiornata' : '✓ API Key rimossa');
+  }
 }
 
 function setFilter(btn, f) {
@@ -390,7 +526,7 @@ function renderPostSelect() {
   const approved = DATA.items.filter(i => i.approvato);
   const sel = document.getElementById('post-select');
   if (!approved.length) {
-    sel.innerHTML = '<option value="">Nessuna voce approvata. Spunta "Approvato" su Notion per renderle disponibili.</option>';
+    sel.innerHTML = '<option value="">Nessuna voce approvata. Approva voci dalla pagina Bulletin per renderle disponibili.</option>';
     return;
   }
   sel.innerHTML = '<option value="">— Scegli una voce approvata —</option>' +
@@ -450,7 +586,6 @@ function copyForSocial(network) {
   let text;
 
   if (network === 'x') {
-    // 280 char max — concise
     text = `${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year})\nDir. ${d.director}\n${formatDate(d.releaseDate)} · ${d.platform||d.category}\n\n#horror #${(d.category||'').toLowerCase().replace(/\s/g,'')}`;
     if (text.length > 280) text = text.slice(0,277)+'...';
   }
@@ -475,18 +610,13 @@ function copyForSocial(network) {
 }
 
 function downloadSlide(d) {
-  // Genera slide TikTok 1080x1920 con canvas
   const canvas = document.createElement('canvas');
   canvas.width = 1080; canvas.height = 1920;
   const ctx = canvas.getContext('2d');
-
-  // Sfondo nero
   ctx.fillStyle = '#0a0a0f';
   ctx.fillRect(0,0,1080,1920);
 
-  // Funzione per disegnare il testo
   const drawText = () => {
-    // Header
     ctx.fillStyle = '#c0392b';
     ctx.fillRect(0, 100, 1080, 8);
     ctx.fillStyle = '#ff6b6b';
@@ -494,37 +624,30 @@ function downloadSlide(d) {
     ctx.textAlign = 'center';
     ctx.fillText('☠ HORROR BULLETIN', 540, 80);
 
-    // Titolo
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 72px system-ui';
     wrapText(ctx, d.title || '', 540, 1450, 1000, 80);
 
-    // Anno
     ctx.fillStyle = '#f0c040';
     ctx.font = '52px system-ui';
     ctx.fillText(`(${d.year||'—'})`, 540, 1580);
 
-    // Regista
     ctx.fillStyle = '#9090a8';
     ctx.font = '36px system-ui';
     ctx.fillText(`Dir. ${d.director||'N/D'}`, 540, 1660);
 
-    // Data + Piattaforma
     ctx.fillStyle = '#5dade2';
     ctx.font = '40px system-ui';
     ctx.fillText(`${formatDate(d.releaseDate)} · ${d.platform||d.category}`, 540, 1730);
 
-    // Sinossi breve bilingue
     ctx.fillStyle = '#e8e8f0';
     ctx.font = '28px system-ui';
     const synShort = (d.synIT || d.synEN || '').slice(0,100);
     if (synShort) wrapText(ctx, synShort, 540, 1810, 1000, 35);
 
-    // Footer
     ctx.fillStyle = '#c0392b';
     ctx.fillRect(0, 1812, 1080, 8);
 
-    // Download
     canvas.toBlob(blob => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -535,25 +658,20 @@ function downloadSlide(d) {
     });
   };
 
-  // Carica locandina
   if (d.poster) {
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
-      // Disegna locandina centrata in alto (fino a y=1400)
       const ratio = img.width / img.height;
       const targetH = 1300;
       const targetW = targetH * ratio;
       const x = (1080 - targetW) / 2;
       ctx.drawImage(img, x, 120, targetW, targetH);
-
-      // Overlay scuro sotto la locandina
       const grad = ctx.createLinearGradient(0,1000,0,1420);
       grad.addColorStop(0,'rgba(10,10,15,0)');
       grad.addColorStop(1,'rgba(10,10,15,1)');
       ctx.fillStyle = grad;
       ctx.fillRect(0,1000,1080,420);
-
       drawText();
     };
     img.onerror = () => drawText();
