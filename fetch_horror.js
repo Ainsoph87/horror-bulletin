@@ -1,4 +1,5 @@
-// fetch_horror.js — v5
+// fetch_horror.js — v6
+// Uscite horror internazionali: Cinema, VOD, Home Video, Streaming, Serie TV
 const TMDB_KEY       = process.env.TMDB_API_KEY;
 const NOTION_TOKEN   = process.env.NOTION_TOKEN;
 const NOTION_PAGE_ID = process.env.NOTION_DB_ID;
@@ -21,34 +22,49 @@ const tY    = now.getMonth() + 2 > 12 ? now.getFullYear() + 1 : now.getFullYear(
 const pad   = n => String(n).padStart(2,'0');
 const dFrom = `${tY}-${pad(tM)}-01`;
 const dTo   = `${tY}-${pad(tM)}-${new Date(tY, tM, 0).getDate()}`;
-
 const MONTH_IT = new Date(tY, tM-1).toLocaleString('it-IT',{month:'long',year:'numeric'}).toUpperCase();
+
+console.log(`Target: ${MONTH_IT} | ${dFrom} → ${dTo}`);
 
 let DB_ID = null;
 
-// Caratteri non latini — titoli non leggibili da pubblico occidentale
-const NON_LATIN = /[\u0E00-\u0E7F\u3000-\u9FFF\uAC00-\uD7AF\u0600-\u06FF\u0900-\u097F\u0400-\u04FF\uF900-\uFAFF]/;
+// Caratteri non latini — esclude titoli illeggibili per pubblico occidentale
+const NON_LATIN = /[\u0E00-\u0E7F\u3000-\u9FFF\uAC00-\uD7AF\u0600-\u06FF\u0900-\u097F\uF900-\uFAFF\u0400-\u04FF]/;
+const isReadable = t => t && !NON_LATIN.test(t);
 
-function isReadable(title) {
-  return title && !NON_LATIN.test(title);
-}
-
-// Usa titolo inglese se il titolo originale non è leggibile
-function bestTitle(det) {
+function bestTitle(det, detEN) {
   const orig = det.title || det.name || '';
   if (isReadable(orig)) return orig;
-  // Prova titolo inglese dalle traduzioni
-  const en = det.translations?.translations?.find(t => t.iso_639_1 === 'en');
-  const enTitle = en?.data?.title || en?.data?.name || '';
-  if (enTitle && isReadable(enTitle)) return enTitle;
-  return null; // film da escludere
+  const en = detEN?.title || detEN?.name || '';
+  if (isReadable(en)) return en;
+  // Prova titolo inglese dalle translations
+  const trans = det.translations?.translations?.find(t => t.iso_639_1 === 'en');
+  const tEN = trans?.data?.title || trans?.data?.name || '';
+  if (isReadable(tEN)) return tEN;
+  return null;
 }
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 async function tmdb(path) {
   const sep = path.includes('?') ? '&' : '?';
   const r = await fetch(`${TMDB_BASE}${path}${sep}api_key=${TMDB_KEY}`);
-  if (!r.ok) throw new Error(`TMDB ${r.status}`);
+  if (!r.ok) throw new Error(`TMDB ${r.status}: ${path}`);
   return r.json();
+}
+
+async function tmdbAll(path) {
+  // Recupera tutte le pagine di risultati
+  const sep = path.includes('?') ? '&' : '?';
+  const first = await (await fetch(`${TMDB_BASE}${path}${sep}api_key=${TMDB_KEY}&page=1`)).json();
+  const pages = Math.min(first.total_pages || 1, 5); // max 5 pagine
+  let results = [...(first.results || [])];
+  for (let p = 2; p <= pages; p++) {
+    const r = await (await fetch(`${TMDB_BASE}${path}${sep}api_key=${TMDB_KEY}&page=${p}`)).json();
+    results = [...results, ...(r.results || [])];
+    await sleep(250);
+  }
+  return results;
 }
 
 async function notion(method, path, body) {
@@ -63,17 +79,14 @@ async function notion(method, path, body) {
 
 async function findExistingDB() {
   const r = await notion('GET', `/blocks/${NOTION_PAGE_ID}/children`);
-  for (const block of r.results || []) {
-    if (block.type === 'child_database') {
-      console.log(`Found existing DB: ${block.id}`);
-      return block.id.replace(/-/g,'');
-    }
+  for (const b of r.results || []) {
+    if (b.type === 'child_database') { console.log(`Found DB: ${b.id}`); return b.id.replace(/-/g,''); }
   }
   return null;
 }
 
 async function createDB() {
-  console.log('Creating new Notion database...');
+  console.log('Creating Notion database...');
   const r = await notion('POST', '/databases', {
     parent: { type: 'page_id', page_id: NOTION_PAGE_ID },
     title: [{ type: 'text', text: { content: 'Horror Bulletin DB' } }],
@@ -85,7 +98,8 @@ async function createDB() {
         { name: 'Cinema',     color: 'red'    },
         { name: 'Streaming',  color: 'blue'   },
         { name: 'VOD',        color: 'purple' },
-        { name: 'Home Video', color: 'yellow' }
+        { name: 'Home Video', color: 'yellow' },
+        { name: 'Serie TV',   color: 'green'  }
       ]}},
       'Piattaforma':   { rich_text: {} },
       'Data uscita':   { date: {} },
@@ -97,7 +111,7 @@ async function createDB() {
       'Pubblicato':    { checkbox: {} }
     }
   });
-  console.log(`Database created: ${r.id}`);
+  console.log(`DB created: ${r.id}`);
   return r.id.replace(/-/g,'');
 }
 
@@ -129,149 +143,157 @@ async function save(e) {
     properties: props,
     children: [{
       object: 'block', type: 'paragraph',
-      paragraph: { rich_text: [{ type: 'text', text: { content: `TMDB ID: ${e.tmdbId}` } }] }
+      paragraph: { rich_text: [{ type: 'text', text: { content: `TMDB ID: ${e.tmdbId} | Tipo: ${e.releaseType}` } }] }
     }]
   });
 }
 
-function getPlatform(wp) {
-  const it = wp?.results?.IT;
-  if (!it) return 'Cinema';
-  if (it.flatrate?.length) return it.flatrate.map(p => p.provider_name).join(' / ');
-  if (it.rent?.length)     return 'VOD — ' + it.rent[0].provider_name;
-  if (it.buy?.length)      return 'VOD — ' + it.buy[0].provider_name;
+// Mappa release_type TMDB → categoria
+function releaseTypeToCategory(rt) {
+  if (rt === 3 || rt === 2 || rt === 1) return 'Cinema';
+  if (rt === 4)                          return 'VOD';
+  if (rt === 5)                          return 'Home Video';
+  if (rt === 6)                          return 'Streaming';
   return 'Cinema';
 }
 
-function getCategory(plat) {
-  if (plat.startsWith('VOD')) return 'VOD';
-  if (plat === 'Cinema')      return 'Cinema';
-  return 'Streaming';
+// Estrae piattaforma dai watch provider globali
+function getPlatformGlobal(wp) {
+  if (!wp?.results) return null;
+  // Priorità: US, GB, IT, FR, DE
+  for (const country of ['US','GB','IT','FR','DE']) {
+    const c = wp.results[country];
+    if (!c) continue;
+    if (c.flatrate?.length) return c.flatrate[0].provider_name;
+    if (c.free?.length)     return c.free[0].provider_name;
+  }
+  // Fallback: primo paese disponibile
+  const first = Object.values(wp.results)[0];
+  if (first?.flatrate?.length) return first.flatrate[0].provider_name;
+  return null;
 }
 
 function formatDate(d) {
   if (!d) return 'N/D';
-  const dt = new Date(d);
-  return dt.toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' });
+  return new Date(d).toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric' });
 }
 
-// Caption per Telegram — per singolo film
+// ── FETCH FILM PER TIPO DI RELEASE ──
+async function fetchMoviesByReleaseType(rt) {
+  // release_type: 1=Premiere 2=Limited 3=Theatrical 4=Digital 5=Physical 6=TV
+  const path = `/discover/movie?with_genres=27&release_date.gte=${dFrom}&release_date.lte=${dTo}&with_release_type=${rt}&sort_by=popularity.desc&language=it-IT`;
+  const results = await tmdbAll(path);
+  return results.map(m => ({ ...m, _type:'movie', _releaseType: rt }));
+}
+
+// ── FETCH SERIE TV ──
+async function fetchSeries() {
+  const path = `/discover/tv?with_genres=27&first_air_date.gte=${dFrom}&first_air_date.lte=${dTo}&sort_by=popularity.desc&language=it-IT`;
+  const results = await tmdbAll(path);
+  return results.map(s => ({ ...s, _type:'tv', _releaseType: 6, title: s.name, release_date: s.first_air_date }));
+}
+
+// ── FETCH NUOVE STAGIONI di serie horror popolari ──
+async function fetchNewSeasons() {
+  // Cerca serie horror con nuove stagioni nel mese target
+  const path = `/discover/tv?with_genres=27&air_date.gte=${dFrom}&air_date.lte=${dTo}&sort_by=popularity.desc&language=it-IT`;
+  const results = await tmdbAll(path);
+  // Filtra solo serie che hanno già almeno una stagione (non nuove)
+  return results
+    .filter(s => (s.first_air_date || '').substring(0,7) !== `${tY}-${pad(tM)}`)
+    .map(s => ({ ...s, _type:'tv', _releaseType: 6, _isSeason: true, title: s.name, release_date: s.first_air_date }));
+}
+
+// ── FORMATO POST TELEGRAM ──
 function filmCaption(e) {
-  const tags = [
-    '#horror', '#horrormovies',
+  const catEmoji = { 'Cinema':'🎟️', 'Streaming':'📡', 'VOD':'🎞️', 'Home Video':'📀', 'Serie TV':'📺' };
+  const tags = ['#horror','#horrormovies',
     '#' + e.category.toLowerCase().replace(/\s/g,''),
-    e.platform !== 'Cinema' ? '#' + e.platform.toLowerCase().replace(/[^a-z0-9]/g,'') : ''
+    e.platform && e.platform !== 'N/D' ? '#' + e.platform.toLowerCase().replace(/[^a-z0-9]/g,'') : ''
   ].filter(Boolean).join(' ');
 
   return [
-    `🎬 *${e.title}* (${e.year})`,
+    `${catEmoji[e.category]||'☠️'} *${e.title}* (${e.year})`,
     ``,
     `🎥 *Regia / Dir.:* ${e.director}`,
-    `📅 *Uscita:* ${formatDate(e.releaseDate)}`,
-    `📺 *Piattaforma:* ${e.platform}`,
+    `📅 *Uscita mondiale:* ${formatDate(e.releaseDate)}`,
+    `📺 *${e.category}* — ${e.platform}`,
     ``,
     `🇮🇹 *Sinossi*`,
-    e.synIT || '_Sinossi non disponibile._',
+    e.synIT ? e.synIT.slice(0,600) : '_Sinossi non disponibile._',
     ``,
     `🇬🇧 *Synopsis*`,
-    e.synEN || '_Synopsis not available._',
+    e.synEN ? e.synEN.slice(0,600) : '_Synopsis not available._',
     ``,
-    tags
+    `${tags}`
   ].join('\n');
 }
 
-// Separatore di categoria per Telegram
 function categorySeparator(cat) {
-  const icons = {
-    'Cinema':     '🎟️',
-    'Streaming':  '📡',
-    'VOD':        '🎞️',
-    'Home Video': '📀'
-  };
-  const icon = icons[cat] || '☠️';
-  return [
-    ``,
-    `━━━━━━━━━━━━━━━━━━━━━━`,
-    `${icon}  *${cat.toUpperCase()}*`,
-    `━━━━━━━━━━━━━━━━━━━━━━`,
-    ``
-  ].join('\n');
+  const icons = { 'Cinema':'🎟️', 'Streaming':'📡', 'VOD':'🎞️', 'Home Video':'📀', 'Serie TV':'📺' };
+  return `\n━━━━━━━━━━━━━━━━━━━━━━\n${icons[cat]||'☠️'}  *${cat.toUpperCase()}*\n━━━━━━━━━━━━━━━━━━━━━━\n`;
 }
 
-// Intestazione mensile
-function monthHeader(count) {
+function monthHeader(grouped) {
+  const total = Object.values(grouped).reduce((s,a) => s+a.length, 0);
+  const order = ['Cinema','Streaming','VOD','Home Video','Serie TV'];
+  const counts = order.filter(c => grouped[c]?.length)
+    .map(c => `${c}: ${grouped[c].length}`).join(' · ');
   return [
     `☠️ *HORROR BULLETIN*`,
     `📅 *${MONTH_IT}*`,
     ``,
-    `_${count} uscite horror questo mese_`,
+    `_${total} uscite horror in arrivo_`,
+    `_${counts}_`,
     ``,
     `#horror #horrorbulletin #horrormonth`
   ].join('\n');
 }
 
-// Delay per non superare rate limit Telegram
-const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-async function tgSend(body) {
-  const r = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+async function tgSend(text) {
+  await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...body, parse_mode: 'Markdown', disable_web_page_preview: true })
+    body: JSON.stringify({ chat_id: TG_CHAT, text, parse_mode: 'Markdown', disable_web_page_preview: true })
   });
-  await sleep(500);
-  return r;
+  await sleep(600);
 }
 
 async function tgPhoto(photo, caption) {
-  const r = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendPhoto`, {
+  await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendPhoto`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      chat_id: TG_CHAT,
-      photo,
-      caption: caption.slice(0, 1024),
-      parse_mode: 'Markdown'
-    })
+    body: JSON.stringify({ chat_id: TG_CHAT, photo, caption: caption.slice(0,1024), parse_mode: 'Markdown' })
   });
   await sleep(800);
-  return r;
 }
 
 async function tgNoPhoto(caption) {
-  return tgSend({
-    chat_id: TG_CHAT,
-    text: [
-      `🖼️ _Locandina non disponibile_`,
-      ``,
-      caption
-    ].join('\n')
-  });
+  await tgSend(`🖼️ _Locandina non disponibile_\n\n${caption}`);
 }
 
-// Discord — un embed per film
-async function discordFilm(e) {
-  const embed = {
-    title: `${e.title} (${e.year})`,
-    color: 0x8B0000,
-    fields: [
-      { name: '🎥 Regia / Dir.', value: e.director, inline: true },
-      { name: '📅 Uscita',       value: formatDate(e.releaseDate), inline: true },
-      { name: '📺 Piattaforma',  value: e.platform, inline: true },
-      { name: '🇮🇹 Sinossi',     value: (e.synIT || '_Non disponibile_').slice(0,1000) },
-      { name: '🇬🇧 Synopsis',    value: (e.synEN || '_Not available_').slice(0,1000) }
-    ],
-    thumbnail: e.poster ? { url: e.poster } : undefined,
-    footer: { text: `#horror #${e.category.toLowerCase()}` }
-  };
-
+async function discordEmbed(e) {
+  const catColor = { 'Cinema':0xC0392B, 'Streaming':0x2980B9, 'VOD':0x8E44AD, 'Home Video':0xF39C12, 'Serie TV':0x27AE60 };
   await fetch(DISCORD_URL, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ embeds: [embed] })
+    body: JSON.stringify({ embeds: [{
+      title: `${e.title} (${e.year})`,
+      color: catColor[e.category] || 0x8B0000,
+      fields: [
+        { name: '🎥 Regia / Dir.', value: e.director,              inline: true },
+        { name: '📅 Uscita',       value: formatDate(e.releaseDate), inline: true },
+        { name: '📺 Categoria',    value: e.category,               inline: true },
+        { name: '🎬 Piattaforma',  value: e.platform,               inline: true },
+        { name: '🇮🇹 Sinossi',    value: (e.synIT||'_N/D_').slice(0,500) },
+        { name: '🇬🇧 Synopsis',   value: (e.synEN||'_N/A_').slice(0,500) }
+      ],
+      thumbnail: e.poster ? { url: e.poster } : undefined,
+      footer: { text: `#horror · #${e.category.toLowerCase().replace(/\s/g,'')}` }
+    }]})
   });
   await sleep(800);
 }
 
-async function discordSeparator(cat) {
-  const icons = { 'Cinema':'🎟️', 'Streaming':'📡', 'VOD':'🎞️', 'Home Video':'📀' };
+async function discordSep(cat) {
+  const icons = { 'Cinema':'🎟️','Streaming':'📡','VOD':'🎞️','Home Video':'📀','Serie TV':'📺' };
   await fetch(DISCORD_URL, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ content: `\n${icons[cat]||'☠️'} **${cat.toUpperCase()}**\n━━━━━━━━━━━━━━━━━━━━━━` })
@@ -279,72 +301,93 @@ async function discordSeparator(cat) {
   await sleep(500);
 }
 
-async function discordHeader(count) {
-  await fetch(DISCORD_URL, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content: `# ☠️ HORROR BULLETIN — ${MONTH_IT}\n*${count} uscite horror questo mese*` })
-  });
-  await sleep(500);
-}
-
+// ── MAIN ──
 async function main() {
   const existingId = await findExistingDB();
   DB_ID = existingId || await createDB();
   console.log(`Using DB: ${DB_ID}`);
 
-  const [mRes, sRes] = await Promise.all([
-    tmdb(`/discover/movie?with_genres=27&primary_release_date.gte=${dFrom}&primary_release_date.lte=${dTo}&sort_by=popularity.desc&language=it-IT&page=1`),
-    tmdb(`/discover/tv?with_genres=27&first_air_date.gte=${dFrom}&first_air_date.lte=${dTo}&sort_by=popularity.desc&language=it-IT&page=1`)
+  // Fetch parallelo per tutti i tipi di release
+  console.log('Fetching all horror releases...');
+  const [
+    theatrical,   // Cinema
+    limited,      // Cinema limited
+    digital,      // VOD
+    physical,     // Home Video
+    tvRelease,    // Streaming/TV
+    newSeries,    // Serie TV nuove
+    newSeasons    // Nuove stagioni
+  ] = await Promise.all([
+    fetchMoviesByReleaseType(3),
+    fetchMoviesByReleaseType(2),
+    fetchMoviesByReleaseType(4),
+    fetchMoviesByReleaseType(5),
+    fetchMoviesByReleaseType(6),
+    fetchSeries(),
+    fetchNewSeasons()
   ]);
 
-  const movies = (mRes.results||[]).map(m => ({ ...m, _type:'movie' }));
-  const series = (sRes.results||[]).map(s => ({ ...s, _type:'tv', title:s.name, release_date:s.first_air_date }));
-  const all    = [...movies, ...series];
-  console.log(`Found ${movies.length} movies, ${series.length} series (pre-filter)`);
+  // Deduplicazione per ID
+  const seen = new Set();
+  const all  = [];
+  for (const item of [...theatrical, ...limited, ...digital, ...physical, ...tvRelease, ...newSeries, ...newSeasons]) {
+    const key = `${item._type}-${item.id}-${item._releaseType}`;
+    if (!seen.has(key)) { seen.add(key); all.push(item); }
+  }
+
+  console.log(`Total candidates: ${all.length}`);
 
   const saved = [];
 
   for (const item of all) {
     try {
-      const rawTitle = item.title || item.name || '';
-
-      // Fetch dettagli con translations per titolo inglese fallback
       const [det, detEN] = await Promise.all([
         tmdb(`/${item._type}/${item.id}?language=it-IT&append_to_response=watch/providers,credits,translations`),
         tmdb(`/${item._type}/${item.id}?language=en-US`)
       ]);
 
-      // Filtra titoli non leggibili da pubblico occidentale
-      const title = bestTitle(det) || bestTitle(detEN);
+      const title = bestTitle(det, detEN);
       if (!title) {
-        console.log(`Skip (non-latin title): ${rawTitle}`);
+        console.log(`Skip (non-latin): ${item.title||item.name}`);
         continue;
       }
 
       if (await exists(title)) { console.log(`Skip (exists): ${title}`); continue; }
 
-      const plat = getPlatform(det['watch/providers']);
-      const cat  = getCategory(plat);
-      const dir  = item._type === 'movie'
+      const cat = item._type === 'tv'
+        ? (item._isSeason ? 'Serie TV' : 'Serie TV')
+        : releaseTypeToCategory(item._releaseType);
+
+      const platformGlobal = getPlatformGlobal(det['watch/providers']);
+      const platform = platformGlobal ||
+        (cat === 'Cinema'     ? 'Cinema'         :
+         cat === 'VOD'        ? 'VOD / Digital'  :
+         cat === 'Home Video' ? 'Blu-ray / DVD'  :
+         cat === 'Streaming'  ? 'Streaming'      : 'N/D');
+
+      const dir = item._type === 'movie'
         ? (det.credits?.crew?.find(c => c.job === 'Director')?.name || 'N/D')
         : (det.created_by?.map(c => c.name).join(', ') || 'N/D');
+
+      const releaseDate = det.release_date || det.first_air_date || null;
 
       const entry = {
         title,
         director:    dir,
-        year:        new Date(det.release_date || det.first_air_date || `${tY}-01-01`).getFullYear(),
+        year:        releaseDate ? new Date(releaseDate).getFullYear() : tY,
         category:    cat,
-        platform:    plat,
-        releaseDate: det.release_date || det.first_air_date || null,
+        platform,
+        releaseDate,
         tmdbId:      item.id,
-        synIT:       det.overview || '',
+        releaseType: item._releaseType,
+        synIT:       det.overview  || detEN.overview || '',
         synEN:       detEN.overview || '',
         poster:      det.poster_path ? TMDB_IMG + det.poster_path : null
       };
 
       await save(entry);
       saved.push(entry);
-      console.log(`Saved: ${entry.title} [${entry.category}]`);
+      console.log(`Saved: [${cat}] ${title}`);
       await sleep(400);
 
     } catch(err) {
@@ -355,48 +398,49 @@ async function main() {
   if (!saved.length) { console.log('No new entries.'); return; }
 
   // Raggruppa per categoria
-  const order    = ['Cinema', 'Streaming', 'VOD', 'Home Video'];
-  const grouped  = {};
+  const order   = ['Cinema','Streaming','VOD','Home Video','Serie TV'];
+  const grouped = {};
   order.forEach(c => grouped[c] = []);
   saved.forEach(e => {
-    if (grouped[e.category]) grouped[e.category].push(e);
+    if (grouped[e.category] !== undefined) grouped[e.category].push(e);
     else grouped['Cinema'].push(e);
   });
-
-  const total = saved.length;
+  // Ordina per data uscita dentro ogni categoria
+  order.forEach(c => grouped[c].sort((a,b) => (a.releaseDate||'') < (b.releaseDate||'') ? -1 : 1));
 
   // ── TELEGRAM ──
-  await tgSend({ chat_id: TG_CHAT, text: monthHeader(total) });
+  console.log('Pushing to Telegram...');
+  await tgSend(monthHeader(grouped));
 
   for (const cat of order) {
     const films = grouped[cat];
     if (!films.length) continue;
-
-    await tgSend({ chat_id: TG_CHAT, text: categorySeparator(cat) });
-
+    await tgSend(categorySeparator(cat));
     for (const e of films) {
       const caption = filmCaption(e);
-      if (e.poster) {
-        await tgPhoto(e.poster, caption);
-      } else {
-        await tgNoPhoto(caption);
-      }
+      if (e.poster) await tgPhoto(e.poster, caption);
+      else          await tgNoPhoto(caption);
     }
   }
 
   // ── DISCORD ──
-  await discordHeader(total);
+  console.log('Pushing to Discord...');
+  const total = saved.length;
+  await fetch(DISCORD_URL, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ content: `# ☠️ HORROR BULLETIN — ${MONTH_IT}\n*${total} uscite horror in arrivo*` })
+  });
+  await sleep(500);
 
   for (const cat of order) {
     const films = grouped[cat];
     if (!films.length) continue;
-    await discordSeparator(cat);
-    for (const e of films) {
-      await discordFilm(e);
-    }
+    await discordSep(cat);
+    for (const e of films) await discordEmbed(e);
   }
 
-  console.log(`Done — ${total} entries saved and pushed.`);
+  console.log(`\nDone — ${total} entries saved and pushed.`);
+  order.forEach(c => { if (grouped[c].length) console.log(`  ${c}: ${grouped[c].length}`); });
 }
 
 main().catch(err => { console.error('Fatal:', err); process.exit(1); });
