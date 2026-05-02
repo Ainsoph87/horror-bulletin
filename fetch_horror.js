@@ -43,7 +43,7 @@ async function notion(method, path, body) {
 // Controlla duplicati per titolo
 async function exists(title) {
   const r = await notion('POST', `/databases/${NOTION_DB_ID}/query`, {
-    filter: { property: 'Titolo', title: { equals: title } }
+    filter: { property: 'Name', title: { equals: title } }
   });
   return r.results.length > 0;
 }
@@ -66,7 +66,7 @@ function getCategory(plat) {
 async function save(e) {
   // Proprietà Notion — solo quelle standard senza tmdb_id
   const props = {
-    'Titolo':      { title:     [{ text: { content: e.title } }] },
+    'Name':        { title:     [{ text: { content: e.title } }] },
     'Regista':     { rich_text: [{ text: { content: e.director } }] },
     'Anno':        { number:    e.year },
     'Piattaforma': { rich_text: [{ text: { content: e.platform } }] },
