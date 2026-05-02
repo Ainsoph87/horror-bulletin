@@ -317,9 +317,6 @@
     <div class="bulk-toolbar">
       <div class="bulk-counter" id="bulk-counter">— voci</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="bulk-btn" style="background:#1da1f2;border-color:#1da1f2;color:#fff" onclick="startSequence('x')">▶ Pubblica tutti su 𝕏</button>
-        <button class="bulk-btn" style="background:#1877f2;border-color:#1877f2;color:#fff" onclick="startSequence('fb')">▶ Pubblica tutti su Facebook</button>
-        <button class="bulk-btn" style="background:#000;border-color:#000;color:#fff" onclick="startSequence('threads')">▶ Pubblica tutti su Threads</button>
         <button class="bulk-btn zip" onclick="downloadAllZip()">📦 Scarica tutto (ZIP)</button>
         <button class="bulk-btn" onclick="resetCopyTracking()">🔄 Reset progresso</button>
       </div>
@@ -894,22 +891,29 @@ function resetCopyTracking() {
 // ── PROXY CORS PER LOCANDINE ──
 function viaProxy(url) {
   if (!url) return null;
-  // images.weserv.nl rimuove il protocollo
   return 'https://images.weserv.nl/?url=' + encodeURIComponent(url.replace(/^https?:\/\//, ''));
 }
 
-// ── DOWNLOAD ZIP — versione veloce con CORS proxy + parallelizzazione ──
+// Funzione per nome cartella sicuro (mantiene leggibilità)
+function safeFolderName(d, idx) {
+  const cleanTitle = (d.title || 'film')
+    .replace(/[<>:"/\\|?*]/g, '')        // caratteri vietati nei filesystem
+    .replace(/\s+/g, ' ')                 // spazi multipli
+    .trim()
+    .slice(0, 60);                        // max 60 char
+  const num = String(idx).padStart(2, '0');
+  return `${num} - ${cleanTitle} (${d.year || 'N-A'})`;
+}
+
+// ── DOWNLOAD ZIP — una cartella per film con tutto dentro ──
 async function downloadAllZip() {
   const items = getBulkItems();
   if (!items.length) { showToast('⚠️ Nessuna voce da esportare'); return; }
   showToast('⏳ Generazione ZIP — preparazione...');
 
   const zip = new JSZip();
-  const posts = zip.folder('posts');
-  const slides = zip.folder('slides');
-  const posters = zip.folder('posters');
 
-  // README
+  // README globale
   const readme = [
     `# Horror Bulletin — Bundle Social`,
     ``,
@@ -919,61 +923,53 @@ async function downloadAllZip() {
     `**Filtro categoria:** ${bulkCategoryFilter}`,
     ``,
     `## Struttura`,
-    `- \`posts/\` — testi pronti per ogni social (un file .txt per voce)`,
-    `- \`slides/\` — slide TikTok 1080x1920 PNG`,
-    `- \`posters/\` — locandine originali`,
+    ``,
+    `Ogni film ha la sua cartella numerata in ordine cronologico di uscita.`,
+    `Dentro ogni cartella trovi:`,
+    ``,
+    `- \`post-x.txt\` — testo per 𝕏 / Twitter (max 280 caratteri)`,
+    `- \`post-facebook.txt\` — testo per Facebook`,
+    `- \`post-instagram.txt\` — testo per Instagram`,
+    `- \`post-threads.txt\` — testo per Threads (max 500 caratteri)`,
+    `- \`post-tiktok.txt\` — caption per TikTok`,
+    `- \`locandina.jpg\` — locandina ufficiale`,
+    `- \`slide-tiktok.png\` — slide 1080x1920 pronta per TikTok/Instagram Stories`,
     ``,
     `## Indice voci`,
     ``,
-    items.map((d,i) => `${i+1}. **${d.title}** (${d.year}) — ${d.category} — ${formatDate(d.releaseDate)}`).join('\n')
+    items.map((d,i) => `${String(i+1).padStart(2,'0')}. **${d.title}** (${d.year}) — ${d.category} — ${formatDate(d.releaseDate)}${d.tipo === 'Riedizione' ? ' ♻️ RIEDIZIONE' : ''}${d.tipo === 'Nuova stagione' ? ' 🎞️ NUOVA STAGIONE' : ''}`).join('\n')
   ].join('\n');
   zip.file('README.md', readme);
 
-  // Posts — testi
-  for (const d of items) {
-    const safeName = (d.title||'film').replace(/[^a-z0-9]/gi,'_').slice(0,50);
-    const txt = [
-      `=== ${d.title} (${d.year}) ===`,
-      `Categoria: ${d.category}`,
-      `Regia: ${d.director}`,
-      `Uscita: ${formatDate(d.releaseDate)}`,
-      `Piattaforma: ${d.platform||''}`,
-      ``,
-      `═══════════════════════════════════════════════`,
-      `── 𝕏 TWITTER (${SOCIAL_LIMITS.x} caratteri max) ──`,
-      `═══════════════════════════════════════════════`,
-      generateSocialPost(d,'x'),
-      ``,
-      `═══════════════════════════════════════════════`,
-      `── 📘 FACEBOOK ──`,
-      `═══════════════════════════════════════════════`,
-      generateSocialPost(d,'fb'),
-      ``,
-      `═══════════════════════════════════════════════`,
-      `── 📷 INSTAGRAM ──`,
-      `═══════════════════════════════════════════════`,
-      generateSocialPost(d,'ig'),
-      ``,
-      `═══════════════════════════════════════════════`,
-      `── 🧵 THREADS (${SOCIAL_LIMITS.threads} caratteri max) ──`,
-      `═══════════════════════════════════════════════`,
-      generateSocialPost(d,'threads'),
-      ``,
-      `═══════════════════════════════════════════════`,
-      `── 🎵 TIKTOK ──`,
-      `═══════════════════════════════════════════════`,
-      generateSocialPost(d,'tiktok')
-    ].join('\n');
-    posts.file(`${safeName}.txt`, txt);
-  }
-
-  // Locandine + slide — parallelizzato a batch di 10 con proxy CORS
-  const CONCURRENCY = 10;
+  // Per ogni film: cartella dedicata con TUTTO dentro
   let posterOk = 0, posterFail = 0, slideOk = 0, slideFail = 0;
   let processed = 0;
+  const CONCURRENCY = 10;
 
-  async function processOne(d) {
-    const safeName = (d.title||'film').replace(/[^a-z0-9]/gi,'_').slice(0,50);
+  async function processOne(d, idx) {
+    const folderName = safeFolderName(d, idx + 1);
+    const folder = zip.folder(folderName);
+
+    // Header info per tutti i file di testo
+    const header = [
+      `═══════════════════════════════════════════════`,
+      `${d.title} (${d.year})`,
+      `═══════════════════════════════════════════════`,
+      `Categoria:    ${d.category}`,
+      `Tipo:         ${d.tipo || 'Nuova uscita'}`,
+      `Regia:        ${d.director || 'N/D'}`,
+      `Uscita:       ${formatDate(d.releaseDate)}`,
+      `Piattaforma:  ${d.platform || ''}`,
+      `═══════════════════════════════════════════════`,
+      ``
+    ].join('\n');
+
+    // 5 file testuali separati per ogni social
+    folder.file('post-x.txt',         header + `── 𝕏 TWITTER (max ${SOCIAL_LIMITS.x} caratteri) ──\n\n` + generateSocialPost(d,'x'));
+    folder.file('post-facebook.txt',  header + `── 📘 FACEBOOK ──\n\n` + generateSocialPost(d,'fb'));
+    folder.file('post-instagram.txt', header + `── 📷 INSTAGRAM ──\n\n` + generateSocialPost(d,'ig'));
+    folder.file('post-threads.txt',   header + `── 🧵 THREADS (max ${SOCIAL_LIMITS.threads} caratteri) ──\n\n` + generateSocialPost(d,'threads'));
+    folder.file('post-tiktok.txt',    header + `── 🎵 TIKTOK ──\n\n` + generateSocialPost(d,'tiktok'));
 
     // Locandina via proxy CORS
     if (d.poster) {
@@ -981,17 +977,17 @@ async function downloadAllZip() {
         const r = await fetch(viaProxy(d.poster));
         if (r.ok) {
           const blob = await r.blob();
-          posters.file(`${safeName}.jpg`, blob);
+          folder.file('locandina.jpg', blob);
           posterOk++;
         } else posterFail++;
       } catch { posterFail++; }
     }
 
-    // Slide TikTok (la genera con la locandina via proxy)
+    // Slide TikTok
     try {
       const blob = await generateSlideBlob(d);
       if (blob) {
-        slides.file(`${safeName}.png`, blob);
+        folder.file('slide-tiktok.png', blob);
         slideOk++;
       } else slideFail++;
     } catch { slideFail++; }
@@ -1002,12 +998,12 @@ async function downloadAllZip() {
     }
   }
 
-  // Parallelizzazione: lavora 10 elementi alla volta
-  const queue = [...items];
+  // Parallelizzazione: 10 alla volta, ma ognuno conserva il suo indice
+  const queue = items.map((d, idx) => ({ d, idx }));
   await Promise.all(Array(CONCURRENCY).fill(0).map(async () => {
     while (queue.length) {
-      const d = queue.shift();
-      await processOne(d);
+      const { d, idx } = queue.shift();
+      await processOne(d, idx);
     }
   }));
 
@@ -1020,89 +1016,8 @@ async function downloadAllZip() {
   a.click();
   URL.revokeObjectURL(url);
 
-  showToast(`✓ ZIP scaricato — ${items.length} voci, ${slideOk}/${items.length} slide, ${posterOk}/${items.filter(x=>x.poster).length} locandine`);
-}
-
-// ── MODALITÀ SEQUENZA — apre finestre intent una dopo l'altra ──
-async function startSequence(network) {
-  const items = getBulkItems();
-  if (!items.length) { showToast('⚠️ Nessuna voce con questi filtri'); return; }
-
-  // Filtra quelli già copiati per questo network
-  const todo = items.filter(d => !copyTracking[d.id]?.[network]);
-  if (!todo.length) {
-    if (!confirm(`Tutti gli ${items.length} post sono già stati pubblicati su ${network.toUpperCase()}.\nVuoi rifarli comunque?`)) return;
-    todo.push(...items);
-  }
-
-  if (!confirm(`Avvio sequenza pubblicazione su ${network.toUpperCase()}:\n\n` +
-    `${todo.length} post da pubblicare.\n\n` +
-    `Per ogni post si aprirà una nuova tab con il testo già pre-compilato.\n` +
-    `Pubblica, chiudi la tab, e l'app passerà al prossimo.\n\n` +
-    `Procedere?`)) return;
-
-  for (let i = 0; i < todo.length; i++) {
-    const d = todo[i];
-    const text = generateSocialPost(d, network);
-    let url;
-    if (network === 'x') {
-      url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text);
-    } else if (network === 'threads') {
-      url = 'https://threads.net/intent/post?text=' + encodeURIComponent(text);
-    } else if (network === 'fb') {
-      // Facebook intent: usa share dialog. NB: Facebook precompila solo la quote, non sempre il testo.
-      url = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent('https://ainsoph87.github.io/horror-bulletin/') + '&quote=' + encodeURIComponent(text);
-    }
-
-    // Apri in nuova tab
-    const win = window.open(url, '_blank');
-    if (!win) {
-      alert('⚠️ Il browser ha bloccato l\'apertura della tab.\n\nDevi consentire le pop-up per questo sito (icona vicino alla barra dell\'URL).');
-      return;
-    }
-
-    // Marca come copiato
-    if (!copyTracking[d.id]) copyTracking[d.id] = {};
-    copyTracking[d.id][network] = true;
-    localStorage.setItem('hb_copy_tracking', JSON.stringify(copyTracking));
-
-    // Mostra modale di avanzamento
-    const proceed = await sequenceModal(d, network, i+1, todo.length);
-    if (!proceed) {
-      showToast('⏸️ Sequenza interrotta');
-      renderBulk();
-      return;
-    }
-  }
-
-  showToast('✓ Sequenza completata!');
-  renderBulk();
-}
-
-function sequenceModal(d, network, idx, total) {
-  return new Promise(resolve => {
-    const overlay = document.createElement('div');
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem';
-    overlay.innerHTML = `
-      <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:1.5rem;max-width:500px;width:100%">
-        <div style="font-size:18px;color:var(--red3);font-weight:500;margin-bottom:8px">Sequenza ${network.toUpperCase()} — ${idx}/${total}</div>
-        <div style="font-size:14px;color:var(--text);margin-bottom:6px">${d.title} (${d.year})</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:1rem">${d.category} · ${formatDate(d.releaseDate)}</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:1.5rem;line-height:1.6">
-          📌 La tab è già aperta con il testo pre-compilato.<br>
-          ✅ Pubblica e poi clicca <strong>Continua</strong> per il prossimo post.<br>
-          ⏸️ Clicca <strong>Stop</strong> per interrompere la sequenza.
-        </div>
-        <div style="display:flex;gap:8px;justify-content:flex-end">
-          <button id="seq-stop" style="padding:8px 16px;border-radius:8px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer">⏸️ Stop</button>
-          <button id="seq-continue" style="padding:8px 16px;border-radius:8px;border:none;background:var(--red);color:#fff;cursor:pointer;font-weight:500">Continua ▶</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(overlay);
-    document.getElementById('seq-continue').onclick = () => { overlay.remove(); resolve(true); };
-    document.getElementById('seq-stop').onclick = () => { overlay.remove(); resolve(false); };
-  });
+  const totalPosters = items.filter(x => x.poster).length;
+  showToast(`✓ ZIP scaricato — ${items.length} film, ${slideOk}/${items.length} slide, ${posterOk}/${totalPosters} locandine`);
 }
 
 // Genera slide come Blob senza scaricarla
