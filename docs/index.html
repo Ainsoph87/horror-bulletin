@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Horror Bulletin</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   :root{
@@ -94,6 +95,43 @@
   .social-btn{padding:6px 12px;border-radius:var(--radius);border:1px solid var(--gold);background:transparent;color:var(--gold3);cursor:pointer;font-size:11px;width:100%}
   .social-btn:hover{background:rgba(212,160,23,.15)}
 
+  /* BULK POST PAGE */
+  .bulk-toolbar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:1rem;margin-bottom:1rem;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;position:sticky;top:56px;z-index:50}
+  .bulk-counter{font-size:13px;color:var(--text2)}
+  .bulk-counter strong{color:var(--red3)}
+  .bulk-btn{padding:8px 14px;border-radius:var(--radius);border:1px solid var(--gold);background:var(--gold);color:#111;cursor:pointer;font-size:12px;font-weight:500}
+  .bulk-btn:hover{background:var(--gold2)}
+  .bulk-btn.zip{background:var(--purple2);border-color:var(--purple2);color:#fff}
+  .bulk-btn.zip:hover{background:var(--purple3)}
+
+  .bulk-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;margin-bottom:1.5rem}
+  .bulk-card.copied-all{border-color:var(--green2)}
+  .bulk-card-header{display:flex;gap:1rem;padding:1rem;border-bottom:1px solid var(--border);flex-wrap:wrap}
+  .bulk-poster{width:120px;flex-shrink:0;aspect-ratio:2/3;background:var(--bg3);border-radius:var(--radius);overflow:hidden;position:relative}
+  .bulk-poster img{width:100%;height:100%;object-fit:cover}
+  .bulk-poster-empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:30px}
+  .bulk-info{flex:1;min-width:200px}
+  .bulk-info-title{font-size:18px;font-weight:500;margin-bottom:6px}
+  .bulk-info-meta{font-size:12px;color:var(--text2);margin-bottom:6px;display:flex;gap:10px;flex-wrap:wrap}
+  .bulk-info-syn{font-size:12px;color:var(--text3);line-height:1.5}
+  .bulk-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .bulk-action-btn{padding:5px 10px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:11px}
+  .bulk-action-btn:hover{background:var(--bg4);color:var(--text)}
+  .bulk-action-btn.published{border-color:var(--blue2);color:var(--blue3)}
+  .bulk-action-btn.tiktok{border-color:var(--purple2);color:var(--purple3)}
+
+  .bulk-socials{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:var(--border)}
+  .bulk-social{background:var(--bg2);padding:1rem}
+  .bulk-social-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .bulk-social-name{font-size:12px;font-weight:500;color:var(--text)}
+  .bulk-social-counter{font-size:10px;color:var(--text3);font-family:monospace}
+  .bulk-social-counter.over{color:var(--red3)}
+  .bulk-textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:8px;font-size:11px;font-family:monospace;color:var(--text);min-height:80px;max-height:200px;resize:vertical;line-height:1.5}
+  .bulk-textarea:focus{outline:none;border-color:var(--border2)}
+  .bulk-copy-btn{margin-top:6px;width:100%;padding:6px;border-radius:var(--radius);border:1px solid var(--gold);background:transparent;color:var(--gold3);cursor:pointer;font-size:11px;transition:.15s}
+  .bulk-copy-btn:hover{background:rgba(212,160,23,.15)}
+  .bulk-copy-btn.copied{background:var(--green);border-color:var(--green2);color:#fff}
+
   .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--bg3);border:1px solid var(--green2);color:var(--green3);padding:10px 16px;border-radius:var(--radius);font-size:13px;z-index:999;display:none}
 
   .loading{display:flex;align-items:center;justify-content:center;padding:3rem;color:var(--text2)}
@@ -102,6 +140,7 @@
   @media (max-width:600px){
     .archive-table{font-size:11px}
     .archive-table td,.archive-table th{padding:6px 8px}
+    .bulk-poster{width:80px}
   }
 </style>
 </head>
@@ -116,6 +155,7 @@
     <button class="nav-tab active" onclick="showPage('bulletin')">Bulletin</button>
     <button class="nav-tab" onclick="showPage('archivio')">Archivio</button>
     <button class="nav-tab" onclick="showPage('social')">Social</button>
+    <button class="nav-tab" onclick="showPage('bulkpost')">📋 Bulk Post</button>
   </div>
   <div class="updated" id="updated-info">—</div>
   <button class="nav-tab" style="font-size:11px;color:var(--text3)" onclick="changeApiKey()" title="Cambia API Key">🔑</button>
@@ -127,7 +167,7 @@
     <div class="bulletin-header">
       <div>
         <div class="bulletin-title" id="bulletin-month">Caricamento...</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:4px" id="next-update">Aggiornamento automatico ogni 2 ore</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px">Aggiornamento automatico ogni 2 ore</div>
       </div>
       <span class="month-badge" id="month-badge">—</span>
     </div>
@@ -154,7 +194,7 @@
     </div>
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
-      <div style="font-size:12px;color:var(--text3)" id="selection-info">Clicca le card per selezionare più voci</div>
+      <div style="font-size:12px;color:var(--text3)">Clicca le card per selezionare più voci</div>
       <button class="card-btn" style="max-width:200px" onclick="approveAllVisible()">✓ Approva tutti i visibili</button>
     </div>
 
@@ -199,7 +239,8 @@
 
   <div id="page-social" class="page">
     <div class="bulletin-header">
-      <div class="bulletin-title">Social — Post preformattati</div>
+      <div class="bulletin-title">Social — Singolo post</div>
+      <div style="font-size:12px;color:var(--text2)">Per generare più post in un colpo, usa la pagina <strong>Bulk Post</strong></div>
     </div>
 
     <div class="post-section">
@@ -207,7 +248,6 @@
       <select class="form-select" id="post-select" style="width:100%;max-width:500px" onchange="updatePostPreview(this.value)">
         <option value="">— Scegli una voce approvata —</option>
       </select>
-      <div style="font-size:11px;color:var(--text3);margin-top:6px">Solo le voci con flag <code>Approvato</code> nel database appaiono qui.</div>
     </div>
 
     <div class="post-section">
@@ -247,6 +287,44 @@
     </div>
   </div>
 
+  <!-- BULK POST PAGE -->
+  <div id="page-bulkpost" class="page">
+    <div class="bulletin-header">
+      <div class="bulletin-title">📋 Bulk Post — Genera tutti i post di una categoria</div>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" onclick="setBulkFilter(this,'all')">Tutte le categorie</button>
+      <button class="filter-btn" onclick="setBulkFilter(this,'Cinema')">🎟️ Cinema</button>
+      <button class="filter-btn" onclick="setBulkFilter(this,'Streaming')">📡 Streaming</button>
+      <button class="filter-btn" onclick="setBulkFilter(this,'VOD')">🎞️ VOD</button>
+      <button class="filter-btn" onclick="setBulkFilter(this,'Home Video')">📀 Home Video</button>
+      <button class="filter-btn" onclick="setBulkFilter(this,'Serie TV')">📺 Serie TV</button>
+    </div>
+
+    <div class="filters">
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer">
+        <input type="checkbox" id="bulk-only-approved" checked onchange="renderBulk()"> Solo approvati
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer">
+        <input type="checkbox" id="bulk-hide-published" checked onchange="renderBulk()"> Nascondi già pubblicati
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer">
+        <input type="checkbox" id="bulk-hide-rerelease" onchange="renderBulk()"> Nascondi riedizioni
+      </label>
+    </div>
+
+    <div class="bulk-toolbar">
+      <div class="bulk-counter" id="bulk-counter">— voci</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="bulk-btn zip" onclick="downloadAllZip()">📦 Scarica tutto (ZIP)</button>
+        <button class="bulk-btn" onclick="resetCopyTracking()">🔄 Reset progresso</button>
+      </div>
+    </div>
+
+    <div id="bulk-container"><div class="loading">⏳ Caricamento...</div></div>
+  </div>
+
 </main>
 
 <div class="toast" id="toast"></div>
@@ -261,12 +339,25 @@ let currentFilter = 'all';
 let currentItem = null;
 let selectedIds = new Set();
 
+// Bulk page state
+let bulkCategoryFilter = 'all';
+let copyTracking = JSON.parse(localStorage.getItem('hb_copy_tracking') || '{}');
+
 const CAT_BADGE = {
   'Cinema':'badge-cinema','Streaming':'badge-streaming','VOD':'badge-vod',
   'Home Video':'badge-homevideo','Serie TV':'badge-serie'
 };
 const CAT_EMOJI = {
   'Cinema':'🎟️','Streaming':'📡','VOD':'🎞️','Home Video':'📀','Serie TV':'📺'
+};
+
+const SOCIAL_LIMITS = {
+  x: 280, threads: 500, fb: 63206, ig: 2200, tiktok: 2200
+};
+
+const SOCIAL_LABELS = {
+  x: '𝕏 Twitter', fb: '📘 Facebook', ig: '📷 Instagram',
+  threads: '🧵 Threads', tiktok: '🎵 TikTok'
 };
 
 async function loadData() {
@@ -428,24 +519,20 @@ async function bulkApprove(approved) {
       totalSuccess += j.successCount || 0;
       totalFailed  += j.failedCount  || 0;
 
-      // Aggiorna localmente solo le voci effettivamente riuscite
       (j.success || []).forEach(id => {
         const item = DATA.items.find(i => i.id === id);
         if (item) item.approvato = approved;
       });
 
-      // Loggare i fallimenti in console
       if (j.failed?.length) console.warn('Failed in batch ' + batchNum + ':', j.failed);
 
       remaining = j.remaining || [];
 
-      // Aggiorna UI a ogni batch
       renderCards();
       renderStats();
       renderArchive();
       renderPostSelect();
 
-      // Piccola pausa tra batch
       if (remaining.length > 0) await new Promise(r => setTimeout(r, 1000));
 
     } catch (err) {
@@ -479,7 +566,7 @@ async function approveAllVisible() {
 
 async function ensureApiKey() {
   if (API_KEY) return true;
-  const k = prompt('Inserisci la tua API Key per modificare il database:\n(la chiave viene salvata solo nel tuo browser)');
+  const k = prompt('Inserisci la tua API Key per modificare il database:');
   if (!k) return false;
   try {
     const r = await fetch(WORKER_URL + '/', { headers: { 'X-Api-Key': k } });
@@ -507,7 +594,7 @@ function changeApiKey() {
 }
 
 function setFilter(btn, f) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#page-bulletin .filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   currentFilter = f;
   renderCards();
@@ -563,7 +650,7 @@ function renderPostSelect() {
   const approved = DATA.items.filter(i => i.approvato);
   const sel = document.getElementById('post-select');
   if (!approved.length) {
-    sel.innerHTML = '<option value="">Nessuna voce approvata. Approva voci dalla pagina Bulletin per renderle disponibili.</option>';
+    sel.innerHTML = '<option value="">Nessuna voce approvata.</option>';
     return;
   }
   sel.innerHTML = '<option value="">— Scegli una voce approvata —</option>' +
@@ -618,104 +705,379 @@ function updatePostPreview(id) {
 
 function copyForSocial(network) {
   if (!currentItem) { showToast('⚠️ Seleziona prima una voce approvata'); return; }
-  const d = currentItem;
-  const fullSyn = (d.synIT || d.synEN || '').slice(0,200);
-  let text;
-
-  if (network === 'x') {
-    text = `${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year})\nDir. ${d.director}\n${formatDate(d.releaseDate)} · ${d.platform||d.category}\n\n#horror #${(d.category||'').toLowerCase().replace(/\s/g,'')}`;
-    if (text.length > 280) text = text.slice(0,277)+'...';
-  }
-  else if (network === 'fb') {
-    text = `${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year})\n\n🎥 Regia: ${d.director}\n📅 Uscita: ${formatDate(d.releaseDate)}\n📺 ${d.category} — ${d.platform||''}\n\n${d.synIT || d.synEN || ''}\n\n#horror #horrormovies #${(d.category||'').toLowerCase().replace(/\s/g,'')}`;
-  }
-  else if (network === 'ig') {
-    text = `${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year}) ${CAT_EMOJI[d.category]||'☠️'}\n\n${d.synIT || d.synEN || ''}\n.\n.\n.\n#horror #horrormovies #horrorfilm #cinema #${(d.category||'').toLowerCase().replace(/\s/g,'')} #horrorcommunity #horrorlovers #horrorfan #scary #thriller #spooky #darkacademia #moviestowatch #filmlover #cinephile`;
-  }
-  else if (network === 'threads') {
-    text = `${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year})\nDir. ${d.director} · ${formatDate(d.releaseDate)}\n${d.platform||d.category}\n\n${fullSyn}\n\n#horror #${(d.category||'').toLowerCase().replace(/\s/g,'')}`;
-    if (text.length > 500) text = text.slice(0,497)+'...';
-  }
-  else if (network === 'tiktok') {
-    text = `${d.title} (${d.year}) ${CAT_EMOJI[d.category]||'☠️'}\nDir. ${d.director}\n${formatDate(d.releaseDate)} · ${d.platform||d.category}\n\n#horror #horrortok #fyp #horrormovies #scary #${(d.category||'').toLowerCase().replace(/\s/g,'')}`;
-    downloadSlide(d);
-  }
-
+  const text = generateSocialPost(currentItem, network);
+  if (network === 'tiktok') downloadSlide(currentItem);
   navigator.clipboard.writeText(text).then(() => {
     showToast('✓ Testo copiato per ' + network.toUpperCase());
   });
 }
 
-function downloadSlide(d) {
-  const canvas = document.createElement('canvas');
-  canvas.width = 1080; canvas.height = 1920;
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#0a0a0f';
-  ctx.fillRect(0,0,1080,1920);
+// ── GENERAZIONE POST PER OGNI SOCIAL ──
+function generateSocialPost(d, network) {
+  const fullSyn = (d.synIT || d.synEN || '').slice(0,200);
+  const catTag = (d.category||'').toLowerCase().replace(/\s/g,'');
+  const tipoTag = d.tipo === 'Riedizione' ? 'rerelease' : 'newrelease';
 
-  const drawText = () => {
-    ctx.fillStyle = '#c0392b';
-    ctx.fillRect(0, 100, 1080, 8);
-    ctx.fillStyle = '#ff6b6b';
-    ctx.font = 'bold 48px system-ui';
-    ctx.textAlign = 'center';
-    ctx.fillText('☠ HORROR BULLETIN', 540, 80);
-
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 72px system-ui';
-    wrapText(ctx, d.title || '', 540, 1450, 1000, 80);
-
-    ctx.fillStyle = '#f0c040';
-    ctx.font = '52px system-ui';
-    ctx.fillText(`(${d.year||'—'})`, 540, 1580);
-
-    ctx.fillStyle = '#9090a8';
-    ctx.font = '36px system-ui';
-    ctx.fillText(`Dir. ${d.director||'N/D'}`, 540, 1660);
-
-    ctx.fillStyle = '#5dade2';
-    ctx.font = '40px system-ui';
-    ctx.fillText(`${formatDate(d.releaseDate)} · ${d.platform||d.category}`, 540, 1730);
-
-    ctx.fillStyle = '#e8e8f0';
-    ctx.font = '28px system-ui';
-    const synShort = (d.synIT || d.synEN || '').slice(0,100);
-    if (synShort) wrapText(ctx, synShort, 540, 1810, 1000, 35);
-
-    ctx.fillStyle = '#c0392b';
-    ctx.fillRect(0, 1812, 1080, 8);
-
-    canvas.toBlob(blob => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `horror-bulletin-${(d.title||'film').replace(/[^a-z0-9]/gi,'_')}.png`;
-      a.click();
-      URL.revokeObjectURL(url);
-    });
-  };
-
-  if (d.poster) {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-      const ratio = img.width / img.height;
-      const targetH = 1300;
-      const targetW = targetH * ratio;
-      const x = (1080 - targetW) / 2;
-      ctx.drawImage(img, x, 120, targetW, targetH);
-      const grad = ctx.createLinearGradient(0,1000,0,1420);
-      grad.addColorStop(0,'rgba(10,10,15,0)');
-      grad.addColorStop(1,'rgba(10,10,15,1)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0,1000,1080,420);
-      drawText();
-    };
-    img.onerror = () => drawText();
-    img.src = d.poster;
-  } else {
-    drawText();
+  if (network === 'x') {
+    let text = `${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year})\nDir. ${d.director}\n${formatDate(d.releaseDate)} · ${d.platform||d.category}\n\n#horror #${catTag} #${tipoTag}`;
+    if (text.length > 280) text = text.slice(0,277)+'...';
+    return text;
   }
+  if (network === 'fb') {
+    return `${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year})\n\n🎥 Regia: ${d.director}\n📅 Uscita: ${formatDate(d.releaseDate)}\n📺 ${d.category} — ${d.platform||''}\n\n🇮🇹 ${d.synIT || 'Sinossi non disponibile.'}\n\n🇬🇧 ${d.synEN || 'Synopsis not available.'}\n\n#horror #horrormovies #horrorfilm #${catTag} #${tipoTag}`;
+  }
+  if (network === 'ig') {
+    return `${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year}) ${CAT_EMOJI[d.category]||'☠️'}\n\n🎥 Dir. ${d.director}\n📅 ${formatDate(d.releaseDate)}\n📺 ${d.platform||d.category}\n\n${d.synIT || d.synEN || ''}\n.\n.\n.\n#horror #horrormovies #horrorfilm #cinema #${catTag} #horrorcommunity #horrorlovers #horrorfan #scary #thriller #spooky #moviestowatch #filmlover #cinephile #horrornight #${tipoTag}`;
+  }
+  if (network === 'threads') {
+    let text = `${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year})\nDir. ${d.director} · ${formatDate(d.releaseDate)}\n${d.platform||d.category}\n\n${fullSyn}\n\n#horror #${catTag} #${tipoTag}`;
+    if (text.length > 500) text = text.slice(0,497)+'...';
+    return text;
+  }
+  if (network === 'tiktok') {
+    return `${d.title} (${d.year}) ${CAT_EMOJI[d.category]||'☠️'}\nDir. ${d.director}\n${formatDate(d.releaseDate)} · ${d.platform||d.category}\n\n#horror #horrortok #fyp #horrormovies #scary #${catTag} #${tipoTag}`;
+  }
+  return '';
+}
+
+// ── BULK POST PAGE ──
+function setBulkFilter(btn, f) {
+  document.querySelectorAll('#page-bulkpost .filters:first-of-type .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  bulkCategoryFilter = f;
+  renderBulk();
+}
+
+function getBulkItems() {
+  let items = DATA.items.slice();
+  if (bulkCategoryFilter !== 'all') items = items.filter(i => i.category === bulkCategoryFilter);
+  if (document.getElementById('bulk-only-approved')?.checked) items = items.filter(i => i.approvato);
+  if (document.getElementById('bulk-hide-published')?.checked) items = items.filter(i => !i.pubblicato);
+  if (document.getElementById('bulk-hide-rerelease')?.checked) items = items.filter(i => i.tipo !== 'Riedizione');
+  // Ordina per data uscita ascendente
+  items.sort((a,b) => (a.releaseDate||'').localeCompare(b.releaseDate||''));
+  return items;
+}
+
+function renderBulk() {
+  const items = getBulkItems();
+  document.getElementById('bulk-counter').innerHTML = `<strong>${items.length}</strong> voc${items.length===1?'e':'i'} ${bulkCategoryFilter==='all'?'totali':'in ' + bulkCategoryFilter}`;
+
+  const c = document.getElementById('bulk-container');
+  if (!items.length) {
+    c.innerHTML = '<div class="empty">Nessuna voce con questi filtri. Prova a cambiare la categoria o disabilita "Solo approvati".</div>';
+    return;
+  }
+
+  c.innerHTML = items.map(d => renderBulkCard(d)).join('');
+}
+
+function renderBulkCard(d) {
+  const allCopied = ['x','fb','ig','threads','tiktok'].every(n => copyTracking[d.id]?.[n]);
+  const posterImg = d.poster
+    ? `<img src="${d.poster}" alt="${d.title}" loading="lazy">`
+    : `<div class="bulk-poster-empty">☠</div>`;
+
+  const socials = ['x','fb','ig','threads','tiktok'].map(n => {
+    const text = generateSocialPost(d, n);
+    const limit = SOCIAL_LIMITS[n];
+    const len = text.length;
+    const over = len > limit;
+    const isCopied = copyTracking[d.id]?.[n];
+    return `
+      <div class="bulk-social">
+        <div class="bulk-social-header">
+          <span class="bulk-social-name">${SOCIAL_LABELS[n]}</span>
+          <span class="bulk-social-counter ${over?'over':''}">${len}/${limit}</span>
+        </div>
+        <textarea class="bulk-textarea" id="bulk-ta-${d.id}-${n}" readonly>${escapeHtml(text)}</textarea>
+        <button class="bulk-copy-btn ${isCopied?'copied':''}" onclick="copyBulkPost('${d.id}','${n}')">
+          ${isCopied?'✓ Copiato':'⎘ Copia'} ${n==='tiktok'?'+ slide':''}
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="bulk-card ${allCopied?'copied-all':''}" id="bulk-card-${d.id}">
+      <div class="bulk-card-header">
+        <div class="bulk-poster">${posterImg}</div>
+        <div class="bulk-info">
+          <div class="bulk-info-title">${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year})</div>
+          <div class="bulk-info-meta">
+            <span>🎥 ${d.director||'N/D'}</span>
+            <span class="card-date">${formatDate(d.releaseDate)}</span>
+            <span class="card-platform">${d.platform||''}</span>
+            <span style="color:${d.approvato?'var(--green3)':'var(--text3)'}">${d.approvato?'✓ Approvato':'⏳ Da approvare'}</span>
+            ${d.pubblicato?'<span style="color:var(--blue3)">📤 Pubblicato</span>':''}
+            ${d.tipo==='Riedizione'?'<span style="color:var(--orange3)">♻️ Riedizione</span>':''}
+          </div>
+          <div class="bulk-info-syn">${(d.synIT||d.synEN||'').slice(0,200)}${(d.synIT||d.synEN||'').length>200?'...':''}</div>
+          <div class="bulk-actions">
+            <button class="bulk-action-btn published" onclick="markPublished('${d.id}')">📤 Marca come pubblicato</button>
+            ${d.poster ? `<button class="bulk-action-btn" onclick="downloadPosterById('${d.id}')">🖼️ Scarica locandina</button>` : ''}
+            <button class="bulk-action-btn tiktok" onclick="downloadSlideById('${d.id}')">🎬 Scarica slide TikTok</button>
+          </div>
+        </div>
+      </div>
+      <div class="bulk-socials">${socials}</div>
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function copyBulkPost(id, network) {
+  const d = DATA.items.find(i => i.id === id);
+  if (!d) return;
+  const text = generateSocialPost(d, network);
+  if (network === 'tiktok') downloadSlide(d);
+  navigator.clipboard.writeText(text).then(() => {
+    if (!copyTracking[id]) copyTracking[id] = {};
+    copyTracking[id][network] = true;
+    localStorage.setItem('hb_copy_tracking', JSON.stringify(copyTracking));
+    showToast('✓ Copiato per ' + network.toUpperCase());
+    renderBulk();
+  });
+}
+
+async function markPublished(id) {
+  if (!await ensureApiKey()) return;
+  showToast('⏳ Aggiornamento...');
+  try {
+    const r = await fetch(WORKER_URL + '/mark-published', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Api-Key': API_KEY },
+      body: JSON.stringify({ id })
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Errore');
+    const item = DATA.items.find(i => i.id === id);
+    if (item) item.pubblicato = true;
+    showToast('✓ Marcato come pubblicato');
+    renderBulk();
+    renderStats();
+    renderArchive();
+  } catch (err) {
+    showToast('⚠️ Errore: ' + err.message);
+  }
+}
+
+function downloadPosterById(id) {
+  const d = DATA.items.find(i => i.id === id);
+  if (!d?.poster) return;
+  const a = document.createElement('a');
+  a.href = d.poster;
+  a.download = `poster-${(d.title||'film').replace(/[^a-z0-9]/gi,'_')}.jpg`;
+  a.target = '_blank';
+  a.click();
+}
+
+function downloadSlideById(id) {
+  const d = DATA.items.find(i => i.id === id);
+  if (d) downloadSlide(d);
+}
+
+function resetCopyTracking() {
+  if (!confirm('Resettare il tracciamento dei post copiati?')) return;
+  copyTracking = {};
+  localStorage.removeItem('hb_copy_tracking');
+  showToast('✓ Tracciamento resettato');
+  renderBulk();
+}
+
+// ── DOWNLOAD ZIP ──
+async function downloadAllZip() {
+  const items = getBulkItems();
+  if (!items.length) { showToast('⚠️ Nessuna voce da esportare'); return; }
+  showToast('⏳ Generazione ZIP in corso (potrebbe richiedere un minuto)...');
+
+  const zip = new JSZip();
+  const posts = zip.folder('posts');
+  const slides = zip.folder('slides');
+  const posters = zip.folder('posters');
+
+  // README
+  const readme = [
+    `# Horror Bulletin — Bundle Social`,
+    ``,
+    `**Generato:** ${new Date().toLocaleString('it-IT')}`,
+    `**Mese target:** ${DATA.targetMonth}`,
+    `**Voci totali:** ${items.length}`,
+    `**Filtro categoria:** ${bulkCategoryFilter}`,
+    ``,
+    `## Struttura`,
+    `- \`posts/\` — testi pronti per ogni social (un file .txt per voce)`,
+    `- \`slides/\` — slide TikTok 1080x1920 PNG`,
+    `- \`posters/\` — locandine originali`,
+    ``,
+    `## Indice voci`,
+    ``,
+    items.map((d,i) => `${i+1}. **${d.title}** (${d.year}) — ${d.category} — ${formatDate(d.releaseDate)}`).join('\n')
+  ].join('\n');
+  zip.file('README.md', readme);
+
+  // Posts (.txt per ogni voce, contiene tutti i 5 social)
+  for (const d of items) {
+    const safeName = (d.title||'film').replace(/[^a-z0-9]/gi,'_').slice(0,50);
+    const txt = [
+      `=== ${d.title} (${d.year}) ===`,
+      `Categoria: ${d.category}`,
+      `Regia: ${d.director}`,
+      `Uscita: ${formatDate(d.releaseDate)}`,
+      `Piattaforma: ${d.platform||''}`,
+      ``,
+      `═══════════════════════════════════════════════`,
+      `── 𝕏 TWITTER (${SOCIAL_LIMITS.x} caratteri max) ──`,
+      `═══════════════════════════════════════════════`,
+      generateSocialPost(d,'x'),
+      ``,
+      `═══════════════════════════════════════════════`,
+      `── 📘 FACEBOOK ──`,
+      `═══════════════════════════════════════════════`,
+      generateSocialPost(d,'fb'),
+      ``,
+      `═══════════════════════════════════════════════`,
+      `── 📷 INSTAGRAM ──`,
+      `═══════════════════════════════════════════════`,
+      generateSocialPost(d,'ig'),
+      ``,
+      `═══════════════════════════════════════════════`,
+      `── 🧵 THREADS (${SOCIAL_LIMITS.threads} caratteri max) ──`,
+      `═══════════════════════════════════════════════`,
+      generateSocialPost(d,'threads'),
+      ``,
+      `═══════════════════════════════════════════════`,
+      `── 🎵 TIKTOK ──`,
+      `═══════════════════════════════════════════════`,
+      generateSocialPost(d,'tiktok')
+    ].join('\n');
+    posts.file(`${safeName}.txt`, txt);
+  }
+
+  // Slides + Poster (con CORS può fallire, gestiamo)
+  let slideOk = 0, slideFail = 0, posterOk = 0, posterFail = 0;
+  let processed = 0;
+  for (const d of items) {
+    processed++;
+    if (processed % 5 === 0) showToast(`⏳ Generazione slide ${processed}/${items.length}...`);
+
+    const safeName = (d.title||'film').replace(/[^a-z0-9]/gi,'_').slice(0,50);
+
+    // Slide TikTok
+    try {
+      const blob = await generateSlideBlob(d);
+      if (blob) {
+        slides.file(`${safeName}.png`, blob);
+        slideOk++;
+      } else slideFail++;
+    } catch { slideFail++; }
+
+    // Locandina (download via fetch, può fallire per CORS su alcuni domini)
+    if (d.poster) {
+      try {
+        const r = await fetch(d.poster);
+        if (r.ok) {
+          const blob = await r.blob();
+          posters.file(`${safeName}.jpg`, blob);
+          posterOk++;
+        } else posterFail++;
+      } catch { posterFail++; }
+    }
+  }
+
+  showToast('⏳ Compressione finale ZIP...');
+  const blob = await zip.generateAsync({ type: 'blob' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `horror-bulletin-${DATA.targetMonth.toLowerCase().replace(/\s/g,'-')}-${bulkCategoryFilter}.zip`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  showToast(`✓ ZIP scaricato — ${items.length} voci, ${slideOk} slide, ${posterOk} locandine`);
+}
+
+// Genera slide come Blob senza scaricarla
+function generateSlideBlob(d) {
+  return new Promise(resolve => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080; canvas.height = 1920;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#0a0a0f';
+    ctx.fillRect(0,0,1080,1920);
+
+    const drawText = () => {
+      ctx.fillStyle = '#c0392b';
+      ctx.fillRect(0, 100, 1080, 8);
+      ctx.fillStyle = '#ff6b6b';
+      ctx.font = 'bold 48px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('☠ HORROR BULLETIN', 540, 80);
+
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 72px system-ui, sans-serif';
+      wrapText(ctx, d.title || '', 540, 1450, 1000, 80);
+
+      ctx.fillStyle = '#f0c040';
+      ctx.font = '52px system-ui, sans-serif';
+      ctx.fillText(`(${d.year||'—'})`, 540, 1580);
+
+      ctx.fillStyle = '#9090a8';
+      ctx.font = '36px system-ui, sans-serif';
+      ctx.fillText(`Dir. ${d.director||'N/D'}`, 540, 1660);
+
+      ctx.fillStyle = '#5dade2';
+      ctx.font = '40px system-ui, sans-serif';
+      ctx.fillText(`${formatDate(d.releaseDate)} · ${d.platform||d.category}`, 540, 1730);
+
+      ctx.fillStyle = '#e8e8f0';
+      ctx.font = '28px system-ui, sans-serif';
+      const synShort = (d.synIT || d.synEN || '').slice(0,100);
+      if (synShort) wrapText(ctx, synShort, 540, 1810, 1000, 35);
+
+      ctx.fillStyle = '#c0392b';
+      ctx.fillRect(0, 1812, 1080, 8);
+
+      canvas.toBlob(blob => resolve(blob));
+    };
+
+    if (d.poster) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        const ratio = img.width / img.height;
+        const targetH = 1300;
+        const targetW = targetH * ratio;
+        const x = (1080 - targetW) / 2;
+        ctx.drawImage(img, x, 120, targetW, targetH);
+        const grad = ctx.createLinearGradient(0,1000,0,1420);
+        grad.addColorStop(0,'rgba(10,10,15,0)');
+        grad.addColorStop(1,'rgba(10,10,15,1)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0,1000,1080,420);
+        drawText();
+      };
+      img.onerror = () => drawText();
+      img.src = d.poster;
+    } else {
+      drawText();
+    }
+  });
+}
+
+function downloadSlide(d) {
+  generateSlideBlob(d).then(blob => {
+    if (!blob) return;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `slide-${(d.title||'film').replace(/[^a-z0-9]/gi,'_')}.png`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
 }
 
 function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
@@ -737,10 +1099,11 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
 
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('nav .nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-  const tabs = { bulletin: 0, archivio: 1, social: 2 };
-  document.querySelectorAll('.nav-tab')[tabs[id]].classList.add('active');
+  const tabs = { bulletin: 0, archivio: 1, social: 2, bulkpost: 3 };
+  document.querySelectorAll('nav .nav-tab')[tabs[id]].classList.add('active');
+  if (id === 'bulkpost') renderBulk();
 }
 
 function showToast(msg) {
