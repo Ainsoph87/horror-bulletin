@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Horror Bulletin</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   :root{
@@ -47,7 +46,7 @@
   .stat-label{font-size:11px;color:var(--text2);margin-top:4px}
 
   .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
-  .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;transition:.2s;display:flex;flex-direction:column;cursor:pointer}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;transition:.2s;display:flex;flex-direction:column}
   .card:hover{border-color:var(--border2);transform:translateY(-2px)}
   .card-poster{width:100%;aspect-ratio:2/3;background:var(--bg3);position:relative;overflow:hidden}
   .card-poster img{width:100%;height:100%;object-fit:cover}
@@ -67,13 +66,6 @@
   .card-date{color:var(--gold3)}
   .card-platform{color:var(--blue3)}
   .card-syn{font-size:11px;color:var(--text2);line-height:1.5;flex:1}
-  .card-status{display:flex;gap:6px;padding:8px 12px;background:var(--bg3);border-top:1px solid var(--border);font-size:10px}
-  .card-status .pill{padding:2px 8px;border-radius:10px;background:var(--bg4);color:var(--text2)}
-  .card-status .pill.on-approved{background:var(--green);color:var(--green3)}
-  .card-status .pill.on-published{background:var(--blue);color:var(--blue3)}
-  .card-actions{display:flex;gap:6px;padding:8px 12px;border-top:1px solid var(--border)}
-  .card-btn{flex:1;padding:6px 0;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:11px;transition:.15s;text-align:center}
-  .card-btn:hover{background:var(--bg4);color:var(--text)}
 
   .archive-table{width:100%;border-collapse:collapse}
   .archive-table th{text-align:left;padding:10px 12px;font-size:11px;color:var(--text2);border-bottom:1px solid var(--border);font-weight:500;text-transform:uppercase;letter-spacing:.5px}
@@ -85,53 +77,6 @@
   .search-input:focus{outline:none;border-color:var(--border2)}
   .form-select{padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px}
 
-  .post-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:1.25rem;margin-bottom:1rem}
-  .post-title{font-size:15px;font-weight:500;margin-bottom:1rem;color:var(--text);padding-bottom:8px;border-bottom:1px solid var(--border)}
-  .post-preview{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px;font-size:12px;line-height:1.6;color:var(--text2);white-space:pre-wrap;font-family:monospace;max-height:300px;overflow-y:auto}
-  .social-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:1rem}
-  .social-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px;display:flex;flex-direction:column;gap:8px}
-  .social-name{font-size:13px;color:var(--text);font-weight:500}
-  .social-type{font-size:10px;color:var(--text3)}
-  .social-btn{padding:6px 12px;border-radius:var(--radius);border:1px solid var(--gold);background:transparent;color:var(--gold3);cursor:pointer;font-size:11px;width:100%}
-  .social-btn:hover{background:rgba(212,160,23,.15)}
-
-  /* BULK POST PAGE */
-  .bulk-toolbar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:1rem;margin-bottom:1rem;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;position:sticky;top:56px;z-index:50}
-  .bulk-counter{font-size:13px;color:var(--text2)}
-  .bulk-counter strong{color:var(--red3)}
-  .bulk-btn{padding:8px 14px;border-radius:var(--radius);border:1px solid var(--gold);background:var(--gold);color:#111;cursor:pointer;font-size:12px;font-weight:500}
-  .bulk-btn:hover{background:var(--gold2)}
-  .bulk-btn.zip{background:var(--purple2);border-color:var(--purple2);color:#fff}
-  .bulk-btn.zip:hover{background:var(--purple3)}
-
-  .bulk-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;margin-bottom:1.5rem}
-  .bulk-card.copied-all{border-color:var(--green2)}
-  .bulk-card-header{display:flex;gap:1rem;padding:1rem;border-bottom:1px solid var(--border);flex-wrap:wrap}
-  .bulk-poster{width:120px;flex-shrink:0;aspect-ratio:2/3;background:var(--bg3);border-radius:var(--radius);overflow:hidden;position:relative}
-  .bulk-poster img{width:100%;height:100%;object-fit:cover}
-  .bulk-poster-empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:30px}
-  .bulk-info{flex:1;min-width:200px}
-  .bulk-info-title{font-size:18px;font-weight:500;margin-bottom:6px}
-  .bulk-info-meta{font-size:12px;color:var(--text2);margin-bottom:6px;display:flex;gap:10px;flex-wrap:wrap}
-  .bulk-info-syn{font-size:12px;color:var(--text3);line-height:1.5}
-  .bulk-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-  .bulk-action-btn{padding:5px 10px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:11px}
-  .bulk-action-btn:hover{background:var(--bg4);color:var(--text)}
-  .bulk-action-btn.published{border-color:var(--blue2);color:var(--blue3)}
-  .bulk-action-btn.tiktok{border-color:var(--purple2);color:var(--purple3)}
-
-  .bulk-socials{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:var(--border)}
-  .bulk-social{background:var(--bg2);padding:1rem}
-  .bulk-social-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-  .bulk-social-name{font-size:12px;font-weight:500;color:var(--text)}
-  .bulk-social-counter{font-size:10px;color:var(--text3);font-family:monospace}
-  .bulk-social-counter.over{color:var(--red3)}
-  .bulk-textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:8px;font-size:11px;font-family:monospace;color:var(--text);min-height:80px;max-height:200px;resize:vertical;line-height:1.5}
-  .bulk-textarea:focus{outline:none;border-color:var(--border2)}
-  .bulk-copy-btn{margin-top:6px;width:100%;padding:6px;border-radius:var(--radius);border:1px solid var(--gold);background:transparent;color:var(--gold3);cursor:pointer;font-size:11px;transition:.15s}
-  .bulk-copy-btn:hover{background:rgba(212,160,23,.15)}
-  .bulk-copy-btn.copied{background:var(--green);border-color:var(--green2);color:#fff}
-
   .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--bg3);border:1px solid var(--green2);color:var(--green3);padding:10px 16px;border-radius:var(--radius);font-size:13px;z-index:999;display:none}
 
   .loading{display:flex;align-items:center;justify-content:center;padding:3rem;color:var(--text2)}
@@ -140,7 +85,6 @@
   @media (max-width:600px){
     .archive-table{font-size:11px}
     .archive-table td,.archive-table th{padding:6px 8px}
-    .bulk-poster{width:80px}
   }
 </style>
 </head>
@@ -154,8 +98,6 @@
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showPage('bulletin')">Bulletin</button>
     <button class="nav-tab" onclick="showPage('archivio')">Archivio</button>
-    <button class="nav-tab" onclick="showPage('social')">Social</button>
-    <button class="nav-tab" onclick="showPage('bulkpost')">📋 Bulk Post</button>
   </div>
   <div class="updated" id="updated-info">—</div>
   <button class="nav-tab" style="font-size:11px;color:var(--text3)" onclick="changeApiKey()" title="Cambia API Key">🔑</button>
@@ -182,20 +124,6 @@
       <button class="filter-btn" onclick="setFilter(this,'Home Video')">📀 Home Video</button>
       <button class="filter-btn" onclick="setFilter(this,'Serie TV')">📺 Serie TV</button>
       <button class="filter-btn" onclick="setFilter(this,'Riedizione')">♻️ Riedizioni</button>
-      <button class="filter-btn" onclick="setFilter(this,'approved')">✓ Approvati</button>
-      <button class="filter-btn" onclick="setFilter(this,'pending')">⏳ Da approvare</button>
-    </div>
-
-    <div id="bulk-bar" style="display:none;background:var(--bg3);border:1px solid var(--red);border-radius:var(--radius);padding:10px 16px;margin-bottom:1rem;align-items:center;gap:12px;flex-wrap:wrap">
-      <span id="bulk-count" style="font-size:13px;color:var(--red3);font-weight:500">0 selezionati</span>
-      <button class="card-btn" style="border-color:var(--green2);color:var(--green3);max-width:200px" onclick="bulkApprove(true)">✓ Approva selezionati</button>
-      <button class="card-btn" style="border-color:var(--orange3);color:var(--orange3);max-width:200px" onclick="bulkApprove(false)">⊘ Disapprova selezionati</button>
-      <button class="card-btn" style="max-width:120px" onclick="clearSelection()">✕ Pulisci</button>
-    </div>
-
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
-      <div style="font-size:12px;color:var(--text3)">Clicca le card per selezionare più voci</div>
-      <button class="card-btn" style="max-width:200px" onclick="approveAllVisible()">✓ Approva tutti i visibili</button>
     </div>
 
     <div id="cards-container" class="cards-grid"><div class="loading">⏳ Caricamento dati...</div></div>
@@ -229,7 +157,6 @@
             <th>Tipo</th>
             <th>Piattaforma</th>
             <th>Data</th>
-            <th>Stato</th>
           </tr>
         </thead>
         <tbody id="archive-body"></tbody>
@@ -237,111 +164,16 @@
     </div>
   </div>
 
-  <div id="page-social" class="page">
-    <div class="bulletin-header">
-      <div class="bulletin-title">Social — Singolo post</div>
-      <div style="font-size:12px;color:var(--text2)">Per generare più post in un colpo, usa la pagina <strong>Bulk Post</strong></div>
-    </div>
-
-    <div class="post-section">
-      <div class="post-title">Seleziona un titolo approvato</div>
-      <select class="form-select" id="post-select" style="width:100%;max-width:500px" onchange="updatePostPreview(this.value)">
-        <option value="">— Scegli una voce approvata —</option>
-      </select>
-    </div>
-
-    <div class="post-section">
-      <div class="post-title">Anteprima post bilingue</div>
-      <div class="post-preview" id="post-preview">Seleziona un titolo per visualizzare il post.</div>
-    </div>
-
-    <div class="post-section">
-      <div class="post-title">Copia per ogni social</div>
-      <div class="social-list">
-        <div class="social-item">
-          <div><div class="social-name">𝕏 / Twitter</div><div class="social-type">280 caratteri max</div></div>
-          <button class="social-btn" onclick="copyForSocial('x')">⎘ Copia testo X</button>
-        </div>
-        <div class="social-item">
-          <div><div class="social-name">📘 Facebook</div><div class="social-type">Post lungo + link</div></div>
-          <button class="social-btn" onclick="copyForSocial('fb')">⎘ Copia testo Facebook</button>
-        </div>
-        <div class="social-item">
-          <div><div class="social-name">📷 Instagram</div><div class="social-type">Caption + hashtag</div></div>
-          <button class="social-btn" onclick="copyForSocial('ig')">⎘ Copia testo Instagram</button>
-        </div>
-        <div class="social-item">
-          <div><div class="social-name">🧵 Threads</div><div class="social-type">500 caratteri max</div></div>
-          <button class="social-btn" onclick="copyForSocial('threads')">⎘ Copia testo Threads</button>
-        </div>
-        <div class="social-item">
-          <div><div class="social-name">🎵 TikTok</div><div class="social-type">Caption breve + slide</div></div>
-          <button class="social-btn" onclick="copyForSocial('tiktok')">⎘ Copia + scarica slide</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="post-section">
-      <div class="post-title">Locandina / Slide</div>
-      <div id="poster-preview" style="text-align:center;color:var(--text3);font-size:13px">Nessuna locandina disponibile.</div>
-    </div>
-  </div>
-
-  <!-- BULK POST PAGE -->
-  <div id="page-bulkpost" class="page">
-    <div class="bulletin-header">
-      <div class="bulletin-title">📋 Bulk Post — Genera tutti i post di una categoria</div>
-    </div>
-
-    <div class="filters">
-      <button class="filter-btn active" onclick="setBulkFilter(this,'all')">Tutte le categorie</button>
-      <button class="filter-btn" onclick="setBulkFilter(this,'Cinema')">🎟️ Cinema</button>
-      <button class="filter-btn" onclick="setBulkFilter(this,'Streaming')">📡 Streaming</button>
-      <button class="filter-btn" onclick="setBulkFilter(this,'VOD')">🎞️ VOD</button>
-      <button class="filter-btn" onclick="setBulkFilter(this,'Home Video')">📀 Home Video</button>
-      <button class="filter-btn" onclick="setBulkFilter(this,'Serie TV')">📺 Serie TV</button>
-    </div>
-
-    <div class="filters">
-      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer">
-        <input type="checkbox" id="bulk-only-approved" checked onchange="renderBulk()"> Solo approvati
-      </label>
-      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer">
-        <input type="checkbox" id="bulk-hide-published" checked onchange="renderBulk()"> Nascondi già pubblicati
-      </label>
-      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer">
-        <input type="checkbox" id="bulk-hide-rerelease" onchange="renderBulk()"> Nascondi riedizioni
-      </label>
-    </div>
-
-    <div class="bulk-toolbar">
-      <div class="bulk-counter" id="bulk-counter">— voci</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="bulk-btn zip" onclick="downloadAllZip()">📦 Scarica tutto (ZIP)</button>
-        <button class="bulk-btn" onclick="resetCopyTracking()">🔄 Reset progresso</button>
-      </div>
-    </div>
-
-    <div id="bulk-container"><div class="loading">⏳ Caricamento...</div></div>
-  </div>
-
 </main>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// === CONFIGURAZIONE WORKER ===
 const WORKER_URL = 'https://horror-bulletin-api.di-rodi-mirko2.workers.dev';
 let API_KEY = localStorage.getItem('hb_api_key') || '';
 
 let DATA = { items:[], updatedAt:null, targetMonth:'', total:0 };
 let currentFilter = 'all';
-let currentItem = null;
-let selectedIds = new Set();
-
-// Bulk page state
-let bulkCategoryFilter = 'all';
-let copyTracking = JSON.parse(localStorage.getItem('hb_copy_tracking') || '{}');
 
 const CAT_BADGE = {
   'Cinema':'badge-cinema','Streaming':'badge-streaming','VOD':'badge-vod',
@@ -349,15 +181,6 @@ const CAT_BADGE = {
 };
 const CAT_EMOJI = {
   'Cinema':'🎟️','Streaming':'📡','VOD':'🎞️','Home Video':'📀','Serie TV':'📺'
-};
-
-const SOCIAL_LIMITS = {
-  x: 280, threads: 500, fb: 63206, ig: 2200, tiktok: 2200
-};
-
-const SOCIAL_LABELS = {
-  x: '𝕏 Twitter', fb: '📘 Facebook', ig: '📷 Instagram',
-  threads: '🧵 Threads', tiktok: '🎵 TikTok'
 };
 
 async function loadData() {
@@ -370,7 +193,6 @@ async function loadData() {
     renderStats();
     renderCards();
     renderArchive();
-    renderPostSelect();
     populateYearFilter();
   } catch(err) {
     document.getElementById('cards-container').innerHTML = '<div class="empty">⚠️ Errore caricamento dati. Riprova più tardi.</div>';
@@ -380,12 +202,15 @@ async function loadData() {
 
 function renderStats() {
   const items = DATA.items;
+  const cats = ['Cinema','Streaming','VOD','Home Video','Serie TV'];
   const stats = [
     { num: items.length, label: 'Totale uscite', color: 'var(--red3)' },
-    { num: items.filter(i => i.approvato).length, label: 'Approvati', color: 'var(--green3)' },
-    { num: items.filter(i => !i.approvato && !i.pubblicato).length, label: 'Da approvare', color: 'var(--gold3)' },
-    { num: items.filter(i => i.pubblicato).length, label: 'Pubblicati', color: 'var(--blue3)' },
-    { num: items.filter(i => i.tipo === 'Riedizione').length, label: 'Riedizioni', color: 'var(--orange3)' }
+    ...cats.map(c => ({
+      num: items.filter(i => i.category === c).length,
+      label: (CAT_EMOJI[c] || '') + ' ' + c,
+      color: 'var(--text)'
+    })).filter(s => s.num > 0),
+    { num: items.filter(i => i.tipo === 'Riedizione').length, label: '♻️ Riedizioni', color: 'var(--orange3)' }
   ];
   document.getElementById('stats-row').innerHTML = stats.map(s =>
     `<div class="stat-card"><div class="stat-num" style="color:${s.color}">${s.num}</div><div class="stat-label">${s.label}</div></div>`
@@ -393,10 +218,8 @@ function renderStats() {
 }
 
 function applyFilter(items, f) {
-  if (f === 'all')         return items;
-  if (f === 'approved')    return items.filter(i => i.approvato);
-  if (f === 'pending')     return items.filter(i => !i.approvato);
-  if (f === 'Riedizione')  return items.filter(i => i.tipo === 'Riedizione');
+  if (f === 'all')        return items;
+  if (f === 'Riedizione') return items.filter(i => i.tipo === 'Riedizione');
   return items.filter(i => i.category === f);
 }
 
@@ -413,14 +236,12 @@ function renderCards() {
     const posterImg  = d.poster
       ? `<img src="${d.poster}" alt="${d.title}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'card-poster-placeholder\\'>☠</div>'">`
       : `<div class="card-poster-placeholder">☠</div>`;
-    const isSelected = selectedIds.has(d.id);
     return `
-      <div class="card" style="${isSelected?'border-color:var(--red);box-shadow:0 0 0 2px var(--red)':''}" onclick="toggleSelect('${d.id}', event)">
+      <div class="card">
         <div class="card-poster">
           ${posterImg}
           <span class="card-badge ${badgeClass}">${d.category||'?'}</span>
           <span class="card-tipo ${tipoClass}">${tipoLabel}</span>
-          ${isSelected ? '<div style="position:absolute;bottom:8px;right:8px;width:28px;height:28px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;font-size:14px">✓</div>' : ''}
         </div>
         <div class="card-body">
           <div class="card-title">${d.title || 'Senza titolo'} ${d.year ? `(${d.year})` : ''}</div>
@@ -431,166 +252,9 @@ function renderCards() {
           </div>
           <div class="card-syn">${(d.synIT || d.synEN || '_Sinossi non disponibile._').slice(0,140)}${(d.synIT||d.synEN||'').length>140?'...':''}</div>
         </div>
-        <div class="card-status">
-          <span class="pill ${d.verificato?'on-approved':''}">${d.verificato?'✓':'·'} Verificato</span>
-          <span class="pill ${d.approvato?'on-approved':''}">${d.approvato?'✓':'·'} Approvato</span>
-          <span class="pill ${d.pubblicato?'on-published':''}">${d.pubblicato?'✓':'·'} Pubblicato</span>
-        </div>
-        <div class="card-actions" onclick="event.stopPropagation()">
-          <button class="card-btn" style="border-color:${d.approvato?'var(--orange3)':'var(--green2)'};color:${d.approvato?'var(--orange3)':'var(--green3)'}" onclick="toggleApprove('${d.id}', ${!d.approvato})">
-            ${d.approvato ? '⊘ Disapprova' : '✓ Approva'}
-          </button>
-          <button class="card-btn" onclick="openPost('${d.id}')">📋 Post Social</button>
-        </div>
       </div>
     `;
   }).join('');
-}
-
-function toggleSelect(id, ev) {
-  if (ev.target.tagName === 'BUTTON') return;
-  if (selectedIds.has(id)) selectedIds.delete(id);
-  else selectedIds.add(id);
-  updateBulkBar();
-  renderCards();
-}
-
-function clearSelection() {
-  selectedIds.clear();
-  updateBulkBar();
-  renderCards();
-}
-
-function updateBulkBar() {
-  const bar = document.getElementById('bulk-bar');
-  const cnt = document.getElementById('bulk-count');
-  cnt.textContent = selectedIds.size + ' selezionat' + (selectedIds.size === 1 ? 'o' : 'i');
-  bar.style.display = selectedIds.size > 0 ? 'flex' : 'none';
-}
-
-async function toggleApprove(id, approved) {
-  if (!await ensureApiKey()) return;
-  showToast('⏳ Aggiornamento in corso...');
-  try {
-    const r = await fetch(WORKER_URL + '/approve', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Api-Key': API_KEY },
-      body: JSON.stringify({ id, approved })
-    });
-    const j = await r.json();
-    if (!r.ok) throw new Error(j.error || 'Errore');
-    const item = DATA.items.find(i => i.id === id);
-    if (item) item.approvato = approved;
-    renderCards();
-    renderStats();
-    renderArchive();
-    renderPostSelect();
-    showToast(approved ? '✓ Voce approvata' : '⊘ Voce disapprovata');
-  } catch (err) {
-    showToast('⚠️ Errore: ' + err.message);
-  }
-}
-
-async function bulkApprove(approved) {
-  if (!selectedIds.size) return;
-  if (!await ensureApiKey()) return;
-  if (!confirm((approved?'Approvare':'Disapprovare') + ' ' + selectedIds.size + ' voci selezionate?')) return;
-
-  const allIds = [...selectedIds];
-  let totalSuccess = 0;
-  let totalFailed  = 0;
-  let remaining    = allIds;
-  let batchNum     = 0;
-
-  showToast('⏳ Operazione bulk in corso...');
-
-  while (remaining.length > 0) {
-    batchNum++;
-    showToast(`⏳ Batch ${batchNum} — ${remaining.length} rimanenti...`);
-    try {
-      const r = await fetch(WORKER_URL + '/bulk-approve', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Api-Key': API_KEY },
-        body: JSON.stringify({ ids: remaining, approved })
-      });
-      const j = await r.json();
-      if (!r.ok) throw new Error(j.error || 'Errore');
-
-      totalSuccess += j.successCount || 0;
-      totalFailed  += j.failedCount  || 0;
-
-      (j.success || []).forEach(id => {
-        const item = DATA.items.find(i => i.id === id);
-        if (item) item.approvato = approved;
-      });
-
-      if (j.failed?.length) console.warn('Failed in batch ' + batchNum + ':', j.failed);
-
-      remaining = j.remaining || [];
-
-      renderCards();
-      renderStats();
-      renderArchive();
-      renderPostSelect();
-
-      if (remaining.length > 0) await new Promise(r => setTimeout(r, 1000));
-
-    } catch (err) {
-      showToast('⚠️ Errore batch ' + batchNum + ': ' + err.message);
-      break;
-    }
-  }
-
-  selectedIds.clear();
-  updateBulkBar();
-  renderCards();
-  renderStats();
-  renderArchive();
-  renderPostSelect();
-
-  if (totalFailed > 0) {
-    showToast('⚠️ ' + totalSuccess + '/' + allIds.length + ' completate (' + totalFailed + ' fallite)');
-  } else {
-    showToast('✓ ' + totalSuccess + '/' + allIds.length + ' voci aggiornate');
-  }
-}
-
-async function approveAllVisible() {
-  const visible = applyFilter(DATA.items, currentFilter);
-  const toApprove = visible.filter(i => !i.approvato);
-  if (!toApprove.length) { showToast('ℹ️ Nessuna voce da approvare'); return; }
-  if (!confirm('Approvare tutte le ' + toApprove.length + ' voci visibili non ancora approvate?')) return;
-  selectedIds = new Set(toApprove.map(i => i.id));
-  await bulkApprove(true);
-}
-
-async function ensureApiKey() {
-  if (API_KEY) return true;
-  const k = prompt('Inserisci la tua API Key per modificare il database:');
-  if (!k) return false;
-  try {
-    const r = await fetch(WORKER_URL + '/', { headers: { 'X-Api-Key': k } });
-    if (!r.ok) {
-      showToast('⚠️ API Key non valida');
-      return false;
-    }
-    API_KEY = k;
-    localStorage.setItem('hb_api_key', k);
-    showToast('✓ API Key salvata');
-    return true;
-  } catch (err) {
-    showToast('⚠️ Errore connessione: ' + err.message);
-    return false;
-  }
-}
-
-function changeApiKey() {
-  const k = prompt('Nuova API Key:', API_KEY);
-  if (k !== null) {
-    API_KEY = k;
-    localStorage.setItem('hb_api_key', k);
-    showToast(k ? '✓ API Key aggiornata' : '✓ API Key rimossa');
-  }
 }
 
 function setFilter(btn, f) {
@@ -608,7 +272,7 @@ function formatDate(d) {
 function renderArchive() {
   const tbody = document.getElementById('archive-body');
   if (!DATA.items.length) {
-    tbody.innerHTML = '<tr><td colspan="7" class="empty">Nessun dato disponibile.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">Nessun dato disponibile.</td></tr>';
     return;
   }
   tbody.innerHTML = DATA.items.map(d => `
@@ -619,7 +283,6 @@ function renderArchive() {
       <td style="color:var(--text2);font-size:11px">${d.tipo||'—'}</td>
       <td style="color:var(--blue3)">${d.platform||''}</td>
       <td style="color:var(--gold3)">${formatDate(d.releaseDate)}</td>
-      <td style="font-size:11px">${d.approvato?'<span style="color:var(--green3)">✓ Approv.</span>':'<span style="color:var(--text3)">⏳</span>'} ${d.pubblicato?'<span style="color:var(--blue3)">📤 Pub.</span>':''}</td>
     </tr>
   `).join('');
 }
@@ -646,484 +309,21 @@ function populateYearFilter() {
   if (sel) sel.innerHTML = '<option value="">Tutti gli anni</option>' + years.map(y => `<option>${y}</option>`).join('');
 }
 
-function renderPostSelect() {
-  const approved = DATA.items.filter(i => i.approvato);
-  const sel = document.getElementById('post-select');
-  if (!approved.length) {
-    sel.innerHTML = '<option value="">Nessuna voce approvata.</option>';
-    return;
+function changeApiKey() {
+  const k = prompt('Nuova API Key:', API_KEY);
+  if (k !== null) {
+    API_KEY = k;
+    localStorage.setItem('hb_api_key', k);
+    showToast(k ? '✓ API Key aggiornata' : '✓ API Key rimossa');
   }
-  sel.innerHTML = '<option value="">— Scegli una voce approvata —</option>' +
-    approved.map(d => `<option value="${d.id}">${d.title} (${d.category}) — ${formatDate(d.releaseDate)}</option>`).join('');
-}
-
-function openPost(id) {
-  showPage('social');
-  document.getElementById('post-select').value = id;
-  updatePostPreview(id);
-}
-
-function updatePostPreview(id) {
-  if (!id) {
-    document.getElementById('post-preview').textContent = 'Seleziona un titolo per visualizzare il post.';
-    document.getElementById('poster-preview').innerHTML = 'Nessuna locandina disponibile.';
-    currentItem = null;
-    return;
-  }
-  const d = DATA.items.find(i => i.id === id);
-  if (!d) return;
-  currentItem = d;
-
-  const tags = ['#horror','#horrormovies','#'+(d.category||'').toLowerCase().replace(/\s/g,''),
-                d.tipo === 'Riedizione' ? '#rerelease' : '#newrelease'].join(' ');
-
-  const post = [
-    `${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year})`,
-    ``,
-    `🎥 Regia / Dir.: ${d.director||'N/D'}`,
-    `📅 Uscita: ${formatDate(d.releaseDate)}`,
-    `📺 ${d.category} — ${d.platform||''}`,
-    ``,
-    `🇮🇹 SINOSSI`,
-    d.synIT || 'Sinossi non disponibile.',
-    ``,
-    `🇬🇧 SYNOPSIS`,
-    d.synEN || 'Synopsis not available.',
-    ``,
-    tags
-  ].join('\n');
-
-  document.getElementById('post-preview').textContent = post;
-
-  if (d.poster) {
-    document.getElementById('poster-preview').innerHTML =
-      `<img src="${d.poster}" style="max-width:300px;border-radius:8px" alt="${d.title}">`;
-  } else {
-    document.getElementById('poster-preview').innerHTML = 'Nessuna locandina disponibile.';
-  }
-}
-
-function copyForSocial(network) {
-  if (!currentItem) { showToast('⚠️ Seleziona prima una voce approvata'); return; }
-  const text = generateSocialPost(currentItem, network);
-  if (network === 'tiktok') downloadSlide(currentItem);
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('✓ Testo copiato per ' + network.toUpperCase());
-  });
-}
-
-// ── GENERAZIONE POST PER OGNI SOCIAL ──
-function generateSocialPost(d, network) {
-  const fullSyn = (d.synIT || d.synEN || '').slice(0,200);
-  const catTag = (d.category||'').toLowerCase().replace(/\s/g,'');
-  const tipoTag = d.tipo === 'Riedizione' ? 'rerelease' : 'newrelease';
-
-  if (network === 'x') {
-    let text = `${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year})\nDir. ${d.director}\n${formatDate(d.releaseDate)} · ${d.platform||d.category}\n\n#horror #${catTag} #${tipoTag}`;
-    if (text.length > 280) text = text.slice(0,277)+'...';
-    return text;
-  }
-  if (network === 'fb') {
-    return `${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year})\n\n🎥 Regia: ${d.director}\n📅 Uscita: ${formatDate(d.releaseDate)}\n📺 ${d.category} — ${d.platform||''}\n\n🇮🇹 ${d.synIT || 'Sinossi non disponibile.'}\n\n🇬🇧 ${d.synEN || 'Synopsis not available.'}\n\n#horror #horrormovies #horrorfilm #${catTag} #${tipoTag}`;
-  }
-  if (network === 'ig') {
-    return `${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year}) ${CAT_EMOJI[d.category]||'☠️'}\n\n🎥 Dir. ${d.director}\n📅 ${formatDate(d.releaseDate)}\n📺 ${d.platform||d.category}\n\n${d.synIT || d.synEN || ''}\n.\n.\n.\n#horror #horrormovies #horrorfilm #cinema #${catTag} #horrorcommunity #horrorlovers #horrorfan #scary #thriller #spooky #moviestowatch #filmlover #cinephile #horrornight #${tipoTag}`;
-  }
-  if (network === 'threads') {
-    let text = `${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year})\nDir. ${d.director} · ${formatDate(d.releaseDate)}\n${d.platform||d.category}\n\n${fullSyn}\n\n#horror #${catTag} #${tipoTag}`;
-    if (text.length > 500) text = text.slice(0,497)+'...';
-    return text;
-  }
-  if (network === 'tiktok') {
-    return `${d.title} (${d.year}) ${CAT_EMOJI[d.category]||'☠️'}\nDir. ${d.director}\n${formatDate(d.releaseDate)} · ${d.platform||d.category}\n\n#horror #horrortok #fyp #horrormovies #scary #${catTag} #${tipoTag}`;
-  }
-  return '';
-}
-
-// ── BULK POST PAGE ──
-function setBulkFilter(btn, f) {
-  document.querySelectorAll('#page-bulkpost .filters:first-of-type .filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  bulkCategoryFilter = f;
-  renderBulk();
-}
-
-function getBulkItems() {
-  let items = DATA.items.slice();
-  if (bulkCategoryFilter !== 'all') items = items.filter(i => i.category === bulkCategoryFilter);
-  if (document.getElementById('bulk-only-approved')?.checked) items = items.filter(i => i.approvato);
-  if (document.getElementById('bulk-hide-published')?.checked) items = items.filter(i => !i.pubblicato);
-  if (document.getElementById('bulk-hide-rerelease')?.checked) items = items.filter(i => i.tipo !== 'Riedizione');
-  // Ordina per data uscita ascendente
-  items.sort((a,b) => (a.releaseDate||'').localeCompare(b.releaseDate||''));
-  return items;
-}
-
-function renderBulk() {
-  const items = getBulkItems();
-  document.getElementById('bulk-counter').innerHTML = `<strong>${items.length}</strong> voc${items.length===1?'e':'i'} ${bulkCategoryFilter==='all'?'totali':'in ' + bulkCategoryFilter}`;
-
-  const c = document.getElementById('bulk-container');
-  if (!items.length) {
-    c.innerHTML = '<div class="empty">Nessuna voce con questi filtri. Prova a cambiare la categoria o disabilita "Solo approvati".</div>';
-    return;
-  }
-
-  c.innerHTML = items.map(d => renderBulkCard(d)).join('');
-}
-
-function renderBulkCard(d) {
-  const allCopied = ['x','fb','ig','threads','tiktok'].every(n => copyTracking[d.id]?.[n]);
-  const posterImg = d.poster
-    ? `<img src="${d.poster}" alt="${d.title}" loading="lazy">`
-    : `<div class="bulk-poster-empty">☠</div>`;
-
-  const socials = ['x','fb','ig','threads','tiktok'].map(n => {
-    const text = generateSocialPost(d, n);
-    const limit = SOCIAL_LIMITS[n];
-    const len = text.length;
-    const over = len > limit;
-    const isCopied = copyTracking[d.id]?.[n];
-    return `
-      <div class="bulk-social">
-        <div class="bulk-social-header">
-          <span class="bulk-social-name">${SOCIAL_LABELS[n]}</span>
-          <span class="bulk-social-counter ${over?'over':''}">${len}/${limit}</span>
-        </div>
-        <textarea class="bulk-textarea" id="bulk-ta-${d.id}-${n}" readonly>${escapeHtml(text)}</textarea>
-        <button class="bulk-copy-btn ${isCopied?'copied':''}" onclick="copyBulkPost('${d.id}','${n}')">
-          ${isCopied?'✓ Copiato':'⎘ Copia'} ${n==='tiktok'?'+ slide':''}
-        </button>
-      </div>
-    `;
-  }).join('');
-
-  return `
-    <div class="bulk-card ${allCopied?'copied-all':''}" id="bulk-card-${d.id}">
-      <div class="bulk-card-header">
-        <div class="bulk-poster">${posterImg}</div>
-        <div class="bulk-info">
-          <div class="bulk-info-title">${CAT_EMOJI[d.category]||'☠️'} ${d.title} (${d.year})</div>
-          <div class="bulk-info-meta">
-            <span>🎥 ${d.director||'N/D'}</span>
-            <span class="card-date">${formatDate(d.releaseDate)}</span>
-            <span class="card-platform">${d.platform||''}</span>
-            <span style="color:${d.approvato?'var(--green3)':'var(--text3)'}">${d.approvato?'✓ Approvato':'⏳ Da approvare'}</span>
-            ${d.pubblicato?'<span style="color:var(--blue3)">📤 Pubblicato</span>':''}
-            ${d.tipo==='Riedizione'?'<span style="color:var(--orange3)">♻️ Riedizione</span>':''}
-          </div>
-          <div class="bulk-info-syn">${(d.synIT||d.synEN||'').slice(0,200)}${(d.synIT||d.synEN||'').length>200?'...':''}</div>
-          <div class="bulk-actions">
-            <button class="bulk-action-btn published" onclick="markPublished('${d.id}')">📤 Marca come pubblicato</button>
-            ${d.poster ? `<button class="bulk-action-btn" onclick="downloadPosterById('${d.id}')">🖼️ Scarica locandina</button>` : ''}
-            <button class="bulk-action-btn tiktok" onclick="downloadSlideById('${d.id}')">🎬 Scarica slide TikTok</button>
-          </div>
-        </div>
-      </div>
-      <div class="bulk-socials">${socials}</div>
-    </div>
-  `;
-}
-
-function escapeHtml(s) {
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-function copyBulkPost(id, network) {
-  const d = DATA.items.find(i => i.id === id);
-  if (!d) return;
-  const text = generateSocialPost(d, network);
-  if (network === 'tiktok') downloadSlide(d);
-  navigator.clipboard.writeText(text).then(() => {
-    if (!copyTracking[id]) copyTracking[id] = {};
-    copyTracking[id][network] = true;
-    localStorage.setItem('hb_copy_tracking', JSON.stringify(copyTracking));
-    showToast('✓ Copiato per ' + network.toUpperCase());
-    renderBulk();
-  });
-}
-
-async function markPublished(id) {
-  if (!await ensureApiKey()) return;
-  showToast('⏳ Aggiornamento...');
-  try {
-    const r = await fetch(WORKER_URL + '/mark-published', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Api-Key': API_KEY },
-      body: JSON.stringify({ id })
-    });
-    const j = await r.json();
-    if (!r.ok) throw new Error(j.error || 'Errore');
-    const item = DATA.items.find(i => i.id === id);
-    if (item) item.pubblicato = true;
-    showToast('✓ Marcato come pubblicato');
-    renderBulk();
-    renderStats();
-    renderArchive();
-  } catch (err) {
-    showToast('⚠️ Errore: ' + err.message);
-  }
-}
-
-function downloadPosterById(id) {
-  const d = DATA.items.find(i => i.id === id);
-  if (!d?.poster) return;
-  const a = document.createElement('a');
-  a.href = d.poster;
-  a.download = `poster-${(d.title||'film').replace(/[^a-z0-9]/gi,'_')}.jpg`;
-  a.target = '_blank';
-  a.click();
-}
-
-function downloadSlideById(id) {
-  const d = DATA.items.find(i => i.id === id);
-  if (d) downloadSlide(d);
-}
-
-function resetCopyTracking() {
-  if (!confirm('Resettare il tracciamento dei post copiati?')) return;
-  copyTracking = {};
-  localStorage.removeItem('hb_copy_tracking');
-  showToast('✓ Tracciamento resettato');
-  renderBulk();
-}
-
-// ── PROXY CORS PER LOCANDINE ──
-function viaProxy(url) {
-  if (!url) return null;
-  return 'https://images.weserv.nl/?url=' + encodeURIComponent(url.replace(/^https?:\/\//, ''));
-}
-
-// Funzione per nome cartella sicuro (mantiene leggibilità)
-function safeFolderName(d, idx) {
-  const cleanTitle = (d.title || 'film')
-    .replace(/[<>:"/\\|?*]/g, '')        // caratteri vietati nei filesystem
-    .replace(/\s+/g, ' ')                 // spazi multipli
-    .trim()
-    .slice(0, 60);                        // max 60 char
-  const num = String(idx).padStart(2, '0');
-  return `${num} - ${cleanTitle} (${d.year || 'N-A'})`;
-}
-
-// ── DOWNLOAD ZIP — una cartella per film con tutto dentro ──
-async function downloadAllZip() {
-  const items = getBulkItems();
-  if (!items.length) { showToast('⚠️ Nessuna voce da esportare'); return; }
-  showToast('⏳ Generazione ZIP — preparazione...');
-
-  const zip = new JSZip();
-
-  // README globale
-  const readme = [
-    `# Horror Bulletin — Bundle Social`,
-    ``,
-    `**Generato:** ${new Date().toLocaleString('it-IT')}`,
-    `**Mese target:** ${DATA.targetMonth}`,
-    `**Voci totali:** ${items.length}`,
-    `**Filtro categoria:** ${bulkCategoryFilter}`,
-    ``,
-    `## Struttura`,
-    ``,
-    `Ogni film ha la sua cartella numerata in ordine cronologico di uscita.`,
-    `Dentro ogni cartella trovi:`,
-    ``,
-    `- \`post-x.txt\` — testo per 𝕏 / Twitter (max 280 caratteri)`,
-    `- \`post-facebook.txt\` — testo per Facebook`,
-    `- \`post-instagram.txt\` — testo per Instagram`,
-    `- \`post-threads.txt\` — testo per Threads (max 500 caratteri)`,
-    `- \`post-tiktok.txt\` — caption per TikTok`,
-    `- \`locandina.jpg\` — locandina ufficiale`,
-    `- \`slide-tiktok.png\` — slide 1080x1920 pronta per TikTok/Instagram Stories`,
-    ``,
-    `## Indice voci`,
-    ``,
-    items.map((d,i) => `${String(i+1).padStart(2,'0')}. **${d.title}** (${d.year}) — ${d.category} — ${formatDate(d.releaseDate)}${d.tipo === 'Riedizione' ? ' ♻️ RIEDIZIONE' : ''}${d.tipo === 'Nuova stagione' ? ' 🎞️ NUOVA STAGIONE' : ''}`).join('\n')
-  ].join('\n');
-  zip.file('README.md', readme);
-
-  // Per ogni film: cartella dedicata con TUTTO dentro
-  let posterOk = 0, posterFail = 0, slideOk = 0, slideFail = 0;
-  let processed = 0;
-  const CONCURRENCY = 10;
-
-  async function processOne(d, idx) {
-    const folderName = safeFolderName(d, idx + 1);
-    const folder = zip.folder(folderName);
-
-    // Header info per tutti i file di testo
-    const header = [
-      `═══════════════════════════════════════════════`,
-      `${d.title} (${d.year})`,
-      `═══════════════════════════════════════════════`,
-      `Categoria:    ${d.category}`,
-      `Tipo:         ${d.tipo || 'Nuova uscita'}`,
-      `Regia:        ${d.director || 'N/D'}`,
-      `Uscita:       ${formatDate(d.releaseDate)}`,
-      `Piattaforma:  ${d.platform || ''}`,
-      `═══════════════════════════════════════════════`,
-      ``
-    ].join('\n');
-
-    // 5 file testuali separati per ogni social
-    folder.file('post-x.txt',         header + `── 𝕏 TWITTER (max ${SOCIAL_LIMITS.x} caratteri) ──\n\n` + generateSocialPost(d,'x'));
-    folder.file('post-facebook.txt',  header + `── 📘 FACEBOOK ──\n\n` + generateSocialPost(d,'fb'));
-    folder.file('post-instagram.txt', header + `── 📷 INSTAGRAM ──\n\n` + generateSocialPost(d,'ig'));
-    folder.file('post-threads.txt',   header + `── 🧵 THREADS (max ${SOCIAL_LIMITS.threads} caratteri) ──\n\n` + generateSocialPost(d,'threads'));
-    folder.file('post-tiktok.txt',    header + `── 🎵 TIKTOK ──\n\n` + generateSocialPost(d,'tiktok'));
-
-    // Locandina via proxy CORS
-    if (d.poster) {
-      try {
-        const r = await fetch(viaProxy(d.poster));
-        if (r.ok) {
-          const blob = await r.blob();
-          folder.file('locandina.jpg', blob);
-          posterOk++;
-        } else posterFail++;
-      } catch { posterFail++; }
-    }
-
-    // Slide TikTok
-    try {
-      const blob = await generateSlideBlob(d);
-      if (blob) {
-        folder.file('slide-tiktok.png', blob);
-        slideOk++;
-      } else slideFail++;
-    } catch { slideFail++; }
-
-    processed++;
-    if (processed % 5 === 0 || processed === items.length) {
-      showToast(`⏳ Elaborazione ${processed}/${items.length}...`);
-    }
-  }
-
-  // Parallelizzazione: 10 alla volta, ma ognuno conserva il suo indice
-  const queue = items.map((d, idx) => ({ d, idx }));
-  await Promise.all(Array(CONCURRENCY).fill(0).map(async () => {
-    while (queue.length) {
-      const { d, idx } = queue.shift();
-      await processOne(d, idx);
-    }
-  }));
-
-  showToast('⏳ Compressione finale ZIP...');
-  const blob = await zip.generateAsync({ type: 'blob' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `horror-bulletin-${DATA.targetMonth.toLowerCase().replace(/\s/g,'-')}-${bulkCategoryFilter}.zip`;
-  a.click();
-  URL.revokeObjectURL(url);
-
-  const totalPosters = items.filter(x => x.poster).length;
-  showToast(`✓ ZIP scaricato — ${items.length} film, ${slideOk}/${items.length} slide, ${posterOk}/${totalPosters} locandine`);
-}
-
-// Genera slide come Blob senza scaricarla
-function generateSlideBlob(d) {
-  return new Promise(resolve => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 1080; canvas.height = 1920;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#0a0a0f';
-    ctx.fillRect(0,0,1080,1920);
-
-    const drawText = () => {
-      ctx.fillStyle = '#c0392b';
-      ctx.fillRect(0, 100, 1080, 8);
-      ctx.fillStyle = '#ff6b6b';
-      ctx.font = 'bold 48px system-ui, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('☠ HORROR BULLETIN', 540, 80);
-
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 72px system-ui, sans-serif';
-      wrapText(ctx, d.title || '', 540, 1450, 1000, 80);
-
-      ctx.fillStyle = '#f0c040';
-      ctx.font = '52px system-ui, sans-serif';
-      ctx.fillText(`(${d.year||'—'})`, 540, 1580);
-
-      ctx.fillStyle = '#9090a8';
-      ctx.font = '36px system-ui, sans-serif';
-      ctx.fillText(`Dir. ${d.director||'N/D'}`, 540, 1660);
-
-      ctx.fillStyle = '#5dade2';
-      ctx.font = '40px system-ui, sans-serif';
-      ctx.fillText(`${formatDate(d.releaseDate)} · ${d.platform||d.category}`, 540, 1730);
-
-      ctx.fillStyle = '#e8e8f0';
-      ctx.font = '28px system-ui, sans-serif';
-      const synShort = (d.synIT || d.synEN || '').slice(0,100);
-      if (synShort) wrapText(ctx, synShort, 540, 1810, 1000, 35);
-
-      ctx.fillStyle = '#c0392b';
-      ctx.fillRect(0, 1812, 1080, 8);
-
-      canvas.toBlob(blob => resolve(blob));
-    };
-
-    if (d.poster) {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        const ratio = img.width / img.height;
-        const targetH = 1300;
-        const targetW = targetH * ratio;
-        const x = (1080 - targetW) / 2;
-        ctx.drawImage(img, x, 120, targetW, targetH);
-        const grad = ctx.createLinearGradient(0,1000,0,1420);
-        grad.addColorStop(0,'rgba(10,10,15,0)');
-        grad.addColorStop(1,'rgba(10,10,15,1)');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0,1000,1080,420);
-        drawText();
-      };
-      img.onerror = () => drawText();
-      img.src = viaProxy(d.poster);
-    } else {
-      drawText();
-    }
-  });
-}
-
-function downloadSlide(d) {
-  generateSlideBlob(d).then(blob => {
-    if (!blob) return;
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `slide-${(d.title||'film').replace(/[^a-z0-9]/gi,'_')}.png`;
-    a.click();
-    URL.revokeObjectURL(url);
-  });
-}
-
-function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-  const words = text.split(' ');
-  let line = '';
-  let currentY = y;
-  for (let n = 0; n < words.length; n++) {
-    const testLine = line + words[n] + ' ';
-    if (ctx.measureText(testLine).width > maxWidth && n > 0) {
-      ctx.fillText(line.trim(), x, currentY);
-      line = words[n] + ' ';
-      currentY += lineHeight;
-    } else {
-      line = testLine;
-    }
-  }
-  ctx.fillText(line.trim(), x, currentY);
 }
 
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('nav .nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-  const tabs = { bulletin: 0, archivio: 1, social: 2, bulkpost: 3 };
+  const tabs = { bulletin: 0, archivio: 1 };
   document.querySelectorAll('nav .nav-tab')[tabs[id]].classList.add('active');
-  if (id === 'bulkpost') renderBulk();
 }
 
 function showToast(msg) {
