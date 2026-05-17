@@ -1,4 +1,4 @@
-// fetch_horror.js — v9
+// fetch_horror.js — v10
 // Doppia fonte: TMDB (film) + TVMaze (serie TV premiere e nuove stagioni)
 const TMDB_KEY       = process.env.TMDB_API_KEY;
 const NOTION_TOKEN   = process.env.NOTION_TOKEN;
@@ -17,7 +17,6 @@ const N_HDR       = {
   'Content-Type': 'application/json'
 };
 
-// File system per export JSON
 const fs = require('fs');
 const path = require('path');
 
@@ -40,11 +39,8 @@ const isLatinReadable = t => {
   return !NON_LATIN.test(t);
 };
 
-// Generi TVMaze considerati horror-friendly
 const TVMAZE_HORROR_GENRES = ['Horror','Thriller','Mystery','Supernatural','Crime'];
-
 const RE_RELEASE_YEARS_THRESHOLD = 2;
-
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // ── HTTP HELPERS ──
@@ -265,9 +261,6 @@ async function fetchHorrorMovies() {
 }
 
 // ── FETCH SERIE TV DA TVMAZE ──
-// Strategia: scarica tutti gli episodi schedulati nel mese target,
-// filtra solo quelli con number=1 (premiere o premiere di stagione),
-// poi filtra per genere horror-friendly e titolo leggibile.
 async function fetchHorrorSeriesPremieres() {
   console.log('Fetching TVMaze schedule for the month...');
   const days = [];
@@ -277,21 +270,19 @@ async function fetchHorrorSeriesPremieres() {
   }
 
   const allEpisodes = [];
-  // TVMaze ha sia /schedule (TV tradizionale) sia /schedule/web (streaming)
   for (const date of days) {
     try {
       const [tvSched, webSched] = await Promise.all([
         tvmaze(`/schedule?country=US&date=${date}`).catch(() => []),
         tvmaze(`/schedule/web?date=${date}`).catch(() => [])
       ]);
-      // /schedule restituisce episodi con embedded show; /schedule/web include _embedded.show
       for (const ep of tvSched) {
         if (ep && ep.show) allEpisodes.push({ ...ep, _show: ep.show, _src: 'tv' });
       }
       for (const ep of webSched) {
         if (ep && ep._embedded?.show) allEpisodes.push({ ...ep, _show: ep._embedded.show, _src: 'web' });
       }
-      await sleep(120); // gentle rate limit
+      await sleep(120);
     } catch (err) {
       console.error(`TVMaze schedule error ${date}: ${err.message}`);
     }
@@ -299,10 +290,8 @@ async function fetchHorrorSeriesPremieres() {
 
   console.log(`TVMaze: fetched ${allEpisodes.length} total episodes scheduled in month`);
 
-  // Filtro 1: solo number=1 (premiere o nuova stagione)
   const premieres = allEpisodes.filter(ep => ep.number === 1);
 
-  // Filtro 2: deduplica per show.id (un episodio per serie)
   const seenShows = new Map();
   for (const ep of premieres) {
     const showId = ep._show.id;
@@ -311,13 +300,11 @@ async function fetchHorrorSeriesPremieres() {
     }
   }
 
-  // Filtro 3: solo generi horror-friendly
   const horrorOnly = [...seenShows.values()].filter(ep => {
     const genres = ep._show.genres || [];
     return genres.some(g => TVMAZE_HORROR_GENRES.includes(g));
   });
 
-  // Filtro 4: titolo leggibile (latino)
   const readable = horrorOnly.filter(ep => isLatinReadable(ep._show.name));
 
   console.log(`TVMaze filtered: ${premieres.length} premieres → ${seenShows.size} unique shows → ${horrorOnly.length} horror → ${readable.length} readable`);
@@ -326,6 +313,8 @@ async function fetchHorrorSeriesPremieres() {
 }
 
 // ── FORMATTAZIONE ──
+
+// Caption singolo film per Telegram
 function filmCaption(e) {
   const catEmoji = { 'Cinema':'🎟️','Streaming':'📡','VOD':'🎞️','Home Video':'📀','Serie TV':'📺' };
   const reLabel = e.isReRelease
@@ -362,27 +351,127 @@ function filmCaption(e) {
   ].filter(Boolean).join('\n');
 }
 
-function categorySeparator(cat) {
-  const icons = { 'Cinema':'🎟️','Streaming':'📡','VOD':'🎞️','Home Video':'📀','Serie TV':'📺' };
-  return `\n━━━━━━━━━━━━━━━━━━━━━━\n${icons[cat]||'☠️'}  *${cat.toUpperCase()}*\n━━━━━━━━━━━━━━━━━━━━━━\n`;
-}
-
-function monthHeader(grouped) {
-  const total = Object.values(grouped).reduce((s,a) => s+a.length, 0);
+// ── HEADER MENSILE ──
+// Telegram
+function monthHeaderTg(grouped) {
   const order = ['Cinema','Streaming','VOD','Home Video','Serie TV'];
-  const counts = order.filter(c => grouped[c]?.length)
-    .map(c => `${c}: ${grouped[c].length}`).join(' · ');
+  const total = Object.values(grouped).reduce((s,a) => s+a.length, 0);
+  const catEmoji = { 'Cinema':'🎟️','Streaming':'📡','VOD':'🎞️','Home Video':'📀','Serie TV':'📺' };
+  const breakdown = order
+    .filter(c => grouped[c]?.length)
+    .map(c => `${catEmoji[c]} ${grouped[c].length} ${c}`)
+    .join('\n');
+
   return [
-    `☠️ *HORROR BULLETIN*`,
+    `☠️☠️☠️☠️☠️☠️☠️☠️☠️☠️☠️☠️`,
+    ``,
+    `🩸 *HORROR BULLETIN* 🩸`,
     `📅 *${MONTH_IT}*`,
     ``,
-    `_${total} uscite horror in arrivo_`,
-    `_${counts}_`,
+    `*${total} uscite horror in arrivo*`,
+    ``,
+    breakdown,
+    ``,
+    `☠️☠️☠️☠️☠️☠️☠️☠️☠️☠️☠️☠️`,
     ``,
     `#horror #horrorbulletin #horrormonth`
   ].join('\n');
 }
 
+// ── SEPARATORE DI CATEGORIA ──
+// Telegram — testo grande e visibile
+function categorySeparatorTg(cat, count) {
+  const icons = { 'Cinema':'🎟️','Streaming':'📡','VOD':'🎞️','Home Video':'📀','Serie TV':'📺' };
+  const icon = icons[cat] || '☠️';
+  const bar  = '━'.repeat(22);
+  return [
+    ``,
+    bar,
+    ``,
+    `${icon}${icon}${icon}  *${cat.toUpperCase()}*  ${icon}${icon}${icon}`,
+    `_${count} uscit${count === 1 ? 'a' : 'e'} in arrivo_`,
+    ``,
+    bar,
+  ].join('\n');
+}
+
+// Discord — messaggio header categoria con embed colorato
+async function discordCategorySep(cat, count) {
+  const catColor = { 'Cinema':0xC0392B,'Streaming':0x2980B9,'VOD':0x8E44AD,'Home Video':0xF39C12,'Serie TV':0x27AE60 };
+  const icons    = { 'Cinema':'🎟️','Streaming':'📡','VOD':'🎞️','Home Video':'📀','Serie TV':'📺' };
+  const icon     = icons[cat] || '☠️';
+  const color    = catColor[cat] || 0x8B0000;
+
+  await fetch(DISCORD_URL, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      embeds: [{
+        title: `${icon}  ${cat.toUpperCase()}  ${icon}`,
+        description: `**${count} uscit${count === 1 ? 'a' : 'e'} in arrivo**`,
+        color,
+      }]
+    })
+  });
+  await sleep(2200);
+}
+
+// Discord — header mensile
+async function discordMonthHeader(grouped) {
+  const order = ['Cinema','Streaming','VOD','Home Video','Serie TV'];
+  const total = Object.values(grouped).reduce((s,a) => s+a.length, 0);
+  const catEmoji = { 'Cinema':'🎟️','Streaming':'📡','VOD':'🎞️','Home Video':'📀','Serie TV':'📺' };
+  const fields = order
+    .filter(c => grouped[c]?.length)
+    .map(c => ({ name: `${catEmoji[c]} ${c}`, value: `${grouped[c].length} uscite`, inline: true }));
+
+  await fetch(DISCORD_URL, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      embeds: [{
+        title: `☠️ HORROR BULLETIN — ${MONTH_IT}`,
+        description: `**${total} uscite horror in arrivo**`,
+        color: 0x8B0000,
+        fields,
+      }]
+    })
+  });
+  await sleep(2200);
+}
+
+// Discord — embed singolo film
+async function discordEmbed(e) {
+  const catColor = { 'Cinema':0xC0392B,'Streaming':0x2980B9,'VOD':0x8E44AD,'Home Video':0xF39C12,'Serie TV':0x27AE60 };
+  let titleStr;
+  if (e.isReRelease)                           titleStr = `♻️ ${e.title} (${e.originalYear}) — Riedizione`;
+  else if (e.tipoOverride === 'Nuova stagione') titleStr = `🎞️ ${e.title} — Stagione ${e.seasonNum}`;
+  else                                         titleStr = `${e.title} (${e.year})`;
+
+  const fields = [
+    { name: '🎥 Regia / Dir.', value: e.director,                inline: true },
+    { name: '📅 Uscita',       value: formatDate(e.releaseDate), inline: true },
+    { name: '📺 Categoria',    value: e.category,                inline: true }
+  ];
+  if (e.isReRelease)                           fields.push({ name: '📦 Formato/Edizione', value: e.platform, inline: false });
+  else if (e.tipoOverride === 'Nuova stagione') fields.push({ name: '📡 Su', value: e.platform, inline: false });
+  else                                         fields.push({ name: '🎬 Piattaforma', value: e.platform, inline: true });
+
+  fields.push({ name: '🇮🇹 Sinossi',  value: (e.synIT||'_Non disponibile_').slice(0,500) });
+  fields.push({ name: '🇬🇧 Synopsis', value: (e.synEN||'_Not available_').slice(0,500) });
+
+  await fetch(DISCORD_URL, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ embeds: [{
+      title: titleStr,
+      color: catColor[e.category] || 0x8B0000,
+      fields,
+      thumbnail: e.poster ? { url: e.poster } : undefined,
+      footer: { text: `#horror · #${e.category.toLowerCase().replace(/\s/g,'')}` }
+    }]})
+  });
+  await sleep(2200);
+}
+
+// ── TELEGRAM HELPERS ──
 async function tgSend(text) {
   await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -403,48 +492,6 @@ async function tgNoPhoto(caption) {
   await tgSend(`🖼️ _Locandina non disponibile_\n\n${caption}`);
 }
 
-async function discordEmbed(e) {
-  const catColor = { 'Cinema':0xC0392B,'Streaming':0x2980B9,'VOD':0x8E44AD,'Home Video':0xF39C12,'Serie TV':0x27AE60 };
-  let titleStr;
-  if (e.isReRelease)                       titleStr = `♻️ ${e.title} (${e.originalYear}) — Riedizione`;
-  else if (e.tipoOverride === 'Nuova stagione') titleStr = `🎞️ ${e.title} — Stagione ${e.seasonNum}`;
-  else                                     titleStr = `${e.title} (${e.year})`;
-
-  const fields = [
-    { name: '🎥 Regia / Dir.', value: e.director,                inline: true },
-    { name: '📅 Uscita',       value: formatDate(e.releaseDate), inline: true },
-    { name: '📺 Categoria',    value: e.category,                inline: true }
-  ];
-  if (e.isReRelease) fields.push({ name: '📦 Formato/Edizione', value: e.platform, inline: false });
-  else if (e.tipoOverride === 'Nuova stagione') fields.push({ name: '📡 Su', value: e.platform, inline: false });
-  else fields.push({ name: '🎬 Piattaforma', value: e.platform, inline: true });
-
-  fields.push({ name: '🇮🇹 Sinossi',  value: (e.synIT||'_Non disponibile_').slice(0,500) });
-  fields.push({ name: '🇬🇧 Synopsis', value: (e.synEN||'_Not available_').slice(0,500) });
-
-  await fetch(DISCORD_URL, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ embeds: [{
-      title: titleStr,
-      color: catColor[e.category] || 0x8B0000,
-      fields,
-      thumbnail: e.poster ? { url: e.poster } : undefined,
-      footer: { text: `#horror · #${e.category.toLowerCase().replace(/\s/g,'')}` }
-    }]})
-  });
-  await sleep(2200);
-}
-
-async function discordSep(cat) {
-  const icons = { 'Cinema':'🎟️','Streaming':'📡','VOD':'🎞️','Home Video':'📀','Serie TV':'📺' };
-  await fetch(DISCORD_URL, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content: `\n${icons[cat]||'☠️'} **${cat.toUpperCase()}**\n━━━━━━━━━━━━━━━━━━━━━━` })
-  });
-  await sleep(2200);
-}
-
-// Strip HTML tags da TVMaze summary
 function stripHtml(html) {
   return (html || '').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
 }
@@ -529,8 +576,8 @@ async function main() {
   // ── PROCESSA SERIE TV (TVMaze) ──
   for (const ep of seriesPremieres) {
     try {
-      const show       = ep._show;
-      const title      = show.name;
+      const show        = ep._show;
+      const title       = show.name;
       const releaseDate = (ep.airdate || '').slice(0,10);
       if (!releaseDate) continue;
 
@@ -538,14 +585,12 @@ async function main() {
 
       const isNewSeason = ep.season > 1;
       const platform    = show.webChannel?.name || show.network?.name || 'Streaming';
-      const dir         = '—'; // TVMaze non fornisce regista, lasciamo vuoto
+      const dir         = '—';
       const year        = new Date(releaseDate).getFullYear();
       const synEN       = stripHtml(show.summary);
 
-      // Recupera sinossi italiana via TMDB se possibile
       let synIT = '';
       try {
-        // TVMaze ha externals.imdb e thetvdb — proviamo lookup TMDB tramite IMDB id
         if (show.externals?.imdb) {
           const find = await tmdb(`/find/${show.externals.imdb}?external_source=imdb_id&language=it-IT`);
           const tvHit = find.tv_results?.[0];
@@ -587,7 +632,7 @@ async function main() {
 
   if (!saved.length) { console.log('No new entries.'); return; }
 
-  // Raggruppa
+  // Raggruppa per categoria
   const order   = ['Cinema','Streaming','VOD','Home Video','Serie TV'];
   const grouped = {};
   order.forEach(c => grouped[c] = []);
@@ -600,40 +645,34 @@ async function main() {
     return (a.releaseDate||'') < (b.releaseDate||'') ? -1 : 1;
   }));
 
-  // TELEGRAM
+  // ── TELEGRAM ──
   console.log('\nPushing to Telegram...');
-  await tgSend(monthHeader(grouped));
+  await tgSend(monthHeaderTg(grouped));
   for (const cat of order) {
     if (!grouped[cat].length) continue;
-    await tgSend(categorySeparator(cat));
+    await tgSend(categorySeparatorTg(cat, grouped[cat].length));
     for (const e of grouped[cat]) {
-      const caption = filmCaption(e);
-      if (e.poster) await tgPhoto(e.poster, caption);
-      else          await tgNoPhoto(caption);
+      if (e.poster) await tgPhoto(e.poster, filmCaption(e));
+      else          await tgNoPhoto(filmCaption(e));
     }
   }
 
-  // DISCORD
+  // ── DISCORD ──
   console.log('Pushing to Discord...');
-  await fetch(DISCORD_URL, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content: `# ☠️ HORROR BULLETIN — ${MONTH_IT}\n*${saved.length} uscite horror in arrivo*` })
-  });
-  await sleep(500);
+  await discordMonthHeader(grouped);
   for (const cat of order) {
     if (!grouped[cat].length) continue;
-    await discordSep(cat);
+    await discordCategorySep(cat, grouped[cat].length);
     for (const e of grouped[cat]) await discordEmbed(e);
   }
 
   console.log(`\nDone — ${saved.length} entries saved and pushed.`);
   order.forEach(c => { if (grouped[c].length) console.log(`  ${c}: ${grouped[c].length}`); });
 
-  // Export completo del DB Notion in data.json per il frontend
   await exportFullDataJson();
 }
 
-// Esporta TUTTO il database Notion in un file JSON consumabile dal frontend
+// ── EXPORT COMPLETO DB → data.json ──
 async function exportFullDataJson() {
   console.log('\nExporting full DB to data.json...');
   const allRows = [];
@@ -678,7 +717,6 @@ async function exportFullDataJson() {
     };
   });
 
-  // Ordina: prima approvati, poi per data
   items.sort((a,b) => (b.releaseDate||'').localeCompare(a.releaseDate||''));
 
   const data = {
@@ -688,10 +726,8 @@ async function exportFullDataJson() {
     items
   };
 
-  // Crea cartella docs/ se non esiste
   const docsDir = path.join(process.cwd(), 'docs');
   if (!fs.existsSync(docsDir)) fs.mkdirSync(docsDir, { recursive: true });
-
   fs.writeFileSync(path.join(docsDir, 'data.json'), JSON.stringify(data, null, 2));
   console.log(`Exported ${items.length} items to docs/data.json`);
 }
