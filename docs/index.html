@@ -18,6 +18,7 @@
     <button class="nav-tab" onclick="showPage('archivio')">Archivio</button>
     <button class="nav-tab" onclick="showPage('social')">Social</button>
     <button class="nav-tab" onclick="showPage('review')">Review</button>
+    <button class="nav-tab" onclick="showPage('guida')">Guida</button>
   </div>
   <div class="updated" id="updated-info">—</div>
 </nav>
@@ -43,6 +44,10 @@
       <button class="filter-btn" onclick="setFilter(this,'Home Video')">📀 Home Video</button>
       <button class="filter-btn" onclick="setFilter(this,'Serie TV')">📺 Serie TV</button>
       <button class="filter-btn" onclick="setFilter(this,'Riedizione')">♻️ Riedizioni</button>
+      <select class="form-select" style="margin-left:auto;padding:4px 10px;font-size:12px" onchange="setSort(this.value)" title="Ordinamento">
+        <option value="date">📅 Per data</option>
+        <option value="rilevanza">🔥 Per rilevanza</option>
+      </select>
     </div>
 
     <div id="cards-container" class="cards-grid"><div class="loading">⏳ Caricamento dati...</div></div>
@@ -119,9 +124,72 @@
     </div>
     <div class="filters" id="review-filters">
       <button class="filter-btn active" onclick="HBReview.setMode(this,'pending')">⏳ Da approvare</button>
-      <button class="filter-btn" onclick="HBReview.setMode(this,'approved')">✓ Approvate</button>
+      <button class="filter-btn" onclick="HBReview.setMode(this,'approved')">✓ Approvate — qui si revoca</button>
     </div>
     <div id="review-list"></div>
+  </div>
+
+  <div id="page-guida" class="page">
+    <div class="bulletin-header"><div class="bulletin-title">Guida allo strumento</div></div>
+
+    <div class="post-section">
+      <div class="post-title">🔄 Come funziona</div>
+      <div class="guida-text">
+        Il 28 di ogni mese il sistema pesca da TMDB e TVMaze le uscite horror del mese successivo,
+        le salva su Notion e le annuncia su Telegram e Discord. Ogni 2 ore il sito si riallinea a Notion.
+        Costo di infrastruttura: <b>0 €/mese</b>.
+      </div>
+    </div>
+
+    <div class="post-section">
+      <div class="post-title">📋 Bulletin e Archivio</div>
+      <div class="guida-text">
+        <b>Bulletin</b> mostra solo le uscite del mese corrente, ordinabili per <b>data</b> o per
+        <b>🔥 rilevanza</b>. <b>Archivio</b> è il catalogo storico completo, con ricerca e filtri.
+        <br><br>
+        <b>🔥 Rilevanza</b> = buzz social (popolarità TMDB, o "weight" TVMaze per le serie) +
+        gradimento (media voti, smorzata dal numero di votanti: un 10/10 con 3 voti non batte
+        un 7 con mille voti). Più è alto, più il titolo è chiacchierato e apprezzato.
+      </div>
+    </div>
+
+    <div class="post-section">
+      <div class="post-title">✅ Review — approvare e revocare</div>
+      <div class="guida-text">
+        La tab <b>Review</b> gestisce il flusso editoriale senza passare da Notion:
+        <br>• <b>⏳ Da approvare</b> → bottone <b>✓ Approva</b>: la voce diventa disponibile nella pagina Social
+        <br>• <b>✓ Approvate</b> → bottone <b>↩ Revoca</b>: la voce torna in coda (la revoca sta in questa lista!)
+        <br><br>
+        Serve la API Key del worker (bottone 🔑 in alto a destra nella pagina): si imposta una volta
+        e resta salvata nel browser. La scrittura passa da un Cloudflare Worker — il token Notion
+        non tocca mai il browser.
+      </div>
+    </div>
+
+    <div class="post-section">
+      <div class="post-title">⚡ Social — post preformattati</div>
+      <div class="guida-text">
+        Scegli una voce approvata e usa il bottone del social che ti serve:
+        <br>• <b>X / Facebook / Threads</b>: un click copia <b>testo + locandina insieme</b> → un incolla nel composer e via
+        <br>• <b>Instagram</b>: un click copia la caption <b>e</b> scarica la locandina (Instagram vieta il resto alle app esterne)
+        <br>• <b>TikTok</b>: un click copia la caption <b>e</b> scarica la slide verticale 1080×1920
+        <br>• Su mobile, <b>📤 Condividi</b> apre la share sheet nativa con immagine e testo
+        <br><br>
+        <b>📦 ZIP bulk</b>: spunta più voci nella lista in fondo alla pagina Social e scarica un unico ZIP —
+        una cartella per film con i 5 testi già formattati, locandina e slide. Le sinossi dei post sono
+        sempre in inglese per massimizzare la reach.
+      </div>
+    </div>
+
+    <div class="post-section">
+      <div class="post-title">🤖 Autoposting (predisposto)</div>
+      <div class="guida-text">
+        La pubblicazione automatica su X, Facebook, Instagram e Threads è predisposta via GitHub Actions
+        con le API ufficiali gratuite dei social — si attiva compilando i secrets del repository.
+        Guida completa nella sezione <i>Autoposting</i> del
+        <a href="https://github.com/Ainsoph87/horror-bulletin#autoposting-autoposting" target="_blank" rel="noopener" style="color:var(--red3)">README del repo</a>.
+      </div>
+    </div>
   </div>
 
 </main>
