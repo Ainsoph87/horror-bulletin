@@ -126,15 +126,17 @@ async function createDB() {
 }
 
 async function exists(title, releaseDate) {
+  // Finestra di 90 giorni: lo stesso film ripescato con data slittata è un duplicato,
+  // una riedizione a distanza di anni no
   const r = await notion('POST', `/databases/${DB_ID}/query`, {
-    filter: {
-      and: [
-        { property: 'Name',        title: { equals: title } },
-        { property: 'Data uscita', date:  { equals: releaseDate } }
-      ]
-    }
+    filter: { property: 'Name', title: { equals: title } }
   });
-  return r.results.length > 0;
+  if (!releaseDate) return r.results.length > 0;
+  const WINDOW = 90 * 86400000;
+  return r.results.some(p => {
+    const d = p.properties?.['Data uscita']?.date?.start;
+    return d && Math.abs(new Date(d) - new Date(releaseDate)) <= WINDOW;
+  });
 }
 
 async function save(e) {
