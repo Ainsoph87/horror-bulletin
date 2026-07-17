@@ -1,6 +1,7 @@
 // app.js — caricamento dati, Bulletin (solo mese corrente), Archivio
 let DATA = { items: [], updatedAt: null, targetMonth: '', total: 0 };
 let currentFilter = 'all';
+let currentSort = 'date'; // date | rilevanza
 
 const CAT_BADGE = {
   'Cinema':'badge-cinema','Streaming':'badge-streaming','VOD':'badge-vod',
@@ -55,8 +56,15 @@ function applyFilter(items, f) {
   return items.filter(i => i.category === f);
 }
 
+function setSort(v) {
+  currentSort = v;
+  renderCards();
+}
+
 function renderCards() {
   const filtered = applyFilter(monthItems(), currentFilter);
+  if (currentSort === 'rilevanza') filtered.sort((a, b) => (b.rilevanza || 0) - (a.rilevanza || 0));
+  else filtered.sort((a, b) => (b.releaseDate || '').localeCompare(a.releaseDate || ''));
   if (!filtered.length) {
     document.getElementById('cards-container').innerHTML = '<div class="empty">Nessuna uscita per questo mese.</div>';
     return;
@@ -88,6 +96,7 @@ function renderCards() {
             <span>Dir. ${d.director||'N/D'}</span>
             <span class="card-date">${formatDate(d.releaseDate)}</span>
             <span class="card-platform">${d.platform||''}</span>
+            ${d.rilevanza ? `<span title="Rilevanza (buzz + voti)" style="color:var(--orange3)">🔥 ${d.rilevanza}</span>` : ''}
           </div>
           <div class="card-syn">${(d.synIT || d.synEN || 'Sinossi non disponibile.').slice(0,140)}${(d.synIT||d.synEN||'').length>140?'...':''}</div>
         </div>
@@ -148,7 +157,7 @@ function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('nav .nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-  const tabs = { bulletin: 0, archivio: 1, social: 2, review: 3 };
+  const tabs = { bulletin: 0, archivio: 1, social: 2, review: 3, guida: 4 };
   document.querySelectorAll('nav .nav-tab')[tabs[id]].classList.add('active');
 }
 

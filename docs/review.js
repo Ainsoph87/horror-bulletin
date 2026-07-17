@@ -22,7 +22,18 @@
     render();
   }
 
+  function renderCounts() {
+    const pend = HB.DATA.items.filter(i => !i.approvato).length;
+    const appr = HB.DATA.items.length - pend;
+    const chips = document.querySelectorAll('#review-filters .filter-btn');
+    if (chips.length === 2) {
+      chips[0].textContent = `⏳ Da approvare (${pend})`;
+      chips[1].textContent = `✓ Approvate (${appr}) — qui si revoca`;
+    }
+  }
+
   function render() {
+    renderCounts();
     if (!apiKey) {
       $('review-list').innerHTML = '<div class="empty">🔑 Imposta la API Key del worker per approvare da qui.<br><br><button class="zip-btn" onclick="HBReview.setKey()">Imposta API Key</button></div>';
       return;

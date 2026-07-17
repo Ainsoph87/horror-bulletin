@@ -70,6 +70,7 @@ async function main() {
       synIT:        t('Sinossi IT','rich_text'),
       synEN:        t('Sinossi EN','rich_text'),
       poster:       t('URL Locandina','url'),
+      rilevanza:    t('Rilevanza','number'),
       verificato:   t('Verificato','checkbox'),
       approvato:    t('Approvato','checkbox'),
       pubblicato:   t('Pubblicato','checkbox')

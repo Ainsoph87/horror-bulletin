@@ -19,6 +19,7 @@ const N_HDR       = {
 
 const fs = require('fs');
 const path = require('path');
+const { movieScore, showScore } = require('./rilevanza.js');
 
 const now   = new Date();
 const tM    = now.getMonth() + 2 > 12 ? 1 : now.getMonth() + 2;
@@ -116,6 +117,7 @@ async function createDB() {
       'Sinossi IT':    { rich_text: {} },
       'Sinossi EN':    { rich_text: {} },
       'URL Locandina': { url: {} },
+      'Rilevanza':     { number: { format: 'number' } },
       'Verificato':    { checkbox: {} },
       'Approvato':     { checkbox: {} },
       'Pubblicato':    { checkbox: {} }
@@ -157,6 +159,7 @@ async function save(e) {
   if (e.synIT)          props['Sinossi IT']     = { rich_text: [{ text: { content: e.synIT.slice(0,2000) } }] };
   if (e.synEN)          props['Sinossi EN']     = { rich_text: [{ text: { content: e.synEN.slice(0,2000) } }] };
   if (e.poster)         props['URL Locandina']  = { url: e.poster };
+  if (e.rilevanza != null) props['Rilevanza']   = { number: e.rilevanza };
 
   return notion('POST', '/pages', {
     parent: { database_id: DB_ID },
@@ -559,6 +562,7 @@ async function main() {
         synIT:       det.overview || '',
         synEN:       detEN.overview || '',
         poster:      det.poster_path ? TMDB_IMG + det.poster_path : null,
+        rilevanza:   movieScore(det),
         source:      'TMDB',
         notes:       `${release.country} type ${release.type}${release.note?' "'+release.note+'"':''}`
       };
@@ -614,6 +618,7 @@ async function main() {
         synIT,
         synEN,
         poster:      show.image?.original || show.image?.medium || null,
+        rilevanza:   showScore(show),
         source:      'TVMaze',
         notes:       `Show ID ${show.id} | Season ${ep.season} ep ${ep.number}`
       };
