@@ -32,12 +32,12 @@
     },
     facebook(d) {
       return [header(d), '', anagrafica(d), '',
-        clean(d.synIT || d.synEN), '',
+        clean(d.synEN || d.synIT), '',
         ['#horror', '#horrormovies', catTag(d), tipoTag(d)].filter(Boolean).join(' ')
       ].join('\n').replace(/\n{3,}/g, '\n\n').trim();
     },
     instagram(d) {
-      return [header(d), '', clean(d.synIT || d.synEN), '.', '.', '.',
+      return [header(d), '', clean(d.synEN || d.synIT), '.', '.', '.',
         ['#horror','#horrormovies','#horrorfilm','#horrorcommunity','#horrorlovers','#horrorfan',
          '#scary','#spooky','#cinephile','#moviestowatch', catTag(d), tipoTag(d)].filter(Boolean).join(' ')
       ].join('\n').trim();
@@ -46,7 +46,7 @@
       const t = [header(d),
         [d.director ? `Dir. ${d.director}` : '', formatDate(d.releaseDate)].filter(Boolean).join(' · '),
         clean(d.platform || d.category), '',
-        cut(clean(d.synIT || d.synEN), 200), '',
+        clean(d.synEN || d.synIT), '',
         ['#horror', catTag(d)].filter(Boolean).join(' ')].filter(s => s !== '').join('\n');
       return cut(t, 500);
     },

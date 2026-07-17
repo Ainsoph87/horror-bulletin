@@ -29,8 +29,24 @@ test('ogni post contiene titolo e #horror', () => {
   }
 });
 
-test('facebook contiene sinossi IT integrale', () => {
-  assert.ok(F.format('facebook', item).includes(item.synIT));
+test('facebook contiene sinossi EN integrale (priorità inglese)', () => {
+  assert.ok(F.format('facebook', item).includes(item.synEN));
+});
+
+test('instagram usa la sinossi EN', () => {
+  assert.ok(F.format('instagram', item).includes(item.synEN));
+});
+
+test('threads non pre-tronca la sinossi (solo limite 500 piattaforma)', () => {
+  const t = F.format('threads', item);
+  assert.ok(t.includes(item.synEN), 'sinossi EN da 400 char deve entrare integrale');
+  assert.ok(t.length <= 500);
+});
+
+test('sinossi EN ha priorità su IT anche quando entrambe presenti', () => {
+  for (const id of ['facebook', 'instagram', 'threads']) {
+    assert.ok(!F.format(id, item).includes('SSSS'), id + ': non deve usare la sinossi IT');
+  }
 });
 
 test('campi mancanti non producono null/undefined nel testo', () => {
