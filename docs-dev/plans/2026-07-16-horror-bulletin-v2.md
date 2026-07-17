@@ -13,7 +13,7 @@
 - Costo 0 €/mese: nessun servizio a pagamento, nessuna dipendenza npm, nessun build step
 - `docs/` è la root di GitHub Pages: NON mettere file di sviluppo lì dentro
 - Schema `docs/data.json` invariato (campi: id, title, director, year, category, tipo, platform, releaseDate, originalYear, synIT, synEN, poster, verificato, approvato, pubblicato)
-- `fetch_horror.js` e `sync_data.js` restano in root e NON vanno modificati
+- `fetch_horror.js` e `sync_data.js` restano in root; si modificano SOLO per la dedup (Task 8)
 - Limiti testo: X ≤ 280 caratteri, Threads ≤ 500 caratteri
 - Lingua UI: italiano; post bilingui IT/EN dove c'è spazio
 - Branch di lavoro: `v2-refactor`
@@ -191,6 +191,14 @@ test('formatDate gestisce null', () => {
 - [ ] **Step 2: Estrarre `docs/app.js`** — Copiare il JS dell'attuale `docs/index.html` (righe 172–337) con queste modifiche:
   - RIMUOVERE: `WORKER_URL`, `API_KEY`, `changeApiKey()`
   - `showPage`: tabs `{ bulletin: 0, archivio: 1, social: 2 }`
+  - **Bulletin = solo mese corrente** (addendum /btw): in `renderCards()` e `renderStats()` filtrare prima con
+
+```js
+const ym = new Date().toISOString().slice(0, 7); // YYYY-MM
+const monthItems = () => DATA.items.filter(i => (i.releaseDate || '').startsWith(ym));
+```
+
+    `renderCards`/`renderStats` lavorano su `monthItems()`; `renderArchive` e la pagina Social restano su `DATA.items`. Empty state Bulletin: "Nessuna uscita per questo mese."
   - In `loadData()` aggiungere in coda: `if (window.HBSocial) HBSocial.init(DATA);`
   - In `renderCards()`, dentro `card-body`, dopo `card-syn`, aggiungere per le voci approvate:
 
@@ -604,6 +612,136 @@ jobs:
   - §Autoposting: stato (predisposizione), guida attivazione per X (developer.x.com, free tier 500 post/mese, 4 secrets), Meta FB/IG (business account + app Meta + Graph API, 3 secrets), Threads (2 secrets); come implementare l'adapter in `publish.js`; nota TikTok manuale
   - Sviluppo: `node --test test/`, serve locale di `docs/`
 - [ ] **Step 2: Commit** — `git add README.md && git commit -m "docs: README completo con guida autoposting"`
+
+---
+
+### Task 8: Dedup titoli (addendum /btw)
+
+**Files:**
+- Create: `dedupe.js` (root — modulo condiviso, testabile)
+- Create: `test/dedupe.test.js`
+- Modify: `sync_data.js` (dedup all'export)
+- Modify: `fetch_horror.js:128-138` (funzione `exists`: finestra 90 giorni invece di data esatta)
+
+**Interfaces:**
+- Produces: `dedupeItems(items) → items` — rimuove i duplicati (stesso titolo normalizzato + categoria, date entro 90 giorni), tenendo la voce con `pubblicato`, poi `approvato`, poi data più recente. Riedizioni a distanza di anni = voci distinte.
+
+- [ ] **Step 1: Test (falliscono)**
+
+`test/dedupe.test.js`:
+
+```js
+const { test } = require('node:test');
+const assert = require('node:assert');
+const dedupeItems = require('../dedupe.js');
+
+const mk = (title, category, releaseDate, extra = {}) => ({ title, category, releaseDate, ...extra });
+
+test('stesso titolo+categoria entro 90 giorni: resta la data più recente', () => {
+  const out = dedupeItems([mk('Hungry', 'Cinema', '2026-06-23'), mk('Hungry', 'Cinema', '2026-07-24')]);
+  assert.strictEqual(out.length, 1);
+  assert.strictEqual(out[0].releaseDate, '2026-07-24');
+});
+
+test('pubblicato vince sulla data', () => {
+  const out = dedupeItems([
+    mk('Hungry', 'Cinema', '2026-06-23', { pubblicato: true }),
+    mk('Hungry', 'Cinema', '2026-07-24')
+  ]);
+  assert.strictEqual(out.length, 1);
+  assert.ok(out[0].pubblicato);
+});
+
+test('approvato vince su non approvato', () => {
+  const out = dedupeItems([
+    mk('Hungry', 'Cinema', '2026-06-23', { approvato: true }),
+    mk('Hungry', 'Cinema', '2026-07-24')
+  ]);
+  assert.strictEqual(out.length, 1);
+  assert.ok(out[0].approvato);
+});
+
+test('categorie diverse non sono duplicati', () => {
+  const out = dedupeItems([mk('Scream 7', 'Cinema', '2026-06-25'), mk('Scream 7', 'Home Video', '2026-06-25')]);
+  assert.strictEqual(out.length, 2);
+});
+
+test('stesso titolo a distanza di anni (riedizione) non è duplicato', () => {
+  const out = dedupeItems([mk('The Thing', 'Cinema', '2026-08-15'), mk('The Thing', 'Cinema', '2022-06-17')]);
+  assert.strictEqual(out.length, 2);
+});
+
+test('titoli con case/spazi diversi sono lo stesso titolo', () => {
+  const out = dedupeItems([mk('  hungry ', 'Cinema', '2026-06-23'), mk('Hungry', 'Cinema', '2026-07-24')]);
+  assert.strictEqual(out.length, 1);
+});
+```
+
+- [ ] **Step 2: Run `node --test` → i test dedupe FALLISCONO (modulo mancante)**
+
+- [ ] **Step 3: Implementare `dedupe.js`**
+
+```js
+// dedupe.js — rimozione duplicati da cron mensile (stesso film ripescato con data slittata).
+// Duplicato = stesso titolo normalizzato + categoria, date entro 90 giorni.
+// Si tiene: pubblicato > approvato > data più recente. Riedizioni a distanza di anni restano distinte.
+const WINDOW_DAYS = 90;
+const norm = t => (t || '').toLowerCase().trim().replace(/\s+/g, ' ');
+const days = (a, b) => Math.abs(new Date(a) - new Date(b)) / 86400000;
+const rank = i => (i.pubblicato ? 4 : 0) + (i.approvato ? 2 : 0);
+
+function dedupeItems(items) {
+  const kept = [];
+  for (const item of items) {
+    const dup = kept.find(k =>
+      norm(k.title) === norm(item.title) &&
+      (k.category || '') === (item.category || '') &&
+      k.releaseDate && item.releaseDate &&
+      days(k.releaseDate, item.releaseDate) <= WINDOW_DAYS
+    );
+    if (!dup) { kept.push(item); continue; }
+    const better =
+      rank(item) > rank(dup) ||
+      (rank(item) === rank(dup) && (item.releaseDate || '') > (dup.releaseDate || ''));
+    if (better) kept[kept.indexOf(dup)] = item;
+  }
+  return kept;
+}
+
+module.exports = dedupeItems;
+```
+
+- [ ] **Step 4: Run `node --test` → tutti pass**
+
+- [ ] **Step 5: Integrare in `sync_data.js`** — dopo `items.sort(...)`:
+
+```js
+const dedupeItems = require('./dedupe.js');
+const before = items.length;
+const deduped = dedupeItems(items);
+if (deduped.length < before) console.log(`Dedup: rimossi ${before - deduped.length} duplicati`);
+```
+
+  e usare `deduped` al posto di `items` nella costruzione di `data` (`total: deduped.length, items: deduped`).
+
+- [ ] **Step 6: Allargare `exists()` in `fetch_horror.js`** — sostituire il body: query per solo titolo, poi finestra locale:
+
+```js
+async function exists(title, releaseDate) {
+  const r = await notion('POST', `/databases/${DB_ID}/query`, {
+    filter: { property: 'Name', title: { equals: title } }
+  });
+  if (!releaseDate) return r.results.length > 0;
+  const WINDOW = 90 * 86400000;
+  return r.results.some(p => {
+    const d = p.properties?.['Data uscita']?.date?.start;
+    return d && Math.abs(new Date(d) - new Date(releaseDate)) <= WINDOW;
+  });
+}
+```
+
+- [ ] **Step 7: Verifica su dati reali** — Run: `node -e "const d=require('./docs/data.json');const dd=require('./dedupe.js');console.log(d.items.length,'->',dd(d.items).length)"` → Expected: da 382 a ~362 (18 gruppi, alcuni con 3 date)
+- [ ] **Step 8: Commit** — `git add dedupe.js test/dedupe.test.js sync_data.js fetch_horror.js && git commit -m "fix: dedup titoli duplicati dal cron mensile (radice + sanatoria export)"`
 
 ---
 

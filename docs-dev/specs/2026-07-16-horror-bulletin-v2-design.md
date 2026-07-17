@@ -96,6 +96,19 @@ Principio: l'autoposting non passa dal browser ma da **GitHub Actions**, dove i 
   solo se tutti falliscono.
 - Verifica finale sul sito live GitHub Pages dopo il deploy.
 
+## E. Addendum 2026-07-17 (da discussione /btw)
+
+1. **Bulletin = solo mese corrente.** La dashboard Bulletin mostra solo le voci con `releaseDate` nel mese
+   corrente (filtro client-side su YYYY-MM); l'Archivio continua a mostrare tutto. Stats della pagina
+   Bulletin calcolate sul sottoinsieme del mese.
+2. **Verifica duplicazione titoli.** Dati reali: 18 gruppi duplicati (stesso titolo+categoria, date entro
+   ~60 giorni — il cron mensile ripesca film con data slittata). Fix su due livelli:
+   - **Radice** (`fetch_horror.js`): il check `exists()` passa da titolo+data esatta a titolo (query Notion)
+     + confronto locale categoria e finestra di 90 giorni.
+   - **Sanatoria** (`sync_data.js`): dedupe all'export via modulo condiviso `dedupe.js` (root, testato con
+     node --test): gruppi per titolo normalizzato+categoria con date entro 90 giorni → si tiene la voce con
+     `pubblicato`, poi `approvato`, poi data più recente. Le riedizioni a distanza di anni restano voci distinte.
+
 ## Fuori scope
 
 - Migrazione a framework/build (Next.js scartato: sovradimensionato per una vetrina di data.json)
