@@ -91,6 +91,15 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem}
 .zip-btn:hover{background:rgba(212,160,23,.15)}
 .zip-btn:disabled{opacity:.4;cursor:not-allowed}
 
+.review-row{display:flex;gap:14px;align-items:center;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:10px 14px;margin-bottom:8px}
+.review-poster{width:48px;min-width:48px;aspect-ratio:2/3;background:var(--bg3);border-radius:4px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--text3)}
+.review-poster img{width:100%;height:100%;object-fit:cover}
+.review-info{flex:1;min-width:0}
+.review-title{font-size:14px;font-weight:500;color:var(--text)}
+.review-meta{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--text2);margin:4px 0}
+.review-syn{font-size:11px;color:var(--text3);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.review-actions{display:flex;flex-direction:column;gap:6px}
+
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--bg3);border:1px solid var(--green2);color:var(--green3);padding:10px 16px;border-radius:var(--radius);font-size:13px;z-index:999;display:none}
 
 .loading{display:flex;align-items:center;justify-content:center;padding:3rem;color:var(--text2)}
