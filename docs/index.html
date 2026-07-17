@@ -4,89 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Horror Bulletin</title>
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  :root{
-    --bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a24;--bg4:#22222e;
-    --border:#2a2a3a;--border2:#3a3a50;
-    --text:#e8e8f0;--text2:#9090a8;--text3:#5a5a72;
-    --red:#c0392b;--red2:#e74c3c;--red3:#ff6b6b;
-    --gold:#b8860b;--gold2:#d4a017;--gold3:#f0c040;
-    --green:#1a6b3a;--green2:#27ae60;--green3:#2ecc71;
-    --blue:#1a3a6b;--blue2:#2980b9;--blue3:#5dade2;
-    --purple:#4a1a6b;--purple2:#8e44ad;--purple3:#bb8fce;
-    --orange:#b8651a;--orange2:#e67e22;--orange3:#f39c12;
-    --radius:8px;--radius2:12px;
-  }
-  body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;min-height:100vh}
-
-  nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:8px}
-  .logo{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:600;color:var(--red3);letter-spacing:1px}
-  .logo-icon{width:28px;height:28px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px}
-  .nav-tabs{display:flex;gap:2px;flex-wrap:wrap}
-  .nav-tab{padding:6px 14px;border-radius:var(--radius);background:none;border:none;color:var(--text2);cursor:pointer;font-size:13px;transition:.15s}
-  .nav-tab:hover{background:var(--bg3);color:var(--text)}
-  .nav-tab.active{background:var(--red);color:#fff}
-  .updated{font-size:11px;color:var(--text3)}
-
-  main{max-width:1200px;margin:0 auto;padding:1.5rem}
-  .page{display:none}.page.active{display:block}
-
-  .bulletin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:12px}
-  .bulletin-title{font-size:22px;font-weight:500;color:var(--text)}
-  .month-badge{background:var(--red);color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500}
-
-  .filters{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap}
-  .filter-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;transition:.15s}
-  .filter-btn:hover,.filter-btn.active{background:var(--red);border-color:var(--red);color:#fff}
-
-  .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:1.5rem}
-  .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center}
-  .stat-num{font-size:24px;font-weight:500;color:var(--red3)}
-  .stat-label{font-size:11px;color:var(--text2);margin-top:4px}
-
-  .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
-  .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;transition:.2s;display:flex;flex-direction:column}
-  .card:hover{border-color:var(--border2);transform:translateY(-2px)}
-  .card-poster{width:100%;aspect-ratio:2/3;background:var(--bg3);position:relative;overflow:hidden}
-  .card-poster img{width:100%;height:100%;object-fit:cover}
-  .card-poster-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:40px}
-  .card-badge{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
-  .badge-cinema{background:var(--red);color:#fff}
-  .badge-streaming{background:var(--blue2);color:#fff}
-  .badge-vod{background:var(--purple2);color:#fff}
-  .badge-homevideo{background:var(--gold);color:#111}
-  .badge-serie{background:var(--green2);color:#fff}
-  .card-tipo{position:absolute;top:8px;right:8px;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;background:var(--orange);color:#fff;text-transform:uppercase}
-  .card-tipo.nuova{background:var(--green2)}
-  .card-tipo.stagione{background:var(--purple2)}
-  .card-body{padding:12px;flex:1;display:flex;flex-direction:column}
-  .card-title{font-size:14px;font-weight:500;margin-bottom:4px;color:var(--text)}
-  .card-meta{font-size:11px;color:var(--text2);margin-bottom:8px;display:flex;gap:8px;flex-wrap:wrap}
-  .card-date{color:var(--gold3)}
-  .card-platform{color:var(--blue3)}
-  .card-syn{font-size:11px;color:var(--text2);line-height:1.5;flex:1}
-
-  .archive-table{width:100%;border-collapse:collapse}
-  .archive-table th{text-align:left;padding:10px 12px;font-size:11px;color:var(--text2);border-bottom:1px solid var(--border);font-weight:500;text-transform:uppercase;letter-spacing:.5px}
-  .archive-table td{padding:10px 12px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
-  .archive-table tr:hover td{background:var(--bg2)}
-
-  .search-bar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
-  .search-input{flex:1;min-width:200px;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px}
-  .search-input:focus{outline:none;border-color:var(--border2)}
-  .form-select{padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px}
-
-  .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--bg3);border:1px solid var(--green2);color:var(--green3);padding:10px 16px;border-radius:var(--radius);font-size:13px;z-index:999;display:none}
-
-  .loading{display:flex;align-items:center;justify-content:center;padding:3rem;color:var(--text2)}
-  .empty{text-align:center;padding:3rem;color:var(--text3);font-size:13px}
-
-  @media (max-width:600px){
-    .archive-table{font-size:11px}
-    .archive-table td,.archive-table th{padding:6px 8px}
-  }
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -98,9 +16,9 @@
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showPage('bulletin')">Bulletin</button>
     <button class="nav-tab" onclick="showPage('archivio')">Archivio</button>
+    <button class="nav-tab" onclick="showPage('social')">Social</button>
   </div>
   <div class="updated" id="updated-info">—</div>
-  <button class="nav-tab" style="font-size:11px;color:var(--text3)" onclick="changeApiKey()" title="Cambia API Key">🔑</button>
 </nav>
 
 <main>
@@ -164,177 +82,39 @@
     </div>
   </div>
 
+  <div id="page-social" class="page">
+    <div class="bulletin-header"><div class="bulletin-title">Social — Post preformattati</div></div>
+    <div class="post-section">
+      <div class="post-title">Voce approvata</div>
+      <select class="form-select" id="post-select" style="width:100%;max-width:500px" onchange="HBSocial.select(this.value)">
+        <option value="">— Scegli una voce approvata —</option>
+      </select>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">Solo le voci con flag <code>Approvato</code> su Notion appaiono qui.</div>
+    </div>
+    <div class="post-section">
+      <div class="post-title">⚡ One-move copy</div>
+      <div class="social-list" id="social-buttons"></div>
+    </div>
+    <div class="post-section">
+      <div class="post-title">Anteprima</div>
+      <div class="post-preview" id="post-preview">Seleziona una voce per l'anteprima.</div>
+      <div id="poster-preview" style="text-align:center;margin-top:12px"></div>
+    </div>
+    <div class="post-section">
+      <div class="post-title">📦 ZIP bulk</div>
+      <div class="zip-bar">
+        <span style="font-size:12px;color:var(--text2)">Seleziona le card approvate nel Bulletin (checkbox) e scarica tutto.</span>
+        <button class="zip-btn" id="zip-btn" onclick="HBSocial.downloadZip()" disabled>⬇ Scarica ZIP selezione (0)</button>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <div class="toast" id="toast"></div>
 
-<script>
-const WORKER_URL = 'https://horror-bulletin-api.di-rodi-mirko2.workers.dev';
-let API_KEY = localStorage.getItem('hb_api_key') || '';
-
-let DATA = { items:[], updatedAt:null, targetMonth:'', total:0 };
-let currentFilter = 'all';
-
-const CAT_BADGE = {
-  'Cinema':'badge-cinema','Streaming':'badge-streaming','VOD':'badge-vod',
-  'Home Video':'badge-homevideo','Serie TV':'badge-serie'
-};
-const CAT_EMOJI = {
-  'Cinema':'🎟️','Streaming':'📡','VOD':'🎞️','Home Video':'📀','Serie TV':'📺'
-};
-
-async function loadData() {
-  try {
-    const r = await fetch('data.json?t=' + Date.now());
-    DATA = await r.json();
-    document.getElementById('updated-info').textContent = 'Aggiornato: ' + new Date(DATA.updatedAt).toLocaleString('it-IT');
-    document.getElementById('bulletin-month').textContent = 'Uscite Horror — ' + DATA.targetMonth;
-    document.getElementById('month-badge').textContent = DATA.targetMonth;
-    renderStats();
-    renderCards();
-    renderArchive();
-    populateYearFilter();
-  } catch(err) {
-    document.getElementById('cards-container').innerHTML = '<div class="empty">⚠️ Errore caricamento dati. Riprova più tardi.</div>';
-    console.error(err);
-  }
-}
-
-function renderStats() {
-  const items = DATA.items;
-  const cats = ['Cinema','Streaming','VOD','Home Video','Serie TV'];
-  const stats = [
-    { num: items.length, label: 'Totale uscite', color: 'var(--red3)' },
-    ...cats.map(c => ({
-      num: items.filter(i => i.category === c).length,
-      label: (CAT_EMOJI[c] || '') + ' ' + c,
-      color: 'var(--text)'
-    })).filter(s => s.num > 0),
-    { num: items.filter(i => i.tipo === 'Riedizione').length, label: '♻️ Riedizioni', color: 'var(--orange3)' }
-  ];
-  document.getElementById('stats-row').innerHTML = stats.map(s =>
-    `<div class="stat-card"><div class="stat-num" style="color:${s.color}">${s.num}</div><div class="stat-label">${s.label}</div></div>`
-  ).join('');
-}
-
-function applyFilter(items, f) {
-  if (f === 'all')        return items;
-  if (f === 'Riedizione') return items.filter(i => i.tipo === 'Riedizione');
-  return items.filter(i => i.category === f);
-}
-
-function renderCards() {
-  const filtered = applyFilter(DATA.items, currentFilter);
-  if (!filtered.length) {
-    document.getElementById('cards-container').innerHTML = '<div class="empty">Nessuna voce con questo filtro.</div>';
-    return;
-  }
-  document.getElementById('cards-container').innerHTML = filtered.map(d => {
-    const badgeClass = CAT_BADGE[d.category] || 'badge-cinema';
-    const tipoClass  = d.tipo === 'Riedizione' ? '' : (d.tipo === 'Nuova stagione' ? 'stagione' : 'nuova');
-    const tipoLabel  = d.tipo === 'Riedizione' ? '♻️ Ried.' : (d.tipo === 'Nuova stagione' ? 'Nuova S.' : 'NEW');
-    const posterImg  = d.poster
-      ? `<img src="${d.poster}" alt="${d.title}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'card-poster-placeholder\\'>☠</div>'">`
-      : `<div class="card-poster-placeholder">☠</div>`;
-    return `
-      <div class="card">
-        <div class="card-poster">
-          ${posterImg}
-          <span class="card-badge ${badgeClass}">${d.category||'?'}</span>
-          <span class="card-tipo ${tipoClass}">${tipoLabel}</span>
-        </div>
-        <div class="card-body">
-          <div class="card-title">${d.title || 'Senza titolo'} ${d.year ? `(${d.year})` : ''}</div>
-          <div class="card-meta">
-            <span>Dir. ${d.director||'N/D'}</span>
-            <span class="card-date">${formatDate(d.releaseDate)}</span>
-            <span class="card-platform">${d.platform||''}</span>
-          </div>
-          <div class="card-syn">${(d.synIT || d.synEN || '_Sinossi non disponibile._').slice(0,140)}${(d.synIT||d.synEN||'').length>140?'...':''}</div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-function setFilter(btn, f) {
-  document.querySelectorAll('#page-bulletin .filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentFilter = f;
-  renderCards();
-}
-
-function formatDate(d) {
-  if (!d) return 'N/D';
-  return new Date(d).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
-}
-
-function renderArchive() {
-  const tbody = document.getElementById('archive-body');
-  if (!DATA.items.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty">Nessun dato disponibile.</td></tr>';
-    return;
-  }
-  tbody.innerHTML = DATA.items.map(d => `
-    <tr>
-      <td style="font-weight:500;color:var(--text)">${d.title || ''}</td>
-      <td style="color:var(--text2)">${d.director || '—'}</td>
-      <td><span class="card-badge ${CAT_BADGE[d.category]||'badge-cinema'}" style="position:static;font-size:10px;padding:2px 6px">${d.category||'?'}</span></td>
-      <td style="color:var(--text2);font-size:11px">${d.tipo||'—'}</td>
-      <td style="color:var(--blue3)">${d.platform||''}</td>
-      <td style="color:var(--gold3)">${formatDate(d.releaseDate)}</td>
-    </tr>
-  `).join('');
-}
-
-function filterArchive(q) {
-  document.querySelectorAll('#archive-body tr').forEach(r => {
-    r.style.display = r.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
-  });
-}
-function filterArchiveYear(y) {
-  document.querySelectorAll('#archive-body tr').forEach(r => {
-    r.style.display = !y || r.textContent.includes(y) ? '' : 'none';
-  });
-}
-function filterArchiveCat(c) {
-  document.querySelectorAll('#archive-body tr').forEach(r => {
-    r.style.display = !c || r.textContent.includes(c) ? '' : 'none';
-  });
-}
-
-function populateYearFilter() {
-  const years = [...new Set(DATA.items.map(i => i.year).filter(Boolean))].sort((a,b)=>b-a);
-  const sel = document.querySelector('#page-archivio .form-select:nth-of-type(1)');
-  if (sel) sel.innerHTML = '<option value="">Tutti gli anni</option>' + years.map(y => `<option>${y}</option>`).join('');
-}
-
-function changeApiKey() {
-  const k = prompt('Nuova API Key:', API_KEY);
-  if (k !== null) {
-    API_KEY = k;
-    localStorage.setItem('hb_api_key', k);
-    showToast(k ? '✓ API Key aggiornata' : '✓ API Key rimossa');
-  }
-}
-
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('nav .nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  const tabs = { bulletin: 0, archivio: 1 };
-  document.querySelectorAll('nav .nav-tab')[tabs[id]].classList.add('active');
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.display = 'block';
-  clearTimeout(window._tt);
-  window._tt = setTimeout(() => t.style.display = 'none', 2800);
-}
-
-loadData();
-</script>
+<script src="formatters.js"></script>
+<script src="social.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
