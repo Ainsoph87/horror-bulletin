@@ -186,10 +186,15 @@ function bestTitle(det, detEN) {
   return null;
 }
 
+const RELEVANT_COUNTRIES = ['US','GB','IT','FR','DE','CA','AU','ES','NL','SE'];
+
 function findReleaseInTargetMonth(releaseDates) {
   if (!releaseDates?.results) return null;
   const inMonth = [];
   for (const country of releaseDates.results) {
+    // Workaround precisione: contano solo i mercati rilevanti — una release di luglio
+    // in un paese qualsiasi (distribuzione in ritardo) non rende "di luglio" un film vecchio
+    if (!RELEVANT_COUNTRIES.includes(country.iso_3166_1)) continue;
     for (const rd of country.release_dates || []) {
       const d = (rd.release_date || '').slice(0,10);
       if (d >= dFrom && d <= dTo) {
@@ -200,8 +205,7 @@ function findReleaseInTargetMonth(releaseDates) {
   if (!inMonth.length) return null;
   const priority = { 3:1, 2:2, 1:3, 4:4, 5:5, 6:6 };
   inMonth.sort((a,b) => (priority[a.type]||99) - (priority[b.type]||99));
-  const preferred = ['US','GB','IT','FR','DE','CA','AU','ES','NL','SE'];
-  for (const c of preferred) {
+  for (const c of RELEVANT_COUNTRIES) {
     const m = inMonth.find(r => r.country === c);
     if (m) return m;
   }
@@ -540,6 +544,13 @@ async function main() {
       const originalYear = det.release_date ? new Date(det.release_date).getFullYear() : releaseYear;
       const isReRelease  = (releaseYear - originalYear) >= RE_RELEASE_YEARS_THRESHOLD;
 
+      // Guardia freschezza: una "nuova uscita" Cinema oltre 120gg dalla prima uscita mondiale
+      // è distribuzione in ritardo, non una novità (Streaming/VOD/Home Video: lag fisiologico, ok)
+      if (!isReRelease && category === 'Cinema' && det.release_date) {
+        const lagDays = (new Date(release.date) - new Date(det.release_date)) / 86400000;
+        if (lagDays > 120) { skipped.lagged = (skipped.lagged || 0) + 1; continue; }
+      }
+
       let displayPlatform = platform;
       if (isReRelease) {
         if (category === 'Home Video')      displayPlatform = release.note || 'Blu-ray / 4K UHD restaurato';
@@ -635,7 +646,7 @@ async function main() {
     }
   }
 
-  console.log(`\nSkipped: nonLatin=${skipped.nonLatin}, noRelease=${skipped.noRelease}, exists=${skipped.exists}, errors=${skipped.error}`);
+  console.log(`\nSkipped: nonLatin=${skipped.nonLatin}, noRelease=${skipped.noRelease}, exists=${skipped.exists}, lagged=${skipped.lagged||0}, errors=${skipped.error}`);
 
   if (!saved.length) { console.log('No new entries.'); return; }
 
