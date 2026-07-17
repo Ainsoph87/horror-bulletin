@@ -37,10 +37,13 @@
   function open(id) { HB.showPage('social'); $('post-select').value = id; select(id); }
 
   // ── poster → PNG blob (TMDB ha CORS aperto) ──
+  // Il cache-buster evita il CORS-fail da risposta già cachata senza header ACAO (richiesta <img> non-CORS)
+  const corsUrl = u => u + (u.includes('?') ? '&' : '?') + 'cors=1';
+
   async function posterPng(url) {
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    await new Promise((ok, ko) => { img.onload = ok; img.onerror = ko; img.src = url; });
+    await new Promise((ok, ko) => { img.onload = ok; img.onerror = ko; img.src = corsUrl(url); });
     const c = document.createElement('canvas');
     c.width = img.naturalWidth; c.height = img.naturalHeight;
     c.getContext('2d').drawImage(img, 0, 0);
@@ -63,10 +66,14 @@
     if (combined && d.poster && navigator.clipboard && navigator.clipboard.write) {
       try {
         const png = await posterPng(d.poster);
-        await navigator.clipboard.write([new ClipboardItem({
-          'text/plain': new Blob([text], { type: 'text/plain' }),
-          'image/png': png
-        })]);
+        // clipboard.write resta appesa se la finestra perde il focus: timeout → fallback testo
+        await Promise.race([
+          navigator.clipboard.write([new ClipboardItem({
+            'text/plain': new Blob([text], { type: 'text/plain' }),
+            'image/png': png
+          })]),
+          new Promise((_, ko) => setTimeout(() => ko(new Error('clipboard timeout')), 4000))
+        ]);
         HB.showToast('⚡ Post completo copiato (testo+immagine) — incolla e via');
         return;
       } catch (e) { console.warn('combined copy failed, fallback testo:', e); }
@@ -130,7 +137,7 @@
     if (d.poster) {
       try {
         const img = new Image(); img.crossOrigin = 'anonymous';
-        await new Promise((ok, ko) => { img.onload = ok; img.onerror = ko; img.src = d.poster; });
+        await new Promise((ok, ko) => { img.onload = ok; img.onerror = ko; img.src = corsUrl(d.poster); });
         const ratio = img.width / img.height, h = 1300, w = h * ratio;
         ctx.drawImage(img, (1080 - w) / 2, 120, w, h);
         const grad = ctx.createLinearGradient(0, 1000, 0, 1420);
