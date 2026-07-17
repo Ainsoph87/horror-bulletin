@@ -103,9 +103,11 @@
     <div class="post-section">
       <div class="post-title">📦 ZIP bulk</div>
       <div class="zip-bar">
-        <span style="font-size:12px;color:var(--text2)">Seleziona le card approvate nel Bulletin (checkbox) e scarica tutto.</span>
+        <button class="zip-btn" onclick="HBSocial.toggleAll(true)">☑ Tutte</button>
+        <button class="zip-btn" onclick="HBSocial.toggleAll(false)">☐ Nessuna</button>
         <button class="zip-btn" id="zip-btn" onclick="HBSocial.downloadZip()" disabled>⬇ Scarica ZIP selezione (0)</button>
       </div>
+      <div id="zip-list" style="max-height:260px;overflow-y:auto;font-size:12px;line-height:2;color:var(--text2)"></div>
     </div>
   </div>
 

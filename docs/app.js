@@ -68,7 +68,7 @@ function renderCards() {
       ? `<img src="${d.poster}" alt="${d.title}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'card-poster-placeholder\\'>☠</div>'">`
       : `<div class="card-poster-placeholder">☠</div>`;
     const check = d.approvato
-      ? `<input type="checkbox" class="card-check" title="Aggiungi allo ZIP" onclick="event.stopPropagation();HBSocial.toggle(${JSON.stringify(d.id)}, this.checked)">`
+      ? `<input type="checkbox" class="card-check" title="Aggiungi allo ZIP" onclick='event.stopPropagation();HBSocial.toggle(${JSON.stringify(d.id)}, this.checked)'>`
       : '';
     const postBtn = d.approvato
       ? `<div class="card-actions"><button class="card-btn" onclick='HBSocial.open(${JSON.stringify(d.id)})'>📋 Post Social</button></div>`

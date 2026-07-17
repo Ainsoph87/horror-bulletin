@@ -10,7 +10,19 @@
     const approved = DATA.items.filter(i => i.approvato);
     $('post-select').innerHTML = '<option value="">— Scegli una voce approvata —</option>' +
       approved.map(d => `<option value="${d.id}">${d.title} (${d.category || '?'}) — ${HB.formatDate(d.releaseDate)}</option>`).join('');
+    $('zip-list').innerHTML = approved.map(d =>
+      `<label style="display:block;cursor:pointer"><input type="checkbox" class="zip-check" style="accent-color:var(--red);margin-right:8px" onclick='HBSocial.toggle(${JSON.stringify(d.id)}, this.checked)'>${d.title} <span style="color:var(--text3)">(${d.category || '?'} — ${HB.formatDate(d.releaseDate)})</span></label>`
+    ).join('') || '<div class="empty">Nessuna voce approvata.</div>';
     renderButtons();
+  }
+
+  function toggleAll(checked) {
+    document.querySelectorAll('#zip-list .zip-check').forEach(c => { c.checked = checked; });
+    selected.clear();
+    if (checked) HB.DATA.items.filter(i => i.approvato).forEach(i => selected.add(i.id));
+    const btn = $('zip-btn');
+    btn.disabled = selected.size === 0;
+    btn.textContent = `⬇ Scarica ZIP selezione (${selected.size})`;
   }
 
   function renderButtons() {
@@ -188,5 +200,5 @@
     HB.showToast(`✓ ZIP con ${items.length} titoli scaricato`);
   }
 
-  window.HBSocial = { init, open, select, copy, share, toggle, downloadZip };
+  window.HBSocial = { init, open, select, copy, share, toggle, toggleAll, downloadZip };
 })();
