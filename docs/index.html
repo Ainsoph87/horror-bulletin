@@ -17,6 +17,7 @@
     <button class="nav-tab active" onclick="showPage('bulletin')">Bulletin</button>
     <button class="nav-tab" onclick="showPage('archivio')">Archivio</button>
     <button class="nav-tab" onclick="showPage('social')">Social</button>
+    <button class="nav-tab" onclick="showPage('review')">Review</button>
   </div>
   <div class="updated" id="updated-info">—</div>
 </nav>
@@ -111,6 +112,18 @@
     </div>
   </div>
 
+  <div id="page-review" class="page">
+    <div class="bulletin-header">
+      <div class="bulletin-title">Review — Approvazione voci</div>
+      <button class="nav-tab" style="font-size:11px;color:var(--text3)" onclick="HBReview.setKey()" title="API Key worker">🔑</button>
+    </div>
+    <div class="filters" id="review-filters">
+      <button class="filter-btn active" onclick="HBReview.setMode(this,'pending')">⏳ Da approvare</button>
+      <button class="filter-btn" onclick="HBReview.setMode(this,'approved')">✓ Approvate</button>
+    </div>
+    <div id="review-list"></div>
+  </div>
+
 </main>
 
 <div class="toast" id="toast"></div>
@@ -118,6 +131,7 @@
 <script src="vendor/jszip.min.js"></script>
 <script src="formatters.js"></script>
 <script src="social.js"></script>
+<script src="review.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

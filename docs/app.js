@@ -25,6 +25,7 @@ async function loadData() {
     renderArchive();
     populateYearFilter();
     if (window.HBSocial) HBSocial.init(DATA);
+    if (window.HBReview) HBReview.init();
   } catch (err) {
     document.getElementById('cards-container').innerHTML = '<div class="empty">⚠️ Errore caricamento dati. Riprova più tardi.</div>';
     console.error(err);
@@ -147,7 +148,7 @@ function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('nav .nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-  const tabs = { bulletin: 0, archivio: 1, social: 2 };
+  const tabs = { bulletin: 0, archivio: 1, social: 2, review: 3 };
   document.querySelectorAll('nav .nav-tab')[tabs[id]].classList.add('active');
 }
 

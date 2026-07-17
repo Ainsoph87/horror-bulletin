@@ -15,8 +15,29 @@ TMDB + TVMaze ──(fetch_horror.js, cron il 28 del mese)──▶ Notion DB �
                                                       docs/data.json ──▶ GitHub Pages
 ```
 
-L'admin panel è Notion: le voci si curano spuntando `Verificato` / `Approvato` / `Pubblicato`.
+Le voci si approvano dalla pagina **Review** del sito (o da Notion, spuntando i flag a mano).
 Solo le voci `Approvato` compaiono nella pagina Social.
+
+## Pagina Review — approvazione da sito
+
+La tab Review elenca le voci da approvare (e le approvate, per revocarle) e scrive su Notion
+tramite il Cloudflare Worker in `worker/` — il token Notion non tocca mai il browser.
+Serve la API Key del worker, impostabile col bottone 🔑 (salvata in localStorage).
+
+Deploy/aggiornamento del worker (free tier Cloudflare, una tantum):
+
+```bash
+cd worker
+npx wrangler login                      # prima volta
+npx wrangler deploy                     # sovrascrive horror-bulletin-api (stesso URL)
+npx wrangler secret put NOTION_TOKEN    # token integrazione Notion
+npx wrangler secret put API_KEY         # chiave a tua scelta, la stessa del bottone 🔑
+```
+
+Contratto: `POST /update` con header `X-Api-Key` e body
+`{ "id": "<notion page id>", "props": { "approvato": true } }`
+(accetta anche `pubblicato` e `verificato`). L'aggiornamento è ottimistico lato UI;
+`data.json` si riallinea al sync successivo (max 2 ore).
 
 ## Struttura
 
@@ -31,6 +52,8 @@ Solo le voci `Approvato` compaiono nella pagina Social.
 | `docs/app.js` | Bulletin (solo mese corrente) + Archivio |
 | `docs/formatters.js` | Testi post per i 5 social — fonte unica, gira in browser e Node |
 | `docs/social.js` | Pagina Social: one-move copy, share, slide TikTok, ZIP |
+| `docs/review.js` | Pagina Review: approvazione voci da sito (via worker) |
+| `worker/worker.js` | Cloudflare Worker: PATCH sicuro dei flag Notion |
 | `docs/vendor/jszip.min.js` | Unica dipendenza, vendorizzata |
 
 ## Pagina Social — one-move copy
