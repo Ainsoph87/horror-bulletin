@@ -7,11 +7,25 @@
   const F = () => window.HBFormatters;
 
   function init(DATA) {
-    const approved = DATA.items.filter(i => i.approvato);
+    // settorializzato: categoria prima di tutto, rilevanza dentro la categoria
+    const approved = DATA.items.filter(i => i.approvato).sort(HB.byCategory);
+    const groups = new Map();
+    for (const d of approved) {
+      const c = d.category || 'Altro';
+      if (!groups.has(c)) groups.set(c, []);
+      groups.get(c).push(d);
+    }
     $('post-select').innerHTML = '<option value="">— Scegli una voce approvata —</option>' +
-      approved.map(d => `<option value="${d.id}">${d.title} (${d.category || '?'}) — ${HB.formatDate(d.releaseDate)}</option>`).join('');
-    $('zip-list').innerHTML = approved.map(d =>
-      `<label style="display:block;cursor:pointer"><input type="checkbox" class="zip-check" style="accent-color:var(--red);margin-right:8px" onclick='HBSocial.toggle(${JSON.stringify(d.id)}, this.checked)'>${d.title} <span style="color:var(--text3)">(${d.category || '?'} — ${HB.formatDate(d.releaseDate)})</span></label>`
+      [...groups].map(([cat, items]) =>
+        `<optgroup label="${cat}">` +
+        items.map(d => `<option value="${d.id}">${d.title}${d.rilevanza ? ` 🔥${d.rilevanza}` : ''} — ${HB.formatDate(d.releaseDate)}</option>`).join('') +
+        '</optgroup>'
+      ).join('');
+    $('zip-list').innerHTML = [...groups].map(([cat, items]) =>
+      `<div style="font-weight:600;color:var(--text);margin:10px 0 4px">${cat} (${items.length})</div>` +
+      items.map(d =>
+        `<label style="display:block;cursor:pointer"><input type="checkbox" class="zip-check" data-cat="${cat}" style="accent-color:var(--red);margin-right:8px" onclick='HBSocial.toggle(${JSON.stringify(d.id)}, this.checked)'>${d.title} <span style="color:var(--text3)">(${d.rilevanza ? `🔥${d.rilevanza} — ` : ''}${HB.formatDate(d.releaseDate)})</span></label>`
+      ).join('')
     ).join('') || '<div class="empty">Nessuna voce approvata.</div>';
     renderButtons();
   }
@@ -183,11 +197,12 @@
   }
 
   async function downloadZip() {
-    const items = HB.DATA.items.filter(i => selected.has(i.id));
+    // ZIP settorializzato: cartella per categoria, dentro i film in ordine di rilevanza
+    const items = HB.DATA.items.filter(i => selected.has(i.id)).sort(HB.byCategory);
     if (!items.length) return;
     const zip = new JSZip();
     for (const d of items) {
-      const dir = zip.folder(slug(d));
+      const dir = zip.folder(slug({ title: d.category || 'altro' })).folder(slug(d));
       for (const s of F().SOCIALS) dir.file(s.id + '.txt', F().format(s.id, d));
       if (d.poster) {
         const png = await posterPng(d.poster).catch(() => null);
