@@ -38,14 +38,21 @@
       $('review-list').innerHTML = '<div class="empty">🔑 Imposta la API Key del worker per approvare da qui.<br><br><button class="zip-btn" onclick="HBReview.setKey()">Imposta API Key</button></div>';
       return;
     }
+    // settorializzato: categoria prima, rilevanza dentro — per accettare bulk omogenei
     const items = HB.DATA.items
       .filter(i => mode === 'pending' ? !i.approvato : i.approvato)
-      .sort((a, b) => (b.releaseDate || '').localeCompare(a.releaseDate || ''));
+      .sort(HB.byCategory);
     if (!items.length) {
       $('review-list').innerHTML = `<div class="empty">${mode === 'pending' ? 'Niente da approvare. 🎉' : 'Nessuna voce approvata.'}</div>`;
       return;
     }
-    $('review-list').innerHTML = items.map(d => `
+    let lastCat = null;
+    $('review-list').innerHTML = items.map(d => {
+      const head = d.category !== lastCat
+        ? `<div style="font-size:15px;font-weight:600;color:var(--text);margin:16px 0 8px">${d.category || 'Altro'} <span style="color:var(--text3);font-weight:400;font-size:12px">(${items.filter(i => i.category === d.category).length})</span></div>`
+        : '';
+      lastCat = d.category;
+      return head + `
       <div class="review-row" id="rev-${d.id}">
         <div class="review-poster">${d.poster ? `<img src="${d.poster}" loading="lazy" alt="">` : '☠'}</div>
         <div class="review-info">
@@ -55,6 +62,7 @@
             <span>${d.tipo || ''}</span>
             <span class="card-date">${HB.formatDate(d.releaseDate)}</span>
             <span class="card-platform">${d.platform || ''}</span>
+            ${d.rilevanza ? `<span title="Rilevanza (buzz + voti)" style="color:var(--orange3)">🔥 ${d.rilevanza}</span>` : ''}
           </div>
           <div class="review-syn">${(d.synEN || d.synIT || '').slice(0, 180)}</div>
         </div>
@@ -64,7 +72,8 @@
             : `<button class="zip-btn" onclick='HBReview.set(${JSON.stringify(d.id)}, false)'>↩ Revoca</button>`}
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
   }
 
   async function set(id, approvato) {

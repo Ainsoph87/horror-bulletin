@@ -37,8 +37,7 @@
     <div class="stats-row" id="stats-row"></div>
 
     <div class="filters" id="filters-row">
-      <button class="filter-btn active" onclick="setFilter(this,'all')">Tutti</button>
-      <button class="filter-btn" onclick="setFilter(this,'Cinema')">🎟️ Cinema</button>
+      <button class="filter-btn active" onclick="setFilter(this,'Cinema')">🎟️ Cinema</button>
       <button class="filter-btn" onclick="setFilter(this,'Streaming')">📡 Streaming</button>
       <button class="filter-btn" onclick="setFilter(this,'VOD')">🎞️ VOD</button>
       <button class="filter-btn" onclick="setFilter(this,'Home Video')">📀 Home Video</button>
@@ -144,8 +143,10 @@
     <div class="post-section">
       <div class="post-title">📋 Bulletin e Archivio</div>
       <div class="guida-text">
-        <b>Bulletin</b> mostra solo le uscite del mese corrente, ordinabili per <b>data</b> o per
-        <b>🔥 rilevanza</b>. <b>Archivio</b> è il catalogo storico completo, con ricerca e filtri.
+        Tutto il sito è <b>settorializzato</b>: la categoria (Cinema, Streaming, VOD, Home Video, Serie TV)
+        viene sempre prima di ogni altro ordinamento. <b>Bulletin</b> mostra le uscite del mese corrente
+        un settore alla volta, ordinabili per <b>data</b> o per <b>🔥 rilevanza</b>.
+        <b>Archivio</b> è il catalogo storico completo, per settore e rilevanza.
         <br><br>
         <b>🔥 Rilevanza</b> = buzz social (popolarità TMDB, o "weight" TVMaze per le serie) +
         gradimento (media voti, smorzata dal numero di votanti: un 10/10 con 3 voti non batte
@@ -175,8 +176,9 @@
         <br>• <b>TikTok</b>: un click copia la caption <b>e</b> scarica la slide verticale 1080×1920
         <br>• Su mobile, <b>📤 Condividi</b> apre la share sheet nativa con immagine e testo
         <br><br>
-        <b>📦 ZIP bulk</b>: spunta più voci nella lista in fondo alla pagina Social e scarica un unico ZIP —
-        una cartella per film con i 5 testi già formattati, locandina e slide. Le sinossi dei post sono
+        <b>📦 ZIP bulk</b>: spunta più voci nella lista in fondo alla pagina Social (raggruppata per settore,
+        in ordine di rilevanza) e scarica un unico ZIP — una cartella per settore, dentro una cartella per film
+        con i 5 testi già formattati, locandina e slide. Le sinossi dei post sono
         sempre in inglese per massimizzare la reach.
       </div>
     </div>

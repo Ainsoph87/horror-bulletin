@@ -1,7 +1,14 @@
 // app.js — caricamento dati, Bulletin (solo mese corrente), Archivio
 let DATA = { items: [], updatedAt: null, targetMonth: '', total: 0 };
-let currentFilter = 'all';
+let currentFilter = 'Cinema'; // niente "Tutti": il contenuto si lavora per settore
 let currentSort = 'date'; // date | rilevanza
+
+// Ordine canonico dei settori: la categoria batte sempre rilevanza e data
+const CAT_ORDER = ['Cinema', 'Streaming', 'VOD', 'Home Video', 'Serie TV'];
+const catRank = i => { const r = CAT_ORDER.indexOf(i.category); return r === -1 ? CAT_ORDER.length : r; };
+const byCategory = (a, b) => catRank(a) - catRank(b)
+  || (b.rilevanza || 0) - (a.rilevanza || 0)
+  || (b.releaseDate || '').localeCompare(a.releaseDate || '');
 
 const CAT_BADGE = {
   'Cinema':'badge-cinema','Streaming':'badge-streaming','VOD':'badge-vod',
@@ -51,7 +58,6 @@ function renderStats() {
 }
 
 function applyFilter(items, f) {
-  if (f === 'all')        return items;
   if (f === 'Riedizione') return items.filter(i => i.tipo === 'Riedizione');
   return items.filter(i => i.category === f);
 }
@@ -63,10 +69,12 @@ function setSort(v) {
 
 function renderCards() {
   const filtered = applyFilter(monthItems(), currentFilter);
-  if (currentSort === 'rilevanza') filtered.sort((a, b) => (b.rilevanza || 0) - (a.rilevanza || 0));
+  // dentro il settore: rilevanza o data a scelta (le Riedizioni sono trasversali → prima per categoria)
+  if (currentFilter === 'Riedizione') filtered.sort(byCategory);
+  else if (currentSort === 'rilevanza') filtered.sort((a, b) => (b.rilevanza || 0) - (a.rilevanza || 0));
   else filtered.sort((a, b) => (b.releaseDate || '').localeCompare(a.releaseDate || ''));
   if (!filtered.length) {
-    document.getElementById('cards-container').innerHTML = '<div class="empty">Nessuna uscita per questo mese.</div>';
+    document.getElementById('cards-container').innerHTML = '<div class="empty">Nessuna uscita per questo mese in questo settore.</div>';
     return;
   }
   document.getElementById('cards-container').innerHTML = filtered.map(d => {
@@ -119,7 +127,7 @@ function renderArchive() {
     tbody.innerHTML = '<tr><td colspan="6" class="empty">Nessun dato disponibile.</td></tr>';
     return;
   }
-  tbody.innerHTML = DATA.items.map(d => `
+  tbody.innerHTML = [...DATA.items].sort(byCategory).map(d => `
     <tr>
       <td style="font-weight:500;color:var(--text)">${d.title || ''}</td>
       <td style="color:var(--text2)">${d.director || '—'}</td>
@@ -169,6 +177,6 @@ function showToast(msg) {
   window._tt = setTimeout(() => t.style.display = 'none', 2800);
 }
 
-window.HB = { get DATA() { return DATA; }, formatDate, showPage, showToast, CAT_BADGE };
+window.HB = { get DATA() { return DATA; }, formatDate, showPage, showToast, CAT_BADGE, byCategory, catRank, CAT_ORDER };
 
 loadData();
