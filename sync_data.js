@@ -78,6 +78,11 @@ async function main() {
 
   items.sort((a,b) => (b.releaseDate||'').localeCompare(a.releaseDate||''));
 
+  const dedupeItems = require('./dedupe.js');
+  const before = items.length;
+  const deduped = dedupeItems(items);
+  if (deduped.length < before) console.log(`Dedup: rimossi ${before - deduped.length} duplicati`);
+
   const now = new Date();
   const tM  = now.getMonth() + 1;
   const tY  = now.getFullYear();
@@ -86,15 +91,15 @@ async function main() {
   const data = {
     updatedAt:   new Date().toISOString(),
     targetMonth: monthIT,
-    total:       items.length,
-    items
+    total:       deduped.length,
+    items:       deduped
   };
 
   const docsDir = path.join(process.cwd(), 'docs');
   if (!fs.existsSync(docsDir)) fs.mkdirSync(docsDir, { recursive: true });
   fs.writeFileSync(path.join(docsDir, 'data.json'), JSON.stringify(data, null, 2));
 
-  console.log(`Synced ${items.length} items to docs/data.json`);
+  console.log(`Synced ${deduped.length} items to docs/data.json`);
 }
 
 main().catch(err => { console.error('Fatal:', err); process.exit(1); });
