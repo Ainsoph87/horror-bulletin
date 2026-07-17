@@ -1,0 +1,31 @@
+name: Publish to socials
+on:
+  workflow_dispatch:
+  # Per pubblicazione automatica dopo il cron mensile, decommentare:
+  # schedule:
+  #   - cron: '0 8 1 * *'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Publish approved items
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          # ── Attivazione X (free tier: 500 post/mese) — vedi README §Autoposting ──
+          # X_API_KEY: ${{ secrets.X_API_KEY }}
+          # X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          # X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          # X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+          # ── Attivazione Meta (Graph API gratuite) ──
+          # META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+          # FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          # IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          # ── Attivazione Threads ──
+          # THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
+          # THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+        run: node publish.js
