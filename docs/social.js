@@ -92,8 +92,12 @@
     try { await navigator.clipboard.writeText(text); } catch { fallbackCopy(text); }
 
     if (network === 'tiktok') {
-      await downloadSlide(d);
-      HB.showToast('⚡ Caption copiata + slide scaricata — incolla e carica');
+      const ext = await downloadSlide(d);
+      HB.showToast(
+        ext === 'mp4' ? '⚡ Caption copiata + video MP4 scaricato — carica su TikTok e incolla'
+        : ext === 'webm' ? '⚠️ Caption copiata + video WEBM (il browser non registra MP4) — convertilo in MP4 per TikTok'
+        : '⚠️ Caption copiata + PNG (questo browser non registra video) — per TikTok serve un MP4'
+      );
     } else if (d.poster) {
       downloadBlob(await posterPng(d.poster).catch(() => null), slug(d) + '-poster.png');
       HB.showToast('⚡ Caption copiata + locandina scaricata — incolla il testo e allega l\'immagine');
@@ -138,22 +142,14 @@
     ctx.fillText(line.trim(), x, cy);
   }
 
-  async function slideBlob(d) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 1080; canvas.height = 1920;
-    const ctx = canvas.getContext('2d');
+  function drawSlide(ctx, d, poster) {
     ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, 1080, 1920);
-
-    if (d.poster) {
-      try {
-        const img = new Image(); img.crossOrigin = 'anonymous';
-        await new Promise((ok, ko) => { img.onload = ok; img.onerror = ko; img.src = corsUrl(d.poster); });
-        const ratio = img.width / img.height, h = 1300, w = h * ratio;
-        ctx.drawImage(img, (1080 - w) / 2, 120, w, h);
-        const grad = ctx.createLinearGradient(0, 1000, 0, 1420);
-        grad.addColorStop(0, 'rgba(10,10,15,0)'); grad.addColorStop(1, 'rgba(10,10,15,1)');
-        ctx.fillStyle = grad; ctx.fillRect(0, 1000, 1080, 420);
-      } catch {}
+    if (poster) {
+      const ratio = poster.width / poster.height, h = 1300, w = h * ratio;
+      ctx.drawImage(poster, (1080 - w) / 2, 120, w, h);
+      const grad = ctx.createLinearGradient(0, 1000, 0, 1420);
+      grad.addColorStop(0, 'rgba(10,10,15,0)'); grad.addColorStop(1, 'rgba(10,10,15,1)');
+      ctx.fillStyle = grad; ctx.fillRect(0, 1000, 1080, 420);
     }
     ctx.fillStyle = '#c0392b'; ctx.fillRect(0, 100, 1080, 8);
     ctx.fillStyle = '#ff6b6b'; ctx.font = 'bold 48px system-ui'; ctx.textAlign = 'center';
@@ -167,10 +163,67 @@
     ctx.fillStyle = '#5dade2'; ctx.font = '40px system-ui';
     ctx.fillText(`${HB.formatDate(d.releaseDate)} · ${d.platform || d.category || ''}`, 540, 1730);
     ctx.fillStyle = '#c0392b'; ctx.fillRect(0, 1812, 1080, 8);
+  }
+
+  // canvas 1080×1920 con la slide già disegnata (poster caricato una volta, riusato per PNG e video)
+  async function slideCanvas(d) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080; canvas.height = 1920;
+    const ctx = canvas.getContext('2d');
+    let poster = null;
+    if (d.poster) {
+      try {
+        poster = new Image(); poster.crossOrigin = 'anonymous';
+        await new Promise((ok, ko) => { poster.onload = ok; poster.onerror = ko; poster.src = corsUrl(d.poster); });
+      } catch { poster = null; }
+    }
+    drawSlide(ctx, d, poster);
+    return { canvas, ctx, redraw: () => drawSlide(ctx, d, poster) };
+  }
+
+  async function slideBlob(d) {
+    const { canvas } = await slideCanvas(d);
     return new Promise(ok => canvas.toBlob(ok, 'image/png'));
   }
 
-  async function downloadSlide(d) { downloadBlob(await slideBlob(d), 'horror-bulletin-' + slug(d) + '-slide.png'); }
+  // TikTok da PC accetta solo video → slide come MP4 di 3s (H.264 se il browser lo registra, senò WEBM).
+  // ponytail: fermo-immagine di 3s; se un giorno serve movimento/audio, qui va un timeline vero.
+  async function slideVideo(d) {
+    if (typeof MediaRecorder === 'undefined') return null;
+    const { canvas, redraw } = await slideCanvas(d);
+    if (!canvas.captureStream) return null;
+    const stream = canvas.captureStream(30);
+    const mime = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm']
+      .find(t => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || '';
+    const rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 6e6 } : undefined);
+    const chunks = [];
+    rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+    const stopped = new Promise(ok => { rec.onstop = ok; });
+    rec.start();
+    // ridisegno via setInterval (non rAF): non si mette in pausa se la finestra perde il focus,
+    // così captureStream continua a emettere frame e la registrazione non si impianta mai
+    const iv = setInterval(redraw, 100);
+    await new Promise(ok => setTimeout(() => {
+      clearInterval(iv);
+      if (rec.state !== 'inactive') rec.stop();
+      stream.getTracks().forEach(t => t.stop());
+      ok();
+    }, 3000));
+    await stopped;
+    const type = (rec.mimeType || mime || 'video/webm').split(';')[0];
+    return { blob: new Blob(chunks, { type }), ext: type.includes('mp4') ? 'mp4' : 'webm' };
+  }
+
+  // ritorna l'estensione effettiva ('mp4' | 'webm' | 'png') così il toast può avvisare l'utente
+  async function downloadSlide(d) {
+    const vid = await slideVideo(d).catch(() => null);
+    if (vid && vid.blob.size) {
+      downloadBlob(vid.blob, 'horror-bulletin-' + slug(d) + '-slide.' + vid.ext);
+      return vid.ext;
+    }
+    downloadBlob(await slideBlob(d).catch(() => null), 'horror-bulletin-' + slug(d) + '-slide.png');
+    return 'png';
+  }
 
   // ── ZIP bulk ──
   function toggle(id, checked) {
