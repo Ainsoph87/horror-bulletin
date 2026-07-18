@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-18T04:54:34.478Z",
+  "updatedAt": "2026-07-18T07:41:12.890Z",
   "targetMonth": "LUGLIO 2026",
   "total": 336,
   "items": [
@@ -1692,7 +1692,7 @@
       "poster": "https://image.tmdb.org/t/p/w500/kLxEGoygDHbOvxJIclXZbieoX45.jpg",
       "rilevanza": 162,
       "verificato": false,
-      "approvato": false,
+      "approvato": true,
       "pubblicato": false
     },
     {
