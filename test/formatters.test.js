@@ -63,16 +63,15 @@ test('X non contiene sinossi ma resta ≤280 con stato', () => {
   assert.ok(/cinema/i.test(t) && /Riedizione/i.test(t), 'X deve tenere lo stato');
 });
 
-test('TikTok include la sinossi EN (troncata, caption)', () => {
-  assert.ok(F.format('tiktok', item).includes('EEEE'), 'tiktok: manca la sinossi');
+test('TikTok non contiene sinossi (allineato a X)', () => {
+  const t = F.format('tiktok', item);
+  assert.ok(!t.includes('EEEE') && !t.includes('SSSS'), 'tiktok non deve contenere sinossi');
 });
 
-test('threads e tiktok usano solo EN (IT non entra / caption breve)', () => {
-  for (const id of ['threads', 'tiktok']) {
-    const t = F.format(id, item);
-    assert.ok(t.includes('EEEE'), id + ': manca EN');
-    assert.ok(!t.includes('SSSS'), id + ': non deve usare la sinossi IT');
-  }
+test('threads usa solo EN (IT non entra nei 500)', () => {
+  const t = F.format('threads', item);
+  assert.ok(t.includes('EEEE'), 'manca EN');
+  assert.ok(!t.includes('SSSS'), 'non deve usare la sinossi IT');
 });
 
 test('threads con sinossi corte include entrambe (EN + IT) entro i 500', () => {
