@@ -37,10 +37,25 @@ test('instagram usa la sinossi EN', () => {
   assert.ok(F.format('instagram', item).includes(item.synEN));
 });
 
-test('threads non pre-tronca la sinossi (solo limite 500 piattaforma)', () => {
+test('threads: stato incluso e sinossi troncata al limite 500', () => {
   const t = F.format('threads', item);
-  assert.ok(t.includes(item.synEN), 'sinossi EN da 400 char deve entrare integrale');
   assert.ok(t.length <= 500);
+  assert.ok(/Riedizione/.test(t), 'manca lo stato');
+  assert.ok(t.includes('EEEE'), 'manca la sinossi (troncata)');
+});
+
+test('ogni post indica canale + stato in chiaro (cinema/riedizione/VOD...)', () => {
+  for (const s of F.SOCIALS) {
+    const t = F.format(s.id, item);
+    assert.ok(/Riedizione/i.test(t), s.id + ': manca lo stato Riedizione');
+    assert.ok(/cinema/i.test(t), s.id + ': manca il canale cinema');
+  }
+});
+
+test('X e TikTok ora includono la sinossi (troncata al budget)', () => {
+  for (const id of ['x', 'tiktok']) {
+    assert.ok(F.format(id, item).includes('EEEE'), id + ': manca la sinossi');
+  }
 });
 
 test('sinossi EN ha priorità su IT anche quando entrambe presenti', () => {
