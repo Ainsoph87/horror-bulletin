@@ -29,12 +29,16 @@ test('ogni post contiene titolo e #horror', () => {
   }
 });
 
-test('facebook contiene sinossi EN integrale (priorità inglese)', () => {
-  assert.ok(F.format('facebook', item).includes(item.synEN));
+test('facebook contiene entrambe le sinossi integrali (EN + IT)', () => {
+  const t = F.format('facebook', item);
+  assert.ok(t.includes(item.synEN), 'manca EN integrale');
+  assert.ok(t.includes(item.synIT), 'manca IT integrale');
 });
 
-test('instagram usa la sinossi EN', () => {
-  assert.ok(F.format('instagram', item).includes(item.synEN));
+test('instagram contiene entrambe le sinossi (EN + IT)', () => {
+  const t = F.format('instagram', item);
+  assert.ok(t.includes(item.synEN), 'manca EN');
+  assert.ok(t.includes(item.synIT), 'manca IT');
 });
 
 test('threads: stato incluso e sinossi troncata al limite 500', () => {
@@ -52,16 +56,30 @@ test('ogni post indica canale + stato in chiaro (cinema/riedizione/VOD...)', () 
   }
 });
 
-test('X e TikTok ora includono la sinossi (troncata al budget)', () => {
-  for (const id of ['x', 'tiktok']) {
-    assert.ok(F.format(id, item).includes('EEEE'), id + ': manca la sinossi');
+test('X non contiene sinossi ma resta ≤280 con stato', () => {
+  const t = F.format('x', item);
+  assert.ok(t.length <= 280);
+  assert.ok(!t.includes('EEEE') && !t.includes('SSSS'), 'X non deve contenere sinossi');
+  assert.ok(/cinema/i.test(t) && /Riedizione/i.test(t), 'X deve tenere lo stato');
+});
+
+test('TikTok include la sinossi EN (troncata, caption)', () => {
+  assert.ok(F.format('tiktok', item).includes('EEEE'), 'tiktok: manca la sinossi');
+});
+
+test('threads e tiktok usano solo EN (IT non entra / caption breve)', () => {
+  for (const id of ['threads', 'tiktok']) {
+    const t = F.format(id, item);
+    assert.ok(t.includes('EEEE'), id + ': manca EN');
+    assert.ok(!t.includes('SSSS'), id + ': non deve usare la sinossi IT');
   }
 });
 
-test('sinossi EN ha priorità su IT anche quando entrambe presenti', () => {
-  for (const id of ['facebook', 'instagram', 'threads']) {
-    assert.ok(!F.format(id, item).includes('SSSS'), id + ': non deve usare la sinossi IT');
-  }
+test('threads con sinossi corte include entrambe (EN + IT) entro i 500', () => {
+  const corto = { ...item, synEN: 'E'.repeat(80), synIT: 'S'.repeat(80) };
+  const t = F.format('threads', corto);
+  assert.ok(t.length <= 500);
+  assert.ok(t.includes('EEEE') && t.includes('SSSS'), 'entrambe devono entrare quando corte');
 });
 
 test('campi mancanti non producono null/undefined nel testo', () => {

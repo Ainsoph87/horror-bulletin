@@ -39,39 +39,50 @@
   ].filter(Boolean).join('\n');
   const cut = (t, max) => t.length > max ? t.slice(0, max - 1) + '…' : t;
 
-  // post per social a limite stretto: intestazione+stato sempre integre, sinossi troncata a ciò che avanza.
+  // blocco sinossi bilingue: EN + IT con bandierine; se ne manca una, mostra solo quella (senza bandiera)
+  function bothSyn(d) {
+    const en = clean(d.synEN), it = clean(d.synIT);
+    if (en && it) return `🇬🇧 ${en}\n\n🇮🇹 ${it}`;
+    return en || it;
+  }
+
+  // post a limite stretto: header+stato+regia sempre integri.
+  // usa `preferred` (es. EN+IT) se ci sta tutto, altrimenti `fallback` troncato a ciò che avanza.
   // margine di 8 sul budget = cuscinetto per il peso doppio degli emoji su X.
-  function budgeted(d, max, tags) {
+  function budgeted(d, max, tags, preferred, fallback) {
     const head = [header(d), statusLine(d),
       [dirName(d) ? `Dir. ${dirName(d)}` : '', formatDate(d.releaseDate)].filter(Boolean).join(' · ')
     ].filter(Boolean).join('\n');
     const tagLine = tags.filter(Boolean).join(' ');
-    const syn = clean(d.synEN || d.synIT);
     const budget = max - head.length - tagLine.length - 8;
-    const synOut = syn && budget > 24 ? cut(syn, budget) : '';
+    let synOut = '';
+    if (preferred && preferred.length <= budget) synOut = preferred;
+    else if (fallback && budget > 24) synOut = cut(fallback, budget);
     return [head, synOut, tagLine].filter(s => s !== '').join('\n\n');
   }
 
   const FORMATS = {
     x(d) {
-      return budgeted(d, 280, ['#horror', catTag(d)]);
+      // 280 char: niente sinossi, solo header + stato + regia/data + hashtag
+      return budgeted(d, 280, ['#horror', catTag(d)], '', '');
     },
     facebook(d) {
       const head = [header(d), statusLine(d)].filter(Boolean).join('\n');
       return [head, '', anagrafica(d), '',
-        clean(d.synEN || d.synIT), '',
+        bothSyn(d), '',
         ['#horror', '#horrormovies', catTag(d), tipoTag(d)].filter(Boolean).join(' ')
       ].join('\n').replace(/\n{3,}/g, '\n\n').trim();
     },
     instagram(d) {
       const head = [header(d), statusLine(d)].filter(Boolean).join('\n');
-      return [head, '', clean(d.synEN || d.synIT), '.', '.', '.',
+      return [head, '', bothSyn(d), '.', '.', '.',
         ['#horror','#horrormovies','#horrorfilm','#horrorcommunity','#horrorlovers','#horrorfan',
          '#scary','#spooky','#cinephile','#moviestowatch', catTag(d), tipoTag(d)].filter(Boolean).join(' ')
       ].join('\n').trim();
     },
     threads(d) {
-      return budgeted(d, 500, ['#horror', catTag(d)]);
+      // prova EN+IT; se non entra nei 500, ripiega su solo inglese troncato
+      return budgeted(d, 500, ['#horror', catTag(d)], bothSyn(d), clean(d.synEN || d.synIT));
     },
     tiktok(d) {
       return [header(d), statusLine(d), dirName(d) ? `Dir. ${dirName(d)}` : '',
@@ -86,7 +97,7 @@
     { id:'facebook',  label:'📘 Facebook',   hint:'Post lungo — caption copiata + locandina scaricata', format: FORMATS.facebook },
     { id:'instagram', label:'📷 Instagram',  hint:'Caption copiata + immagine da caricare', format: FORMATS.instagram },
     { id:'threads',   label:'🧵 Threads',    hint:'≤500 char — caption copiata + locandina scaricata', format: FORMATS.threads },
-    { id:'tiktok',    label:'🎵 TikTok',     hint:'Caption copiata + slide scaricata', format: FORMATS.tiktok }
+    { id:'tiktok',    label:'🎵 TikTok',     hint:'Caption copiata + video MP4 scaricato', format: FORMATS.tiktok }
   ];
 
   return { SOCIALS, CAT_EMOJI, formatDate, format: (id, d) => FORMATS[id](d) };
