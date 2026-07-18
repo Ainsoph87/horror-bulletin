@@ -59,10 +59,10 @@
   };
 
   const SOCIALS = [
-    { id:'x',         label:'𝕏 / Twitter',  hint:'≤280 char — 1 incolla (testo+immagine)', format: FORMATS.x },
-    { id:'facebook',  label:'📘 Facebook',   hint:'Post lungo — 1 incolla (testo+immagine)', format: FORMATS.facebook },
+    { id:'x',         label:'𝕏 / Twitter',  hint:'≤280 char — caption copiata + locandina scaricata', format: FORMATS.x },
+    { id:'facebook',  label:'📘 Facebook',   hint:'Post lungo — caption copiata + locandina scaricata', format: FORMATS.facebook },
     { id:'instagram', label:'📷 Instagram',  hint:'Caption copiata + immagine da caricare', format: FORMATS.instagram },
-    { id:'threads',   label:'🧵 Threads',    hint:'≤500 char — 1 incolla (testo+immagine)', format: FORMATS.threads },
+    { id:'threads',   label:'🧵 Threads',    hint:'≤500 char — caption copiata + locandina scaricata', format: FORMATS.threads },
     { id:'tiktok',    label:'🎵 TikTok',     hint:'Caption copiata + slide scaricata', format: FORMATS.tiktok }
   ];
 

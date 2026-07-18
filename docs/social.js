@@ -41,11 +41,10 @@
 
   function renderButtons() {
     $('social-buttons').innerHTML = F().SOCIALS.map(s => {
-      const oneMove = ['x', 'facebook', 'threads'].includes(s.id);
       return `<div class="social-item">
         <div><div class="social-name">${s.label}</div><div class="social-type">${s.hint}</div></div>
-        <button class="social-btn ${oneMove ? 'one-move' : ''}" onclick="HBSocial.copy('${s.id}')">
-          ${oneMove ? '⚡ Copia post completo' : s.id === 'tiktok' ? '⚡ Caption + slide' : '⚡ Caption + immagine'}
+        <button class="social-btn one-move" onclick="HBSocial.copy('${s.id}')">
+          ${s.id === 'tiktok' ? '⚡ Caption + slide' : '⚡ Caption + immagine'}
         </button>
         ${navigator.share ? `<button class="social-btn" onclick="HBSocial.share('${s.id}')">📤 Condividi (mobile)</button>` : ''}
       </div>`;
@@ -86,33 +85,18 @@
     if (!currentItem) { HB.showToast('⚠️ Seleziona prima una voce approvata'); return; }
     const d = currentItem;
     const text = F().format(network, d);
-    const combined = ['x', 'facebook', 'threads'].includes(network);
 
-    // ponytail: paste combinato testo+immagine — se il browser rifiuta il multi-tipo, degrada a solo testo
-    if (combined && d.poster && navigator.clipboard && navigator.clipboard.write) {
-      try {
-        const png = await posterPng(d.poster);
-        // clipboard.write resta appesa se la finestra perde il focus: timeout → fallback testo
-        await Promise.race([
-          navigator.clipboard.write([new ClipboardItem({
-            'text/plain': new Blob([text], { type: 'text/plain' }),
-            'image/png': png
-          })]),
-          new Promise((_, ko) => setTimeout(() => ko(new Error('clipboard timeout')), 4000))
-        ]);
-        HB.showToast('⚡ Post completo copiato (testo+immagine) — incolla e via');
-        return;
-      } catch (e) { console.warn('combined copy failed, fallback testo:', e); }
-    }
-
+    // I compositori di X/Facebook/Threads/Instagram, se negli appunti c'è un'immagine, incollano
+    // SOLO l'immagine e buttano il testo. Quindi: testo negli appunti + locandina scaricata a parte,
+    // l'utente incolla il testo e allega l'immagine. (Il paste combinato testo+immagine non è supportato.)
     try { await navigator.clipboard.writeText(text); } catch { fallbackCopy(text); }
 
-    if (network === 'instagram' && d.poster) {
-      downloadBlob(await posterPng(d.poster).catch(() => null), slug(d) + '-poster.png');
-      HB.showToast('⚡ Caption copiata + locandina scaricata — carica e incolla');
-    } else if (network === 'tiktok') {
+    if (network === 'tiktok') {
       await downloadSlide(d);
-      HB.showToast('⚡ Caption copiata + slide scaricata — carica e incolla');
+      HB.showToast('⚡ Caption copiata + slide scaricata — incolla e carica');
+    } else if (d.poster) {
+      downloadBlob(await posterPng(d.poster).catch(() => null), slug(d) + '-poster.png');
+      HB.showToast('⚡ Caption copiata + locandina scaricata — incolla il testo e allega l\'immagine');
     } else {
       HB.showToast('✓ Testo copiato per ' + network.toUpperCase());
     }
