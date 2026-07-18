@@ -85,8 +85,9 @@
       return budgeted(d, 500, ['#horror', catTag(d)], bothSyn(d), clean(d.synEN || d.synIT));
     },
     tiktok(d) {
+      // come X: niente sinossi, header + stato + regia/data + hashtag
       return [header(d), statusLine(d), dirName(d) ? `Dir. ${dirName(d)}` : '',
-        formatDate(d.releaseDate), cut(clean(d.synEN || d.synIT), 150),
+        formatDate(d.releaseDate),
         ['#horror','#horrortok','#fyp','#horrormovies','#scary', catTag(d)].filter(Boolean).join(' ')
       ].filter(s => s !== '').join('\n');
     }
