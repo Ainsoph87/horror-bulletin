@@ -113,11 +113,21 @@
     // Instagram ignora il testo condiviso (policy): lo mettiamo comunque negli appunti
     try { await navigator.clipboard.writeText(text); } catch {}
     const payload = { text };
-    if (d.poster) {
-      const png = await posterPng(d.poster).catch(() => null);
-      if (png) payload.files = [new File([png], slug(d) + '.png', { type: 'image/png' })];
-    }
+    // stesso criterio del copia da PC: TikTok condivide il video, gli altri la locandina
+    const asset = await postAsset(d, network);
+    if (asset) payload.files = [new File([asset.blob], slug(d) + '.' + asset.ext, { type: asset.blob.type })];
     try { await navigator.share(payload); } catch (e) { if (e.name !== 'AbortError') HB.showToast('⚠️ Condivisione non riuscita'); }
+  }
+
+  // asset visivo del post, allineato al copia-incolla: TikTok → video MP4, altri → locandina PNG
+  async function postAsset(d, network) {
+    if (network === 'tiktok') {
+      const vid = await slideVideo(d).catch(() => null);
+      if (vid && vid.blob.size) return vid;
+    }
+    if (!d.poster) return null;
+    const png = await posterPng(d.poster).catch(() => null);
+    return png ? { blob: png, ext: 'png' } : null;
   }
 
   const slug = d => (d.title || 'film').replace(/[^a-z0-9]/gi, '_').toLowerCase();
@@ -238,15 +248,20 @@
     const items = HB.DATA.items.filter(i => selected.has(i.id)).sort(HB.byCategory);
     if (!items.length) return;
     const zip = new JSZip();
+    let n = 0;
     for (const d of items) {
+      // il video slide si registra in ~3s a titolo: avanzamento per non far sembrare bloccato
+      HB.showToast(`⏳ Preparo lo ZIP… ${++n}/${items.length} (video slide ≈3s a titolo)`);
       const dir = zip.folder(slug({ title: d.category || 'altro' })).folder(slug(d));
       for (const s of F().SOCIALS) dir.file(s.id + '.txt', F().format(s.id, d));
       if (d.poster) {
         const png = await posterPng(d.poster).catch(() => null);
         if (png) dir.file('poster.png', png);
       }
-      const slide = await slideBlob(d).catch(() => null);
-      if (slide) dir.file('slide.png', slide);
+      // slide TikTok come MP4 (stesso asset del copia-incolla), fallback PNG se il browser non registra
+      const vid = await slideVideo(d).catch(() => null);
+      if (vid && vid.blob.size) dir.file('slide.' + vid.ext, vid.blob);
+      else { const slide = await slideBlob(d).catch(() => null); if (slide) dir.file('slide.png', slide); }
     }
     downloadBlob(await zip.generateAsync({ type: 'blob' }), 'horror-bulletin-posts.zip');
     HB.showToast(`✓ ZIP con ${items.length} titoli scaricato`);
