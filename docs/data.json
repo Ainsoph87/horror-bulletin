@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-07-19T06:26:00.064Z",
+  "updatedAt": "2026-07-19T09:47:31.746Z",
   "targetMonth": "LUGLIO 2026",
-  "total": 336,
+  "total": 335,
   "items": [
     {
       "id": "38d7dd18-9060-8147-9db5-dd370ecd3406",
@@ -19,7 +19,8 @@
       "rilevanza": 171,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-816e-a919-fe224636a328",
@@ -37,7 +38,8 @@
       "rilevanza": 17,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-810e-b145-e5ef42cf0b72",
@@ -55,7 +57,8 @@
       "rilevanza": 40,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81df-86c4-c9b23b1dd8d5",
@@ -73,7 +76,8 @@
       "rilevanza": 4,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8135-8b42-e09b596c3f99",
@@ -91,7 +95,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8126-a250-f0aa70ba3188",
@@ -109,7 +114,8 @@
       "rilevanza": 4,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81bd-a8e9-d4789ac98eeb",
@@ -127,7 +133,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81ed-978b-d9bd25fac19d",
@@ -145,7 +152,8 @@
       "rilevanza": 32,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81f0-9399-df76c1b34df4",
@@ -163,7 +171,8 @@
       "rilevanza": 5,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8166-8361-ff985c09255f",
@@ -181,7 +190,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8134-a83b-ec13505f671a",
@@ -199,7 +209,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8151-aa36-d88c9724bee8",
@@ -217,7 +228,8 @@
       "rilevanza": 87,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81f7-850f-dbdb8556fe99",
@@ -235,7 +247,8 @@
       "rilevanza": 153,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8170-9576-e38a5651f404",
@@ -253,7 +266,8 @@
       "rilevanza": 101,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81a4-9bfb-f9d2c8909cf9",
@@ -271,7 +285,8 @@
       "rilevanza": 121,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81b3-b855-d15efcc337e7",
@@ -289,7 +304,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81cd-a137-f960a444f5b3",
@@ -307,7 +323,8 @@
       "rilevanza": 99,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81bc-9937-d9c07d0989af",
@@ -325,7 +342,8 @@
       "rilevanza": 171,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81c7-b048-dbae95a92c63",
@@ -343,7 +361,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8157-8f64-d4c4463e8fd0",
@@ -361,7 +380,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8157-a0bf-ee6d5525769f",
@@ -379,7 +399,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8198-b965-c67216f1dff6",
@@ -397,7 +418,8 @@
       "rilevanza": 51,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8165-be3b-f91b01ac1b31",
@@ -415,7 +437,8 @@
       "rilevanza": 60,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-818c-8ff9-c9f177e262f4",
@@ -433,7 +456,8 @@
       "rilevanza": 70,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81c3-9c94-fa81e6c2da6c",
@@ -451,7 +475,8 @@
       "rilevanza": 78,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81d1-9e33-d3ccf303071c",
@@ -469,7 +494,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-815f-87b6-d240471a08c6",
@@ -487,7 +513,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8181-9aec-ce8c007becfb",
@@ -505,7 +532,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81b8-a300-d268613198aa",
@@ -523,7 +551,8 @@
       "rilevanza": 5,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81b4-9fc0-fadf331ba6e9",
@@ -541,7 +570,8 @@
       "rilevanza": 4,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81aa-a56b-f8cfc9d966e3",
@@ -559,7 +589,8 @@
       "rilevanza": 84,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8163-819e-e3c8a2e9e9fd",
@@ -577,7 +608,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81ff-bb4b-e528938098d2",
@@ -595,7 +627,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-815d-bdc8-c330a6a1f6ce",
@@ -613,7 +646,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81fb-9477-c5d6fbede04d",
@@ -631,7 +665,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81cd-b845-cf122eb8b9ee",
@@ -649,7 +684,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-816c-9b79-d3848a76ef75",
@@ -667,7 +703,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81d1-bfe4-e95ef03eb0b9",
@@ -685,7 +722,8 @@
       "rilevanza": 5,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8166-997b-c769c37e4171",
@@ -703,7 +741,8 @@
       "rilevanza": 165,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8114-b0b9-e8563e2ecfd5",
@@ -721,7 +760,8 @@
       "rilevanza": 17,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-810d-98a8-c2dc315b0e3e",
@@ -739,7 +779,8 @@
       "rilevanza": 24,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8198-ad2a-d6da57778cbe",
@@ -757,7 +798,8 @@
       "rilevanza": 37,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8193-a62c-d83d25084fa2",
@@ -775,7 +817,8 @@
       "rilevanza": 119,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81c2-9ff4-f0af26e6736e",
@@ -793,7 +836,8 @@
       "rilevanza": 419,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81e6-8159-ff78e4e8c8a1",
@@ -811,7 +855,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8145-b73b-fe4383f74f1e",
@@ -829,7 +874,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-816b-8e23-e8650b7f2d82",
@@ -847,7 +893,8 @@
       "rilevanza": 7,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-812b-851a-f197de973aa5",
@@ -865,7 +912,8 @@
       "rilevanza": 212,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-814e-9730-c134d75f2aeb",
@@ -883,7 +931,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8137-979f-c9677a065f4e",
@@ -901,7 +950,8 @@
       "rilevanza": 222,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-811c-b7e5-c8e1c43c6bc7",
@@ -919,7 +969,8 @@
       "rilevanza": 98,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8158-8c56-cd768af4d378",
@@ -937,7 +988,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8188-9532-f2d1169d4e23",
@@ -955,7 +1007,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8125-b39b-f3b6c3ceb552",
@@ -973,7 +1026,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81a5-9a24-c70dc9599676",
@@ -991,7 +1045,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-817d-a63d-c985ecfa2555",
@@ -1009,7 +1064,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-819b-8804-fb1cd20da129",
@@ -1027,7 +1083,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8101-b440-cbb79b0f2cb4",
@@ -1045,7 +1102,8 @@
       "rilevanza": 82,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8169-ba08-fceeae78b2db",
@@ -1063,7 +1121,8 @@
       "rilevanza": 95,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8110-b957-f94e157e050d",
@@ -1081,7 +1140,8 @@
       "rilevanza": 108,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81ea-a126-e54c0b750c15",
@@ -1099,7 +1159,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-812b-b9b2-e2fdc9dc926e",
@@ -1117,7 +1178,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81b6-95a3-e1a4a2a30b3d",
@@ -1135,7 +1197,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81e1-b76e-fc34ced2d2a2",
@@ -1153,7 +1216,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8150-808a-ead97454bbeb",
@@ -1171,7 +1235,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-818b-bc91-cf4d00679d2b",
@@ -1189,7 +1254,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8135-942e-ffa9b09ac264",
@@ -1207,7 +1273,8 @@
       "rilevanza": 7,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81d7-8635-fb9e4fce7965",
@@ -1225,7 +1292,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-818e-a230-f51033734595",
@@ -1243,7 +1311,8 @@
       "rilevanza": 38,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8134-a870-e9aa783d9514",
@@ -1261,7 +1330,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81c7-b535-dd98a83a8b93",
@@ -1279,7 +1349,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8127-8b39-ff93c8fe3cfc",
@@ -1297,7 +1368,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-818b-8ca6-c97cb8e9678a",
@@ -1315,7 +1387,8 @@
       "rilevanza": 21,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8100-b175-f3138126e1c7",
@@ -1333,7 +1406,8 @@
       "rilevanza": 162,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8164-acfc-ec7e4774b180",
@@ -1351,7 +1425,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81bd-ad13-e58aad76ee60",
@@ -1369,7 +1444,8 @@
       "rilevanza": 173,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81b2-aaf4-d69f4273ac29",
@@ -1387,7 +1463,8 @@
       "rilevanza": 7,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8104-a97c-f4cc8dfb4937",
@@ -1405,7 +1482,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-811e-a36d-c1a47449f21a",
@@ -1423,7 +1501,8 @@
       "rilevanza": 173,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81e3-80e4-d580cfc764e3",
@@ -1441,7 +1520,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8107-a3bd-e1ec99852db8",
@@ -1459,7 +1539,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81aa-b187-ebc2043877c3",
@@ -1477,7 +1558,8 @@
       "rilevanza": 100,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8170-be66-f61d9fe08c0c",
@@ -1495,7 +1577,8 @@
       "rilevanza": 85,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-813d-8a67-d24d02650ba9",
@@ -1513,7 +1596,8 @@
       "rilevanza": 61,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81fb-bfb4-f75a50994981",
@@ -1531,7 +1615,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-810b-8ef7-de85829a973c",
@@ -1549,7 +1634,8 @@
       "rilevanza": 3,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-813c-b5b9-f994f9618117",
@@ -1567,7 +1653,8 @@
       "rilevanza": 14,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8138-9823-c495da607937",
@@ -1585,7 +1672,8 @@
       "rilevanza": 89,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8164-bcb2-ed545800d3e1",
@@ -1603,7 +1691,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8144-91bb-ff1d6e1d6a0a",
@@ -1621,7 +1710,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-813a-8e30-fe4f65bf1a7f",
@@ -1639,7 +1729,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81d8-bb47-d6f7f3abc8f1",
@@ -1657,7 +1748,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8100-ae4b-f0a451ad09d8",
@@ -1675,7 +1767,8 @@
       "rilevanza": 16,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8127-b95d-fc58b6e09162",
@@ -1693,7 +1786,8 @@
       "rilevanza": 162,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8121-88e9-e139ff80bfcf",
@@ -1711,7 +1805,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81ea-aad8-d0212274350a",
@@ -1729,7 +1824,8 @@
       "rilevanza": 20,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81ac-86c3-ed81938a101d",
@@ -1747,7 +1843,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81c2-99ae-dac08a40c3b1",
@@ -1765,7 +1862,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81d0-8da0-eee75e77576f",
@@ -1783,7 +1881,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81d0-9651-e6d178b3a53b",
@@ -1801,7 +1900,8 @@
       "rilevanza": 147,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8120-a710-c631b6f5d048",
@@ -1819,7 +1919,8 @@
       "rilevanza": 24,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81e3-9421-d189f79ad7ea",
@@ -1837,7 +1938,8 @@
       "rilevanza": 66,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81ba-86dd-cfb5cd7cc46d",
@@ -1855,7 +1957,8 @@
       "rilevanza": 94,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81fc-ba16-f077104e5eb8",
@@ -1873,7 +1976,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8157-9bbf-e59206efeb90",
@@ -1891,7 +1995,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8151-bad5-d5742c44c227",
@@ -1909,7 +2014,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8169-9073-d2184a8e5b1a",
@@ -1927,7 +2033,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8195-ae1f-f0f6c0162f51",
@@ -1945,7 +2052,8 @@
       "rilevanza": 150,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-810b-a4dd-c3df1cacd657",
@@ -1963,7 +2071,8 @@
       "rilevanza": 3,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8131-b71b-faac95a31c69",
@@ -1981,7 +2090,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8148-b04d-d7b89501fbdd",
@@ -1999,7 +2109,8 @@
       "rilevanza": 13,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81f4-8cc3-d7786b0f4f1b",
@@ -2017,7 +2128,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-818d-bc8b-d966787c620e",
@@ -2035,7 +2147,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-816b-ba6d-e4ddfb2ff3ea",
@@ -2053,7 +2166,8 @@
       "rilevanza": 32,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81ad-8670-ffc293b16d54",
@@ -2071,7 +2185,8 @@
       "rilevanza": 125,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81b6-b3d3-e91018350657",
@@ -2089,7 +2204,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81ea-af83-e1c7e497f1dd",
@@ -2107,7 +2223,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-812b-b705-e7344a818e43",
@@ -2125,7 +2242,8 @@
       "rilevanza": 104,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8133-98a8-da07d9fb8581",
@@ -2143,7 +2261,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81e6-a2b4-e85657792077",
@@ -2161,7 +2280,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8155-9531-fa7e80e22c38",
@@ -2179,7 +2299,8 @@
       "rilevanza": 9,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81fb-87a9-ed29b74c885c",
@@ -2197,7 +2318,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8158-b0b7-d4426755897a",
@@ -2215,7 +2337,8 @@
       "rilevanza": 3,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81fb-8475-ff37f88f41bd",
@@ -2233,7 +2356,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8163-9de6-ceb9a754c119",
@@ -2251,7 +2375,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81b2-bf95-cda9d801c752",
@@ -2269,7 +2394,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8192-988b-e75927b9ffb5",
@@ -2287,7 +2413,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-817b-bfc0-f8872f386c22",
@@ -2305,7 +2432,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-810a-a4f9-f0b2721b4200",
@@ -2323,7 +2451,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81af-bac5-c0087812534f",
@@ -2341,7 +2470,8 @@
       "rilevanza": 181,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8173-80dd-d4167e1a22b8",
@@ -2359,7 +2489,8 @@
       "rilevanza": 29,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-816f-80b0-ee731c550b9c",
@@ -2377,7 +2508,8 @@
       "rilevanza": 38,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81e8-bfcf-fd319337cba7",
@@ -2395,7 +2527,8 @@
       "rilevanza": 99,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81fb-8c67-e0427d5c038a",
@@ -2413,7 +2546,8 @@
       "rilevanza": 208,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-815c-9dae-fae04c9a385d",
@@ -2431,7 +2565,8 @@
       "rilevanza": 43,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8194-8080-e519db20e23f",
@@ -2449,7 +2584,8 @@
       "rilevanza": 26,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8161-a617-ddb4fbd1d5bb",
@@ -2467,7 +2603,8 @@
       "rilevanza": 85,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8127-a31c-e31561d75a2e",
@@ -2485,7 +2622,8 @@
       "rilevanza": 77,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81fc-9939-e2bda5310c0f",
@@ -2503,7 +2641,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81ac-a207-dae21dd1e8b3",
@@ -2521,7 +2660,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8117-bdbe-e69cecaa41de",
@@ -2539,7 +2679,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8107-81af-e8b5aba4b96e",
@@ -2557,7 +2698,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81e2-b549-e7a3f0407701",
@@ -2575,7 +2717,8 @@
       "rilevanza": 138,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81f5-9609-ecd82b8015d3",
@@ -2593,7 +2736,8 @@
       "rilevanza": 9,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8163-b40c-dc7963415741",
@@ -2611,7 +2755,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8146-89a2-c94a30f63466",
@@ -2629,7 +2774,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8169-9273-e3c446876243",
@@ -2647,7 +2793,8 @@
       "rilevanza": 29,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8188-8a29-c4a4e0d3e935",
@@ -2665,7 +2812,8 @@
       "rilevanza": 158,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8198-a890-c86cca6c1921",
@@ -2683,7 +2831,8 @@
       "rilevanza": 23,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8174-857f-dd1d565b9d99",
@@ -2701,7 +2850,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-811c-a06a-ceebd7d9386f",
@@ -2719,7 +2869,8 @@
       "rilevanza": 9,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-819e-84af-d69b37aa5272",
@@ -2737,7 +2888,8 @@
       "rilevanza": 19,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81fd-9a0d-ef663f0983e1",
@@ -2755,7 +2907,8 @@
       "rilevanza": 149,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-816f-8c14-ff322fad2b40",
@@ -2773,7 +2926,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81a7-9f15-f8e4009d3763",
@@ -2791,7 +2945,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81d1-af3f-c8aa880cda18",
@@ -2809,7 +2964,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81cf-9fb5-cb058fc9cd7f",
@@ -2827,25 +2983,8 @@
       "rilevanza": 93,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
-    },
-    {
-      "id": "38d7dd18-9060-8164-a159-f43d036c503e",
-      "title": "Enola Holmes",
-      "director": "—",
-      "year": 2026,
-      "category": "Serie TV",
-      "tipo": "Nuova stagione",
-      "platform": "Netflix",
-      "releaseDate": "2026-07-01",
-      "originalYear": 2020,
-      "synIT": null,
-      "synEN": "Enola Holmes puts a dynamic female twist on the world's greatest detective and his brilliant family. Based on the beloved Edgar-nominated book series, the films tell the story of Sherlock Holmes' rebellious teen sister Enola, a gifted super-sleuth in her own right who often outsmarts her famous siblings.",
-      "poster": "https://static.tvmaze.com/uploads/images/original_untouched/629/1573440.jpg",
-      "rilevanza": 175,
-      "verificato": false,
-      "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8125-ad65-c3d175452238",
@@ -2863,7 +3002,8 @@
       "rilevanza": 18,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-811b-acaf-f6e9685057c3",
@@ -2881,7 +3021,8 @@
       "rilevanza": 128,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-818a-9a36-df8ce8e250c9",
@@ -2899,7 +3040,8 @@
       "rilevanza": 104,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8137-8bf3-c5a2a097b488",
@@ -2917,7 +3059,8 @@
       "rilevanza": 61,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8146-bc09-cb0888f1a172",
@@ -2935,7 +3078,8 @@
       "rilevanza": 793,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81a7-8eb0-dd395d469bae",
@@ -2953,7 +3097,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-8168-8a6c-da624c60a7a8",
@@ -2971,7 +3116,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-81a3-8f1b-cac55ff2e280",
@@ -2989,7 +3135,8 @@
       "rilevanza": 13,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "38d7dd18-9060-817e-a8e1-fe9f424cf82b",
@@ -3007,7 +3154,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81d8-a87a-d4a23c411071",
@@ -3025,7 +3173,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81f0-8c24-f7711115b828",
@@ -3043,7 +3192,8 @@
       "rilevanza": 5,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-815b-a503-d5c1a269fdca",
@@ -3061,7 +3211,8 @@
       "rilevanza": 108,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8141-81be-e482175f0bd3",
@@ -3079,7 +3230,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8187-bc2d-f05a06328b1c",
@@ -3097,7 +3249,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81f7-a6d5-dca8ad142e74",
@@ -3115,7 +3268,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8189-9019-d5fd6b894253",
@@ -3133,7 +3287,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8158-8ebe-fc225f17c55b",
@@ -3151,7 +3306,8 @@
       "rilevanza": 16,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8172-8899-cf704eb99248",
@@ -3169,7 +3325,8 @@
       "rilevanza": 97,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81e8-b9c2-da137ea37e6e",
@@ -3187,7 +3344,8 @@
       "rilevanza": 64,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8166-b851-dec31ed64f4e",
@@ -3205,7 +3363,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81f5-b738-e3066fa76261",
@@ -3223,7 +3382,8 @@
       "rilevanza": 17,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-819d-b65f-ee6ef387b2bc",
@@ -3241,7 +3401,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8116-8bba-d5bda741a53f",
@@ -3259,7 +3420,8 @@
       "rilevanza": 75,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8145-a0c1-e7ac0cab5f4a",
@@ -3277,7 +3439,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81cb-b7d4-c3adac156d59",
@@ -3295,7 +3458,8 @@
       "rilevanza": 103,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81b4-af4f-cd8f2f6df618",
@@ -3313,7 +3477,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-815a-9be5-daf9841745d0",
@@ -3331,7 +3496,8 @@
       "rilevanza": 150,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8182-a924-dc3854f46f60",
@@ -3349,7 +3515,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81b3-b27e-ebea1ca703ee",
@@ -3367,7 +3534,8 @@
       "rilevanza": 4,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81b2-9eb2-f71c2170e52e",
@@ -3385,7 +3553,8 @@
       "rilevanza": 63,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-815c-9568-dcad3863ba1f",
@@ -3403,7 +3572,8 @@
       "rilevanza": 113,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8136-b3a0-c926db3e378b",
@@ -3421,7 +3591,8 @@
       "rilevanza": 14,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8164-bf8a-fcf941893fa6",
@@ -3439,7 +3610,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8184-a618-c6774e4c0625",
@@ -3457,7 +3629,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8183-8fea-ee3c0957708e",
@@ -3475,7 +3648,8 @@
       "rilevanza": 169,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8189-b7e5-d459f573ff5a",
@@ -3493,7 +3667,8 @@
       "rilevanza": 149,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81a0-a17c-eff454aa9279",
@@ -3511,7 +3686,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8140-96a3-e1c5714e36fb",
@@ -3529,7 +3705,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8183-86ba-d9533868a1fc",
@@ -3547,7 +3724,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8168-86a5-cc3f64d31e7d",
@@ -3565,7 +3743,8 @@
       "rilevanza": 29,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8111-95ce-c09d49c7b829",
@@ -3583,7 +3762,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-819c-836d-fd83b5d1d0b0",
@@ -3601,7 +3781,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8110-beca-cda5fb18ae96",
@@ -3619,7 +3800,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8174-9845-fabd9d8d3361",
@@ -3637,7 +3819,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8193-a4c8-fe9d9926e9ee",
@@ -3655,7 +3838,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81df-bc05-fd8e1738b9a6",
@@ -3673,7 +3857,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8124-bc59-e4e627d8e4c6",
@@ -3691,7 +3876,8 @@
       "rilevanza": 181,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8197-b279-dc0974e23ec5",
@@ -3709,7 +3895,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8128-8fde-cee59449771c",
@@ -3727,7 +3914,8 @@
       "rilevanza": 29,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8169-9b5e-c38e2055da45",
@@ -3745,7 +3933,8 @@
       "rilevanza": 174,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-815b-ace3-cf01465ebca1",
@@ -3763,7 +3952,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-815a-be7c-ec7248f892df",
@@ -3781,7 +3971,8 @@
       "rilevanza": 16,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81d4-a39f-c297166638db",
@@ -3799,7 +3990,8 @@
       "rilevanza": 338,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8185-8d77-ed014c7e6fed",
@@ -3817,7 +4009,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-813c-a0db-e380e776d5c1",
@@ -3835,7 +4028,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-815b-98ab-d8f41287833f",
@@ -3853,7 +4047,8 @@
       "rilevanza": 171,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81f9-a50b-c42240e1b163",
@@ -3871,7 +4066,8 @@
       "rilevanza": 29,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81b4-a797-f6d799ce33d7",
@@ -3889,7 +4085,8 @@
       "rilevanza": 113,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8172-886d-f2250a613ba3",
@@ -3907,7 +4104,8 @@
       "rilevanza": 57,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81c7-8f22-d1edba7a086b",
@@ -3925,7 +4123,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-812f-8e26-e5bfdb3b2f67",
@@ -3943,7 +4142,8 @@
       "rilevanza": 19,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8196-a7f4-c5d57c4c60dd",
@@ -3961,7 +4161,8 @@
       "rilevanza": 5,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81fd-8397-fcf012662502",
@@ -3979,7 +4180,8 @@
       "rilevanza": 95,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8111-a5b5-df7195810072",
@@ -3997,7 +4199,8 @@
       "rilevanza": 160,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-815e-806c-caef0807f784",
@@ -4015,7 +4218,8 @@
       "rilevanza": 17,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81e0-9bf6-d430a9929f87",
@@ -4033,7 +4237,8 @@
       "rilevanza": 390,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-817b-9345-ddbd0e6af32a",
@@ -4051,7 +4256,8 @@
       "rilevanza": 15,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81f7-95b6-e8eb48f51274",
@@ -4069,7 +4275,8 @@
       "rilevanza": 29,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8141-a3ee-f19f9b7dd255",
@@ -4087,7 +4294,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8144-9ae9-fbe251830a32",
@@ -4105,7 +4313,8 @@
       "rilevanza": 3,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8189-b11d-ecc5ae51f449",
@@ -4123,7 +4332,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81ef-a10f-f324fe137488",
@@ -4141,7 +4351,8 @@
       "rilevanza": 176,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8136-a6f5-f11a3f7782af",
@@ -4159,7 +4370,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81a1-b58a-cd58aacdc71c",
@@ -4177,7 +4389,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-811d-bc02-fdacf3751f40",
@@ -4195,7 +4408,8 @@
       "rilevanza": 68,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8124-8a01-e8408f8525a3",
@@ -4213,7 +4427,8 @@
       "rilevanza": 155,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-811b-84e4-d05d9bc6afb4",
@@ -4231,7 +4446,8 @@
       "rilevanza": 212,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-819b-8559-e0cd5c655b80",
@@ -4249,7 +4465,8 @@
       "rilevanza": 3,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-816a-a98e-d5c1ceafc135",
@@ -4267,7 +4484,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8155-864d-d7e64ac02fbb",
@@ -4285,7 +4503,8 @@
       "rilevanza": 125,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81a3-a34a-e1a0783220fd",
@@ -4303,7 +4522,8 @@
       "rilevanza": 81,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81fb-9344-c53c171b7188",
@@ -4321,7 +4541,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81fc-ba49-fb284af5a1d1",
@@ -4339,7 +4560,8 @@
       "rilevanza": 13,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81ca-aac1-de84cfd9d0c5",
@@ -4357,7 +4579,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8159-8ef9-e3aeda91327b",
@@ -4375,7 +4598,8 @@
       "rilevanza": 36,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8118-9bed-cdd8980c74db",
@@ -4393,7 +4617,8 @@
       "rilevanza": 24,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-811b-8620-dbad064efe2e",
@@ -4411,7 +4636,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8157-9c1e-c748ba7f5774",
@@ -4429,7 +4655,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81aa-b929-c4b1481172a7",
@@ -4447,7 +4674,8 @@
       "rilevanza": 90,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81ee-b3d6-fc3d8b18b279",
@@ -4465,7 +4693,8 @@
       "rilevanza": 62,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-816e-ae47-fe8b4b8753c8",
@@ -4483,7 +4712,8 @@
       "rilevanza": 82,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8178-a4a2-c2951d12981b",
@@ -4501,7 +4731,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81f1-82e1-d654c2ec5da7",
@@ -4519,7 +4750,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81ea-9508-fef25539d9f7",
@@ -4537,7 +4769,8 @@
       "rilevanza": 4,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81aa-ad07-e68e239f0eef",
@@ -4555,7 +4788,8 @@
       "rilevanza": 31,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-813f-a258-d58c7268cab6",
@@ -4573,7 +4807,8 @@
       "rilevanza": 156,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81ef-85a6-c81aaa16c190",
@@ -4591,7 +4826,8 @@
       "rilevanza": 40,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-812c-8d7a-cfdf20cdae01",
@@ -4609,7 +4845,8 @@
       "rilevanza": 36,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-813f-a819-cc9d2c582c79",
@@ -4627,7 +4864,8 @@
       "rilevanza": 7,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8157-8ac6-e387598f0e19",
@@ -4645,7 +4883,8 @@
       "rilevanza": 12,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81c8-bdda-f8c378b8d123",
@@ -4663,7 +4902,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8194-bd9c-d6764a977180",
@@ -4681,7 +4921,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-816d-ad15-df540bcc39f7",
@@ -4699,7 +4940,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81bb-b7bc-e72c0cc3d6f0",
@@ -4717,7 +4959,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-810a-8e79-e7723a713521",
@@ -4735,7 +4978,8 @@
       "rilevanza": 5,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8146-8199-c52d8ce9a3c2",
@@ -4753,7 +4997,8 @@
       "rilevanza": 16,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8178-9d8d-e4e976316ea0",
@@ -4771,7 +5016,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81c9-9417-f3ea1e9d1a53",
@@ -4789,7 +5035,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81d4-b486-e4cf114b6257",
@@ -4807,7 +5054,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8141-b6eb-ffbce877bbaa",
@@ -4825,7 +5073,8 @@
       "rilevanza": 88,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-817b-99ca-c0ae9dfc47dc",
@@ -4843,7 +5092,8 @@
       "rilevanza": 122,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81cf-a177-caf8a5a83e73",
@@ -4861,7 +5111,8 @@
       "rilevanza": 149,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81dd-acb8-e6bf9e19b34d",
@@ -4879,7 +5130,8 @@
       "rilevanza": 157,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-818d-94fa-d5824976160d",
@@ -4897,7 +5149,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8162-bd6c-d8a164d30dea",
@@ -4915,7 +5168,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8196-b6bc-eb5ee2f166b9",
@@ -4933,7 +5187,8 @@
       "rilevanza": 47,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81ec-b543-c2794963a091",
@@ -4951,7 +5206,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81c0-a3c1-d7ae06fd8d79",
@@ -4969,7 +5225,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81b5-a47e-e3bd82529fec",
@@ -4987,7 +5244,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81f9-ab54-f8dbed372700",
@@ -5005,7 +5263,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81a2-a3e0-f76cbfa0ab88",
@@ -5023,7 +5282,8 @@
       "rilevanza": 166,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81d4-b02d-f0df915d2cb9",
@@ -5041,7 +5301,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81d8-bf75-e8e57c9e63a9",
@@ -5059,7 +5320,8 @@
       "rilevanza": 85,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8114-8c9d-d0af76fb3bf2",
@@ -5077,7 +5339,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81cf-af89-d18ac7dd6024",
@@ -5095,7 +5358,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8115-81d2-e5f3f5cda3bc",
@@ -5113,7 +5377,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81fa-98f4-dc39d0caae87",
@@ -5131,7 +5396,8 @@
       "rilevanza": 13,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-817b-98df-f0ff1a9f9634",
@@ -5149,7 +5415,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-816b-8387-d12a39ed8742",
@@ -5167,7 +5434,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8160-987e-f77d3af596ce",
@@ -5185,7 +5453,8 @@
       "rilevanza": 29,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8197-a172-daac09248f9e",
@@ -5203,7 +5472,8 @@
       "rilevanza": 46,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81e4-a639-c3cb56964366",
@@ -5221,7 +5491,8 @@
       "rilevanza": 75,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81ef-8c8d-ced1feb1d979",
@@ -5239,7 +5510,8 @@
       "rilevanza": 22,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81dd-9a6f-fb0bbcd2e5f0",
@@ -5257,7 +5529,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81f7-b1de-fa7984f1b269",
@@ -5275,7 +5548,8 @@
       "rilevanza": 57,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81d1-bb16-ed160734b735",
@@ -5293,7 +5567,8 @@
       "rilevanza": 60,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81a8-b628-ccb38510f594",
@@ -5311,7 +5586,8 @@
       "rilevanza": 157,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-811e-b635-db56f44db0a3",
@@ -5329,7 +5605,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81d3-8002-f6416f2a3646",
@@ -5347,7 +5624,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8123-91cf-f9a2ff69b57a",
@@ -5365,7 +5643,8 @@
       "rilevanza": 3,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81e1-b128-c298a88964da",
@@ -5383,7 +5662,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8127-86ab-e7b361fb4c91",
@@ -5401,7 +5681,8 @@
       "rilevanza": 419,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81f3-968e-df106feb5be5",
@@ -5419,7 +5700,8 @@
       "rilevanza": 53,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81b3-9550-dc9db73cb7ec",
@@ -5437,7 +5719,8 @@
       "rilevanza": 3,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81cc-aed0-f5ac16d15e8f",
@@ -5455,7 +5738,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-811f-9564-d92ad84dcc96",
@@ -5473,7 +5757,8 @@
       "rilevanza": 22,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81aa-a16c-f07f2d938212",
@@ -5491,7 +5776,8 @@
       "rilevanza": 11,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-817e-86a7-c7ef9570a9f8",
@@ -5509,7 +5795,8 @@
       "rilevanza": 159,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8142-8ad8-ea19c937c847",
@@ -5527,7 +5814,8 @@
       "rilevanza": 43,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81fc-b701-f17fcd690107",
@@ -5545,7 +5833,8 @@
       "rilevanza": 60,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8115-8a99-d9a7b9f5b5c2",
@@ -5563,7 +5852,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8199-90e0-f6132a307ed6",
@@ -5581,7 +5871,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81f6-8ef7-fbc921b7489a",
@@ -5599,7 +5890,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-811e-a483-e327f0a9f95d",
@@ -5617,7 +5909,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-813d-a0b0-e5a93291f552",
@@ -5635,7 +5928,8 @@
       "rilevanza": 19,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81ca-bc8c-fd9c10033aec",
@@ -5653,7 +5947,8 @@
       "rilevanza": 4,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8111-906c-fc9d8f3bc372",
@@ -5671,7 +5966,8 @@
       "rilevanza": 78,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8139-9812-fc3fbb196309",
@@ -5689,7 +5985,8 @@
       "rilevanza": 142,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81cc-bbf6-eb94160e9440",
@@ -5707,7 +6004,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8197-a42a-ea7fb2542426",
@@ -5725,7 +6023,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81e2-8d9e-f4801a851f21",
@@ -5743,7 +6042,8 @@
       "rilevanza": 173,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8152-837a-fce1a8016ea8",
@@ -5761,7 +6061,8 @@
       "rilevanza": 93,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-815d-8eca-c6dd92410078",
@@ -5779,7 +6080,8 @@
       "rilevanza": 10,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81e4-b58c-ff85ea356e90",
@@ -5797,7 +6099,8 @@
       "rilevanza": 793,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81e0-90d1-d16b16532798",
@@ -5815,7 +6118,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81d8-b34c-e69ebd4a69ae",
@@ -5833,7 +6137,8 @@
       "rilevanza": 92,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-8147-b973-e4ba106a2ba0",
@@ -5851,7 +6156,8 @@
       "rilevanza": 1,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8185-a9ca-d2477e8bfd83",
@@ -5869,7 +6175,8 @@
       "rilevanza": 114,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-8157-8d57-cd775fb9c575",
@@ -5887,7 +6194,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-816b-b126-c0b5cbc8c989",
@@ -5905,7 +6213,8 @@
       "rilevanza": 107,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "36e7dd18-9060-81fc-ad0c-e8d35d049058",
@@ -5923,7 +6232,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81ed-8742-dd7a20ba792d",
@@ -5941,7 +6251,8 @@
       "rilevanza": 94,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81da-8eca-dd66d96b5c8d",
@@ -5959,7 +6270,8 @@
       "rilevanza": 94,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-81d9-b957-f8b6ce20887f",
@@ -5977,7 +6289,8 @@
       "rilevanza": 2,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3637dd18-9060-813b-a7db-d7dfbbde4797",
@@ -5995,7 +6308,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": false,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81c8-a127-c79145d70b0a",
@@ -6013,7 +6327,8 @@
       "rilevanza": 0,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-8103-8a52-cdd8b4656055",
@@ -6031,7 +6346,8 @@
       "rilevanza": 5,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     },
     {
       "id": "3547dd18-9060-81e5-a375-c40eda992848",
@@ -6049,7 +6365,8 @@
       "rilevanza": 95,
       "verificato": false,
       "approvato": true,
-      "pubblicato": false
+      "pubblicato": false,
+      "scartato": false
     }
   ]
 }
