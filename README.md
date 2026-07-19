@@ -73,7 +73,9 @@ Su mobile il bottone **📤 Condividi** apre la share sheet nativa con immagine 
 
 **ZIP bulk** (solo mese corrente): checkbox nel Bulletin/pagina Social → "Scarica ZIP selezione".
 Per ogni film: `x.txt`, `facebook.txt`, `instagram.txt`, `threads.txt`, `tiktok.txt`, `poster.png`,
-`slide.*`, più un `apri-e-posta.html` che apre il composer di ogni social con la caption già copiata.
+`slide.*`, più un launcher **`apri-e-posta.hta`** (Windows): un bottone per social che copia la
+caption + apre il composer nel browser + apre Esplora risorse col file già selezionato — poi
+resta solo Ctrl-V, trascina, Post. Nessun autopost (ToS): X/Threads usano gli endpoint intent.
 
 Se la copia combinata testo+immagine non funziona nel tuo browser (dipende dal composer e da
 eventuali estensioni), degrada automaticamente a copia solo-testo.

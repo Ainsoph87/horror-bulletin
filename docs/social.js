@@ -292,52 +292,67 @@
         })
       });
     }
-    zip.file('apri-e-posta.html', launcherHtml(manifest));
-    // il browser non può aprire Esplora risorse (sandbox): questo .bat lo fa da Windows,
-    // aprendo la cartella estratta così i file sono lì pronti da trascinare nel composer.
-    zip.file('apri-cartella.bat', '@echo off\r\nexplorer "%~dp0"\r\n');
+    // launcher Windows (.hta): a differenza di una pagina browser ha accesso al file system,
+    // quindi ogni bottone apre il composer + copia la caption + apre Esplora risorse col file selezionato.
+    zip.file('apri-e-posta.hta', launcherHta(manifest));
     downloadBlob(await zip.generateAsync({ type: 'blob' }), 'horror-bulletin-posts.zip');
-    HB.showToast(`✓ ZIP con ${items.length} titoli — apri "apri-e-posta.html"`);
+    HB.showToast(`✓ ZIP con ${items.length} titoli — apri "apri-e-posta.hta"`);
   }
 
-  // pagina standalone dentro lo ZIP: un bottone per social che copia la caption e apre la finestra di posting
-  const esc = s => String(s == null ? '' : s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
-  function launcherHtml(posts) {
+  // launcher Windows .hta: gira con mshta (motore IE), quindi ha accesso al file system.
+  // Ogni bottone: copia la caption (clipboardData) + apre il composer nel browser predefinito
+  // (Shell.Application.ShellExecute) + apre Esplora risorse col file selezionato (explorer /select).
+  // Codice embedded in ES5 (niente arrow/template literal: Trident non li supporta).
+  function launcherHta(posts) {
     const data = JSON.stringify(posts).replace(/</g, '\\u003c');
-    return `<!doctype html><html lang="it"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+    return `<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Horror Bulletin — Apri e posta</title>
+<hta:application id="hb" applicationname="HorrorBulletin" scroll="yes" singleinstance="yes" border="thin" innerborder="no" />
 <style>
-  body{font-family:system-ui;background:#0a0a0f;color:#eee;margin:0;padding:24px 24px 60px;max-width:820px;margin-inline:auto}
-  h1{color:#ff6b6b} h2{margin:28px 0 4px;border-bottom:1px solid #333;padding-bottom:4px;color:#fff}
-  .social{display:flex;align-items:center;gap:10px;padding:8px 0;flex-wrap:wrap}
-  .social b{min-width:130px}
-  button{background:#c0392b;color:#fff;border:0;border-radius:6px;padding:8px 12px;cursor:pointer;font-size:14px}
-  button:hover{background:#e04a3a} button.done{background:#2d572c}
-  .file{color:#5dade2;font-family:monospace;font-size:13px}
-  .steps{color:#9090a8;font-size:14px;background:#15151f;padding:12px 16px;border-radius:8px;line-height:1.5}
-  code{background:#222;padding:1px 5px;border-radius:4px}
+  body{font-family:Segoe UI,system-ui,sans-serif;background:#0a0a0f;color:#eee;margin:0;padding:20px}
+  h1{color:#ff6b6b} h2{margin:22px 0 4px;border-bottom:1px solid #333;padding-bottom:4px;color:#fff}
+  .social{margin:6px 0}
+  .social b{display:inline-block;min-width:140px}
+  button{background:#c0392b;color:#fff;border:0;border-radius:5px;padding:7px 12px;cursor:pointer;font-size:14px}
+  button.done{background:#2d572c}
+  .file{color:#5dade2;font-family:Consolas,monospace;font-size:12px;margin-left:8px}
+  .steps{color:#9090a8;font-size:13px;background:#15151f;padding:12px;border-radius:6px;line-height:1.5}
+  code{background:#222;padding:1px 5px}
 </style></head><body>
 <h1>☠ Apri e posta</h1>
-<p class="steps">Prima: doppio-click su <code>apri-cartella.bat</code> (in questa stessa cartella) → apre in Esplora risorse i file da trascinare. Tienila affiancata.
-<br>Poi per ogni social: <b>1)</b> premi <b>Apri + copia</b> — la caption va negli appunti e si apre la finestra di posting.
-<b>2)</b> <code>Ctrl-V</code> nella casella (𝕏 e Threads sono già precompilati). <b>3)</b> trascina nel composer il file indicato. <b>4)</b> premi <b>Post</b>.
-<br><small>(La cartella non si può aprire da questa pagina: il browser non ha accesso al file system — ci pensa il .bat.)</small></p>
+<p class="steps"><b>Apri</b> (per ogni social) = copia la caption + apre la finestra di posting nel browser + apre Esplora risorse con il file già selezionato.
+Poi ti resta solo: <code>Ctrl-V</code> nella casella (𝕏 e Threads sono già precompilati) · <b>trascina</b> il file evidenziato nel composer · premi <b>Post</b>.</p>
 <div id="app"></div>
-<script>
-const POSTS = ${data};
-function copy(t){ try{ navigator.clipboard.writeText(t); }catch(e){ const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); } }
-function go(pi,si,btn){ const s=POSTS[pi].socials[si]; copy(s.caption); window.open(s.url,'_blank'); btn.classList.add('done'); btn.textContent='✓ aperto — Ctrl-V'; }
-function e(s){ return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
-document.getElementById('app').innerHTML = POSTS.map((p,pi)=>
-  '<h2>'+e(p.category)+' — '+e(p.title)+'</h2>'+
-  p.socials.map((s,si)=>
-    '<div class="social"><b>'+e(s.label)+'</b>'+
-    '<button onclick="go('+pi+','+si+',this)">Apri + copia</button>'+
-    (s.file?'<span class="file">trascina: '+e(s.file)+'</span>':'<span class="file">(nessun file)</span>')+
-    '</div>'
-  ).join('')
-).join('');
+<script type="text/javascript">
+var POSTS = ${data};
+var BS = String.fromCharCode(92);
+var wsh, shApp;
+try { wsh = new ActiveXObject('WScript.Shell'); } catch(e){}
+try { shApp = new ActiveXObject('Shell.Application'); } catch(e){}
+try { window.resizeTo(780, 820); } catch(e){}
+function e(s){ s=(s==null?'':''+s); return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function baseDir(){ var p=decodeURIComponent(location.href).replace(/^file:[/][/][/]/,''); p=p.substring(0,p.lastIndexOf('/')); return p.replace(/[/]/g, BS); }
+function go(pi,si,btn){
+  var s=POSTS[pi].socials[si];
+  try { window.clipboardData.setData('Text', s.caption); } catch(e1){}
+  try { if(shApp) shApp.ShellExecute(s.url); } catch(e2){}
+  if(s.file && wsh){ try { wsh.Run('explorer /select,"'+baseDir()+BS+s.file.replace(/[/]/g,BS)+'"'); } catch(e3){} }
+  btn.className='done'; btn.innerHTML='✓ aperto';
+}
+var html='';
+for(var pi=0; pi<POSTS.length; pi++){
+  var p=POSTS[pi];
+  html+='<h2>'+e(p.category)+' — '+e(p.title)+'</h2>';
+  for(var si=0; si<p.socials.length; si++){
+    var s=p.socials[si];
+    html+='<div class="social"><b>'+e(s.label)+'</b>'+
+      '<button onclick="go('+pi+','+si+',this)">Apri</button>'+
+      (s.file? '<span class="file">'+e(s.file)+'</span>' : '<span class="file">(nessun file)</span>')+
+      '</div>';
+  }
+}
+document.getElementById('app').innerHTML=html;
 </script></body></html>`;
   }
 
