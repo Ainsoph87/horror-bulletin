@@ -293,6 +293,9 @@
       });
     }
     zip.file('apri-e-posta.html', launcherHtml(manifest));
+    // il browser non può aprire Esplora risorse (sandbox): questo .bat lo fa da Windows,
+    // aprendo la cartella estratta così i file sono lì pronti da trascinare nel composer.
+    zip.file('apri-cartella.bat', '@echo off\r\nexplorer "%~dp0"\r\n');
     downloadBlob(await zip.generateAsync({ type: 'blob' }), 'horror-bulletin-posts.zip');
     HB.showToast(`✓ ZIP con ${items.length} titoli — apri "apri-e-posta.html"`);
   }
@@ -316,8 +319,10 @@
   code{background:#222;padding:1px 5px;border-radius:4px}
 </style></head><body>
 <h1>☠ Apri e posta</h1>
-<p class="steps">Per ogni social: <b>1)</b> premi <b>Apri + copia</b> — la caption va negli appunti e si apre la finestra di posting.
-<b>2)</b> <code>Ctrl-V</code> nella casella (𝕏 e Threads sono già precompilati). <b>3)</b> trascina il file indicato dalla cartella estratta. <b>4)</b> premi <b>Post</b>.</p>
+<p class="steps">Prima: doppio-click su <code>apri-cartella.bat</code> (in questa stessa cartella) → apre in Esplora risorse i file da trascinare. Tienila affiancata.
+<br>Poi per ogni social: <b>1)</b> premi <b>Apri + copia</b> — la caption va negli appunti e si apre la finestra di posting.
+<b>2)</b> <code>Ctrl-V</code> nella casella (𝕏 e Threads sono già precompilati). <b>3)</b> trascina nel composer il file indicato. <b>4)</b> premi <b>Post</b>.
+<br><small>(La cartella non si può aprire da questa pagina: il browser non ha accesso al file system — ci pensa il .bat.)</small></p>
 <div id="app"></div>
 <script>
 const POSTS = ${data};
