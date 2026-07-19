@@ -255,10 +255,10 @@
   const COMPOSER = {
     x:         c => 'https://x.com/intent/post?text=' + encodeURIComponent(c),
     threads:   c => 'https://www.threads.net/intent/post?text=' + encodeURIComponent(c),
-    // FB e IG non hanno deeplink ufficiali al composer: /me (profilo) ha la casella di post ed
-    // evita l'interstitial della home nuda; /create/select/ è la rotta interna del create IG.
-    facebook:  () => 'https://www.facebook.com/me',
-    instagram: () => 'https://www.instagram.com/create/select/',
+    // FB e IG non hanno deeplink al composer che regga (i deeplink vengono interpretati come
+    // profili inesistenti): si apre la home, il composer lo si apre a mano.
+    facebook:  () => 'https://www.facebook.com/',
+    instagram: () => 'https://www.instagram.com/',
     tiktok:    () => 'https://www.tiktok.com/tiktokstudio/upload'
   };
 
