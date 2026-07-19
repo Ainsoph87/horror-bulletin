@@ -17,7 +17,6 @@
     <button class="nav-tab active" onclick="showPage('bulletin')">Bulletin</button>
     <button class="nav-tab" onclick="showPage('archivio')">Archivio</button>
     <button class="nav-tab" onclick="showPage('social')">Social</button>
-    <button class="nav-tab" onclick="showPage('review')">Review</button>
     <button class="nav-tab" onclick="showPage('guida')">Guida</button>
   </div>
   <div class="updated" id="updated-info">—</div>
@@ -80,6 +79,7 @@
             <th>Tipo</th>
             <th>Piattaforma</th>
             <th>Data</th>
+            <th></th>
           </tr>
         </thead>
         <tbody id="archive-body"></tbody>
@@ -90,11 +90,11 @@
   <div id="page-social" class="page">
     <div class="bulletin-header"><div class="bulletin-title">Social — Post preformattati</div></div>
     <div class="post-section">
-      <div class="post-title">Voce approvata</div>
+      <div class="post-title">Voce da postare</div>
       <select class="form-select" id="post-select" style="width:100%;max-width:500px" onchange="HBSocial.select(this.value)">
-        <option value="">— Scegli una voce approvata —</option>
+        <option value="">— Scegli una voce —</option>
       </select>
-      <div style="font-size:11px;color:var(--text3);margin-top:6px">Solo le voci con flag <code>Approvato</code> su Notion appaiono qui.</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">Ci sono tutte le voci non scartate. Per rimuoverne una usa il 🗑 su Bulletin o Archivio.</div>
     </div>
     <div class="post-section">
       <div class="post-title">⚡ One-move copy</div>
@@ -114,18 +114,6 @@
       </div>
       <div id="zip-list" style="max-height:260px;overflow-y:auto;font-size:12px;line-height:2;color:var(--text2)"></div>
     </div>
-  </div>
-
-  <div id="page-review" class="page">
-    <div class="bulletin-header">
-      <div class="bulletin-title">Review — Approvazione voci</div>
-      <button class="nav-tab" style="font-size:11px;color:var(--text3)" onclick="HBReview.setKey()" title="API Key worker">🔑</button>
-    </div>
-    <div class="filters" id="review-filters">
-      <button class="filter-btn active" onclick="HBReview.setMode(this,'pending')">⏳ Da approvare</button>
-      <button class="filter-btn" onclick="HBReview.setMode(this,'approved')">✓ Approvate — qui si revoca</button>
-    </div>
-    <div id="review-list"></div>
   </div>
 
   <div id="page-guida" class="page">
@@ -155,22 +143,23 @@
     </div>
 
     <div class="post-section">
-      <div class="post-title">✅ Review — approvare e revocare</div>
+      <div class="post-title">🗑 Scartare un falso positivo</div>
       <div class="guida-text">
-        La tab <b>Review</b> gestisce il flusso editoriale senza passare da Notion:
-        <br>• <b>⏳ Da approvare</b> → bottone <b>✓ Approva</b>: la voce diventa disponibile nella pagina Social
-        <br>• <b>✓ Approvate</b> → bottone <b>↩ Revoca</b>: la voce torna in coda (la revoca sta in questa lista!)
+        Niente approvazione: ogni uscita pescata è <b>subito</b> in bulletin, archivio, bulk e social.
+        Se un titolo <b>non è horror</b> o non vale la registrazione, premi il <b>🗑</b> sulla sua card
+        (Bulletin) o sulla sua riga (Archivio): sparisce all'istante da tutto e non tornerà.
         <br><br>
-        Serve la API Key del worker (bottone 🔑 in alto a destra nella pagina): si imposta una volta
-        e resta salvata nel browser. La scrittura passa da un Cloudflare Worker — il token Notion
-        non tocca mai il browser.
+        Lo scarto scrive il flag <code>Scartato</code> su Notion via Cloudflare Worker (il token Notion
+        non tocca mai il browser). Serve la <b>API Key</b> del worker: viene chiesta al primo scarto e
+        resta salvata nel browser. È reversibile: togli la spunta <code>Scartato</code> su Notion e al
+        prossimo sync la voce ricompare.
       </div>
     </div>
 
     <div class="post-section">
       <div class="post-title">⚡ Social — post preformattati</div>
       <div class="guida-text">
-        Scegli una voce approvata e usa il bottone del social che ti serve:
+        Scegli una voce e usa il bottone del social che ti serve:
         <br>• <b>X / Facebook / Threads</b>: un click copia <b>testo + locandina insieme</b> → un incolla nel composer e via
         <br>• <b>Instagram</b>: un click copia la caption <b>e</b> scarica la locandina (Instagram vieta il resto alle app esterne)
         <br>• <b>TikTok</b>: un click copia la caption <b>e</b> scarica la slide verticale 1080×1920
@@ -200,9 +189,8 @@
 
 <script src="vendor/jszip.min.js"></script>
 <!-- bump ?v ad ogni deploy: Pages cacha i JS 10 min, il ?v obbliga il browser a riscaricarli -->
-<script src="formatters.js?v=6"></script>
-<script src="social.js?v=6"></script>
-<script src="review.js?v=6"></script>
-<script src="app.js?v=6"></script>
+<script src="formatters.js?v=7"></script>
+<script src="social.js?v=7"></script>
+<script src="app.js?v=7"></script>
 </body>
 </html>

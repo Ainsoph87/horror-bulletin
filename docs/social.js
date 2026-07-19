@@ -7,33 +7,40 @@
   const F = () => window.HBFormatters;
 
   function init(DATA) {
-    // settorializzato: categoria prima di tutto, rilevanza dentro la categoria
-    const approved = DATA.items.filter(i => i.approvato).sort(HB.byCategory);
+    // settorializzato: categoria prima di tutto, rilevanza dentro la categoria.
+    // Niente più approvazione: tutto ciò che è in data.json (= non scartato) è postabile.
     const groups = new Map();
-    for (const d of approved) {
+    for (const d of [...DATA.items].sort(HB.byCategory)) {
       const c = d.category || 'Altro';
       if (!groups.has(c)) groups.set(c, []);
       groups.get(c).push(d);
     }
-    $('post-select').innerHTML = '<option value="">— Scegli una voce approvata —</option>' +
+    $('post-select').innerHTML = '<option value="">— Scegli una voce —</option>' +
       [...groups].map(([cat, items]) =>
         `<optgroup label="${cat}">` +
         items.map(d => `<option value="${d.id}">${d.title}${d.rilevanza ? ` 🔥${d.rilevanza}` : ''} — ${HB.formatDate(d.releaseDate)}</option>`).join('') +
         '</optgroup>'
       ).join('');
-    $('zip-list').innerHTML = [...groups].map(([cat, items]) =>
+    // ZIP bulk = solo mese corrente (il picker singolo sopra resta su tutto)
+    const zipGroups = new Map();
+    for (const d of HB.monthItems().sort(HB.byCategory)) {
+      const c = d.category || 'Altro';
+      if (!zipGroups.has(c)) zipGroups.set(c, []);
+      zipGroups.get(c).push(d);
+    }
+    $('zip-list').innerHTML = [...zipGroups].map(([cat, items]) =>
       `<div style="font-weight:600;color:var(--text);margin:10px 0 4px">${cat} (${items.length})</div>` +
       items.map(d =>
         `<label style="display:block;cursor:pointer"><input type="checkbox" class="zip-check" data-cat="${cat}" style="accent-color:var(--red);margin-right:8px" onclick='HBSocial.toggle(${JSON.stringify(d.id)}, this.checked)'>${d.title} <span style="color:var(--text3)">(${d.rilevanza ? `🔥${d.rilevanza} — ` : ''}${HB.formatDate(d.releaseDate)})</span></label>`
       ).join('')
-    ).join('') || '<div class="empty">Nessuna voce approvata.</div>';
+    ).join('') || '<div class="empty">Nessuna uscita nel mese corrente.</div>';
     renderButtons();
   }
 
   function toggleAll(checked) {
     document.querySelectorAll('#zip-list .zip-check').forEach(c => { c.checked = checked; });
     selected.clear();
-    if (checked) HB.DATA.items.filter(i => i.approvato).forEach(i => selected.add(i.id));
+    if (checked) HB.monthItems().forEach(i => selected.add(i.id));
     const btn = $('zip-btn');
     btn.disabled = selected.size === 0;
     btn.textContent = `⬇ Scarica ZIP selezione (${selected.size})`;
@@ -243,28 +250,90 @@
     btn.textContent = `⬇ Scarica ZIP selezione (${selected.size})`;
   }
 
+  // finestra di posting per social. X e Threads usano gli endpoint "intent" ufficiali (ToS-ok)
+  // → caption già precompilata; gli altri non hanno deeplink di composizione, si apre la pagina.
+  const COMPOSER = {
+    x:         c => 'https://x.com/intent/post?text=' + encodeURIComponent(c),
+    threads:   c => 'https://www.threads.net/intent/post?text=' + encodeURIComponent(c),
+    facebook:  () => 'https://www.facebook.com/',
+    instagram: () => 'https://www.instagram.com/',
+    tiktok:    () => 'https://www.tiktok.com/tiktokstudio/upload'
+  };
+
   async function downloadZip() {
     // ZIP settorializzato: cartella per categoria, dentro i film in ordine di rilevanza
     const items = HB.DATA.items.filter(i => selected.has(i.id)).sort(HB.byCategory);
     if (!items.length) return;
     const zip = new JSZip();
+    const manifest = [];
     let n = 0;
     for (const d of items) {
       // il video slide si registra in ~3s a titolo: avanzamento per non far sembrare bloccato
       HB.showToast(`⏳ Preparo lo ZIP… ${++n}/${items.length} (video slide ≈3s a titolo)`);
+      const folder = slug({ title: d.category || 'altro' }) + '/' + slug(d);
       const dir = zip.folder(slug({ title: d.category || 'altro' })).folder(slug(d));
       for (const s of F().SOCIALS) dir.file(s.id + '.txt', F().format(s.id, d));
+      let poster = false, slideFile = null;
       if (d.poster) {
         const png = await posterPng(d.poster).catch(() => null);
-        if (png) dir.file('poster.png', png);
+        if (png) { dir.file('poster.png', png); poster = true; }
       }
       // slide TikTok come MP4 (stesso asset del copia-incolla), fallback PNG se il browser non registra
       const vid = await slideVideo(d).catch(() => null);
-      if (vid && vid.blob.size) dir.file('slide.' + vid.ext, vid.blob);
-      else { const slide = await slideBlob(d).catch(() => null); if (slide) dir.file('slide.png', slide); }
+      if (vid && vid.blob.size) { slideFile = 'slide.' + vid.ext; dir.file(slideFile, vid.blob); }
+      else { const slide = await slideBlob(d).catch(() => null); if (slide) { slideFile = 'slide.png'; dir.file(slideFile, slide); } }
+      manifest.push({
+        title: d.title, category: d.category || 'Altro', folder,
+        socials: F().SOCIALS.map(s => {
+          const caption = F().format(s.id, d);
+          // TikTok si trascina il video, gli altri la locandina (o il video se manca la locandina)
+          const file = s.id === 'tiktok' ? slideFile : (poster ? 'poster.png' : slideFile);
+          return { id: s.id, label: s.label, caption, url: COMPOSER[s.id](caption), file: file && folder + '/' + file };
+        })
+      });
     }
+    zip.file('apri-e-posta.html', launcherHtml(manifest));
     downloadBlob(await zip.generateAsync({ type: 'blob' }), 'horror-bulletin-posts.zip');
-    HB.showToast(`✓ ZIP con ${items.length} titoli scaricato`);
+    HB.showToast(`✓ ZIP con ${items.length} titoli — apri "apri-e-posta.html"`);
+  }
+
+  // pagina standalone dentro lo ZIP: un bottone per social che copia la caption e apre la finestra di posting
+  const esc = s => String(s == null ? '' : s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  function launcherHtml(posts) {
+    const data = JSON.stringify(posts).replace(/</g, '\\u003c');
+    return `<!doctype html><html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Horror Bulletin — Apri e posta</title>
+<style>
+  body{font-family:system-ui;background:#0a0a0f;color:#eee;margin:0;padding:24px 24px 60px;max-width:820px;margin-inline:auto}
+  h1{color:#ff6b6b} h2{margin:28px 0 4px;border-bottom:1px solid #333;padding-bottom:4px;color:#fff}
+  .social{display:flex;align-items:center;gap:10px;padding:8px 0;flex-wrap:wrap}
+  .social b{min-width:130px}
+  button{background:#c0392b;color:#fff;border:0;border-radius:6px;padding:8px 12px;cursor:pointer;font-size:14px}
+  button:hover{background:#e04a3a} button.done{background:#2d572c}
+  .file{color:#5dade2;font-family:monospace;font-size:13px}
+  .steps{color:#9090a8;font-size:14px;background:#15151f;padding:12px 16px;border-radius:8px;line-height:1.5}
+  code{background:#222;padding:1px 5px;border-radius:4px}
+</style></head><body>
+<h1>☠ Apri e posta</h1>
+<p class="steps">Per ogni social: <b>1)</b> premi <b>Apri + copia</b> — la caption va negli appunti e si apre la finestra di posting.
+<b>2)</b> <code>Ctrl-V</code> nella casella (𝕏 e Threads sono già precompilati). <b>3)</b> trascina il file indicato dalla cartella estratta. <b>4)</b> premi <b>Post</b>.</p>
+<div id="app"></div>
+<script>
+const POSTS = ${data};
+function copy(t){ try{ navigator.clipboard.writeText(t); }catch(e){ const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); } }
+function go(pi,si,btn){ const s=POSTS[pi].socials[si]; copy(s.caption); window.open(s.url,'_blank'); btn.classList.add('done'); btn.textContent='✓ aperto — Ctrl-V'; }
+function e(s){ return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+document.getElementById('app').innerHTML = POSTS.map((p,pi)=>
+  '<h2>'+e(p.category)+' — '+e(p.title)+'</h2>'+
+  p.socials.map((s,si)=>
+    '<div class="social"><b>'+e(s.label)+'</b>'+
+    '<button onclick="go('+pi+','+si+',this)">Apri + copia</button>'+
+    (s.file?'<span class="file">trascina: '+e(s.file)+'</span>':'<span class="file">(nessun file)</span>')+
+    '</div>'
+  ).join('')
+).join('');
+</script></body></html>`;
   }
 
   window.HBSocial = { init, open, select, copy, share, toggle, toggleAll, downloadZip };

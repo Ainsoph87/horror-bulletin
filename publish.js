@@ -31,8 +31,8 @@ async function flagPublished(pageId) {
 
 async function main() {
   const data = JSON.parse(fs.readFileSync('docs/data.json', 'utf8'));
-  const queue = data.items.filter(i => i.approvato && !i.pubblicato);
-  console.log(`In coda: ${queue.length} voci approvate e non pubblicate`);
+  const queue = data.items.filter(i => !i.scartato && !i.pubblicato);
+  console.log(`In coda: ${queue.length} voci non scartate e non pubblicate`);
 
   const active = Object.entries(ADAPTERS).filter(([id, a]) => {
     const missing = a.env.filter(k => !process.env[k]);

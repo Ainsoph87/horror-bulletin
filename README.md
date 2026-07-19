@@ -15,14 +15,17 @@ TMDB + TVMaze ──(fetch_horror.js, cron il 28 del mese)──▶ Notion DB �
                                                       docs/data.json ──▶ GitHub Pages
 ```
 
-Le voci si approvano dalla pagina **Review** del sito (o da Notion, spuntando i flag a mano).
-Solo le voci `Approvato` compaiono nella pagina Social.
+Nessuna approvazione: ogni voce pescata è subito live su bulletin, archivio, bulk e social.
+I falsi positivi si eliminano col **🗑** sulla card (Bulletin) o sulla riga (Archivio).
 
-## Pagina Review — approvazione da sito
+## Scarto voci — rimozione da sito
 
-La tab Review elenca le voci da approvare (e le approvate, per revocarle) e scrive su Notion
-tramite il Cloudflare Worker in `worker/` — il token Notion non tocca mai il browser.
-Serve la API Key del worker, impostabile col bottone 🔑 (salvata in localStorage).
+Il 🗑 scrive il flag `Scartato` su Notion tramite il Cloudflare Worker in `worker/` (il token
+Notion non tocca mai il browser); il `sync_data.js` esclude alla fonte le voci `Scartato`, così
+spariscono da tutto in un colpo solo. Reversibile: togli la spunta `Scartato` su Notion.
+Serve la API Key del worker: viene chiesta al primo scarto e salvata in localStorage.
+
+> Richiede una colonna checkbox **`Scartato`** nel database Notion e il redeploy del worker.
 
 Deploy/aggiornamento del worker (free tier Cloudflare, una tantum):
 
@@ -35,8 +38,8 @@ npx wrangler secret put API_KEY         # chiave a tua scelta, la stessa del bot
 ```
 
 Contratto: `POST /update` con header `X-Api-Key` e body
-`{ "id": "<notion page id>", "props": { "approvato": true } }`
-(accetta anche `pubblicato` e `verificato`). L'aggiornamento è ottimistico lato UI;
+`{ "id": "<notion page id>", "props": { "scartato": true } }`
+(accetta anche `approvato`, `pubblicato`, `verificato`). L'aggiornamento è ottimistico lato UI;
 `data.json` si riallinea al sync successivo (max 2 ore).
 
 ## Struttura
@@ -52,8 +55,7 @@ Contratto: `POST /update` con header `X-Api-Key` e body
 | `docs/app.js` | Bulletin (solo mese corrente) + Archivio |
 | `docs/formatters.js` | Testi post per i 5 social — fonte unica, gira in browser e Node |
 | `docs/social.js` | Pagina Social: one-move copy, share, slide TikTok, ZIP |
-| `docs/review.js` | Pagina Review: approvazione voci da sito (via worker) |
-| `worker/worker.js` | Cloudflare Worker: PATCH sicuro dei flag Notion |
+| `worker/worker.js` | Cloudflare Worker: PATCH sicuro dei flag Notion (incl. `Scartato`) |
 | `docs/vendor/jszip.min.js` | Unica dipendenza, vendorizzata |
 
 ## Pagina Social — one-move copy
@@ -69,8 +71,9 @@ Contratto: `POST /update` con header `X-Api-Key` e body
 Su mobile il bottone **📤 Condividi** apre la share sheet nativa con immagine + testo
 (la caption viene comunque copiata negli appunti, perché Instagram la scarta).
 
-**ZIP bulk**: checkbox sulle card approvate nel Bulletin → "Scarica ZIP selezione" nella pagina Social.
-Per ogni film: `x.txt`, `facebook.txt`, `instagram.txt`, `threads.txt`, `tiktok.txt`, `poster.png`, `slide.png`.
+**ZIP bulk** (solo mese corrente): checkbox nel Bulletin/pagina Social → "Scarica ZIP selezione".
+Per ogni film: `x.txt`, `facebook.txt`, `instagram.txt`, `threads.txt`, `tiktok.txt`, `poster.png`,
+`slide.*`, più un `apri-e-posta.html` che apre il composer di ogni social con la caption già copiata.
 
 Se la copia combinata testo+immagine non funziona nel tuo browser (dipende dal composer e da
 eventuali estensioni), degrada automaticamente a copia solo-testo.
@@ -78,7 +81,7 @@ eventuali estensioni), degrada automaticamente a copia solo-testo.
 ## Autoposting (§Autoposting)
 
 `publish.js` + `.github/workflows/publish.yml` sono la predisposizione: leggono le voci
-`approvato && !pubblicato`, le formattano con gli stessi formatter del sito e le passano agli
+`!scartato && !pubblicato`, le formattano con gli stessi formatter del sito e le passano agli
 adapter. **Nessuna API a pagamento**: si usano le API ufficiali gratuite. Ogni social si attiva
 in tre passi:
 

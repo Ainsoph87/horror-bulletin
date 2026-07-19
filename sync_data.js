@@ -73,15 +73,21 @@ async function main() {
       rilevanza:    t('Rilevanza','number'),
       verificato:   t('Verificato','checkbox'),
       approvato:    t('Approvato','checkbox'),
-      pubblicato:   t('Pubblicato','checkbox')
+      pubblicato:   t('Pubblicato','checkbox'),
+      scartato:     t('Scartato','checkbox')
     };
   });
 
   items.sort((a,b) => (b.releaseDate||'').localeCompare(a.releaseDate||''));
 
+  // scarto = esclusione alla fonte: la voce non entra in data.json, quindi sparisce da
+  // bulletin, archivio, bulk e social in un colpo solo. Filtrato PRIMA del dedup così un
+  // eventuale duplicato non-scartato sopravvive.
+  const live = items.filter(i => !i.scartato);
+
   const dedupeItems = require('./dedupe.js');
-  const before = items.length;
-  const deduped = dedupeItems(items);
+  const before = live.length;
+  const deduped = dedupeItems(live);
   if (deduped.length < before) console.log(`Dedup: rimossi ${before - deduped.length} duplicati`);
 
   const now = new Date();

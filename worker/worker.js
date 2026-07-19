@@ -3,7 +3,7 @@
 // Secrets richiesti (wrangler secret put / dashboard): NOTION_TOKEN, API_KEY
 const ALLOWED_ORIGINS = ['https://ainsoph87.github.io', 'http://localhost:8787'];
 
-const PROPS = { approvato: 'Approvato', pubblicato: 'Pubblicato', verificato: 'Verificato' };
+const PROPS = { approvato: 'Approvato', pubblicato: 'Pubblicato', verificato: 'Verificato', scartato: 'Scartato' };
 
 function cors(origin) {
   return {
